@@ -1,16 +1,16 @@
 import { Metadata } from "next"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { AboutEmmanuelTV } from "@/components/sections/about-emmanuel-tv"
+import { AboutEmmanuelTVSection } from "@/components/sections/about-emmanuel-tv"
 import SplashCursor from "@/components/SplashCursor"
 
 export const metadata: Metadata = {
-  title: "Emmanuel TV - Dunamis International Gospel Centre",
-  description: "Explore Emmanuel TV's global ministry, programming, and impact on Christian broadcasting",
-  keywords: "Emmanuel TV, Christian television, ministry, broadcasting, global ministry",
+  title: "About - Emmanuel TV",
+  description: "Learn about Emmanuel TV, the Christian television network broadcasting from The Synagogue Church of All Nations",
+  keywords: "Emmanuel TV, Christian television, T.B. Joshua, SCOAN, healing ministry, Christian broadcasting",
   openGraph: {
-    title: "Emmanuel TV - Dunamis International Gospel Centre",
-    description: "Explore Emmanuel TV's global ministry, programming, and impact on Christian broadcasting",
+    title: "About - Emmanuel TV",
+    description: "Learn about Emmanuel TV, the Christian television network broadcasting from The Synagogue Church of All Nations",
     type: "website",
   },
 }
@@ -21,7 +21,7 @@ export default function EmmanuelTVPage() {
       <SplashCursor />
       <Header />
       <main>
-        <AboutEmmanuelTV />
+        <AboutEmmanuelTVSection />
       </main>
       <Footer />
     </div>

@@ -30,7 +30,6 @@ export const metadata: Metadata = {
     ],
     apple: "/apple-icon.png",
   },
-  viewport: "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes",
 }
 
 export default function RootLayout({
@@ -40,12 +39,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-      </head>
       <body className={`font-sans antialiased`}>
         <Preloader />
         <SplashCursor />

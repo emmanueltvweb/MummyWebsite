@@ -27,7 +27,6 @@ export function VideoModal({ isOpen, onClose, video }: VideoModalProps) {
   const [error, setError] = useState<string | null>(null)
   const [hasStarted, setHasStarted] = useState(false)
   const [isEmbed, setIsEmbed] = useState(false)
-  const [showPlayOverlay, setShowPlayOverlay] = useState(true)
   
   const videoRef = useRef<HTMLVideoElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
@@ -39,29 +38,7 @@ export function VideoModal({ isOpen, onClose, video }: VideoModalProps) {
     if (!video) return
     const embedType = video.type || (video.embedUrl ? 'embed' : 'video')
     setIsEmbed(embedType !== 'video')
-    // Show play overlay for Facebook videos initially
-    if (embedType === 'facebook') {
-      setShowPlayOverlay(true)
-    }
   }, [video])
-
-  // Initialize video overlay when modal opens for embedded videos
-  useEffect(() => {
-    if (isOpen && isEmbed && (video?.type === 'facebook' || video?.type === 'youtube')) {
-      // For embedded videos, show play overlay initially
-      setShowPlayOverlay(true);
-      
-      // Load Facebook SDK if not already loaded (for potential fallback)
-      if (video?.type === 'facebook' && !(window as any).FB) {
-        const script = document.createElement('script');
-        script.async = true;
-        script.defer = true;
-        script.crossOrigin = 'anonymous';
-        script.src = 'https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v18.0';
-        document.head.appendChild(script);
-      }
-    }
-  }, [isOpen, isEmbed, video?.type])
 
   // Handle keyboard navigation and focus trapping
   useEffect(() => {
@@ -298,150 +275,17 @@ export function VideoModal({ isOpen, onClose, video }: VideoModalProps) {
           )}
           
           {isEmbed ? (
-            <div className="w-full aspect-video relative">
-              {/* Use direct iframe for better reliability */}
-              {video?.type === 'facebook' ? (
-                <iframe
-                  src={video.embedUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 'none' }}
-                  allow="autoplay; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                  title={video.title}
-                  aria-label={`Video: ${video.title}`}
-                  className="facebook-video-iframe"
-                />
-              ) : video?.type === 'youtube' ? (
-                <iframe
-                  src={video.embedUrl}
-                  width="100%"
-                  height="100%"
-                  style={{ border: 'none' }}
-                  allow="autoplay; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                  title={video.title}
-                  aria-label={`Video: ${video.title}`}
-                  className="youtube-video-iframe"
-                />
-              ) : (
-                <div 
-                  className="fb-video" 
-                  data-href={video.embedUrl}
-                  data-width="100%"
-                  data-height="100%"
-                  data-show-text="false"
-                  data-autoplay="false"
-                  data-allowfullscreen="true"
-                  data-controls="true"
-                  style={{ width: '100%', height: '100%' }}
-                >
-                  <iframe
-                    src={video.embedUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 'none' }}
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    allowFullScreen
-                    title={video.title}
-                    aria-label={`Video: ${video.title}`}
-                  />
-                </div>
-              )}
-              
-              {/* Play Button Overlay for Facebook Videos */}
-              {video?.type === 'facebook' && showPlayOverlay && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                  <button
-                    onClick={() => {
-                      const iframe = document.querySelector('.facebook-video-iframe') as HTMLIFrameElement;
-                      
-                      if (iframe) {
-                        // Update iframe src with autoplay parameters
-                        const currentSrc = iframe.src;
-                        let newSrc = currentSrc;
-                        
-                        // Remove any existing autoplay/mute parameters
-                        newSrc = newSrc.replace(/&autoplay=(true|false)/g, '');
-                        newSrc = newSrc.replace(/\?autoplay=(true|false)&/g, '?');
-                        newSrc = newSrc.replace(/&mute=(0|1)/g, '');
-                        
-                        // Add autoplay parameters
-                        if (newSrc.includes('?')) {
-                          newSrc += '&autoplay=true&mute=0';
-                        } else {
-                          newSrc += '?autoplay=true&mute=0';
-                        }
-                        
-                        // Update the iframe src to trigger autoplay
-                        iframe.src = newSrc;
-                        
-                        // Hide the play button
-                        setShowPlayOverlay(false);
-                        
-                        // Try to send play message as fallback
-                        setTimeout(() => {
-                          try {
-                            iframe.contentWindow?.postMessage(JSON.stringify({
-                              type: 'command',
-                              command: 'play'
-                            }), '*');
-                          } catch (e) {
-                            console.log('Could not send play message');
-                          }
-                        }, 500);
-                      }
-                    }}
-                    className="w-20 h-20 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-200"
-                    aria-label="Play video"
-                  >
-                    <svg className="w-10 h-10 ml-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                </div>
-              )}
-
-              {/* Play Button Overlay for YouTube Videos */}
-              {video?.type === 'youtube' && showPlayOverlay && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                  <button
-                    onClick={() => {
-                      const iframe = document.querySelector('.youtube-video-iframe') as HTMLIFrameElement;
-                      
-                      if (iframe) {
-                        // Update iframe src with autoplay parameters for YouTube
-                        const currentSrc = iframe.src;
-                        let newSrc = currentSrc;
-                        
-                        // Remove any existing autoplay/mute parameters
-                        newSrc = newSrc.replace(/&autoplay=(0|1)/g, '');
-                        newSrc = newSrc.replace(/\?autoplay=(0|1)&/g, '?');
-                        newSrc = newSrc.replace(/&mute=(0|1)/g, '');
-                        
-                        // Add autoplay parameters for YouTube
-                        if (newSrc.includes('?')) {
-                          newSrc += '&autoplay=1&mute=1';
-                        } else {
-                          newSrc += '?autoplay=1&mute=1';
-                        }
-                        
-                        // Update the iframe src to trigger autoplay
-                        iframe.src = newSrc;
-                        
-                        // Hide the play button
-                        setShowPlayOverlay(false);
-                      }
-                    }}
-                    className="w-20 h-20 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-200"
-                    aria-label="Play video"
-                  >
-                    <svg className="w-10 h-10 ml-2" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </button>
-                </div>
-              )}
+            <div className="w-full aspect-video">
+              <iframe
+                src={video.embedUrl}
+                width="100%"
+                height="100%"
+                style={{ border: 'none' }}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                title={video.title}
+                aria-label={`Video: ${video.title}`}
+              />
             </div>
           ) : (
             <video

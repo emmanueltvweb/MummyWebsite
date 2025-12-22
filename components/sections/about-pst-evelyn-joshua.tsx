@@ -72,7 +72,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/Evelyn-Joshua3.jpg",
+      src: "/mumanddad.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "right"
     }
@@ -150,6 +150,7 @@ const carouselSlides: CarouselSlide[] = [
     }
   }
 ]
+
 
 export function AboutSection({ 
   autoPlayInterval = 5000, 
@@ -377,6 +378,7 @@ export function AboutSection({
             {currentSlide + 1} of {totalSlides}
           </div>
         </div>
+        
       </Container>
     </section>
   )

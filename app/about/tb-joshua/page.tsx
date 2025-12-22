@@ -1,16 +1,16 @@
 import { Metadata } from "next"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { AboutTBJoshua } from "@/components/sections/about-tb-joshua"
+import { AboutTBJoshuaSection } from "@/components/sections/about-tb-joshua"
 import SplashCursor from "@/components/SplashCursor"
 
 export const metadata: Metadata = {
-  title: "Prophet T.B. Joshua - Dunamis International Gospel Centre",
-  description: "Discover Prophet T.B. Joshua's legacy, teachings, and impact on global ministry",
-  keywords: "TB Joshua, Prophet TB Joshua, SCOAN, Emmanuel TV, Christian ministry, legacy",
+  title: "About - Prophet T.B. Joshua",
+  description: "Learn about Prophet Temitope Balogun Joshua, founder of The Synagogue Church of All Nations and Emmanuel TV",
+  keywords: "T.B. Joshua, Prophet T.B. Joshua, SCOAN, Emmanuel TV, Nigerian prophet, healing ministry",
   openGraph: {
-    title: "Prophet T.B. Joshua - Dunamis International Gospel Centre",
-    description: "Discover Prophet T.B. Joshua's legacy, teachings, and impact on global ministry",
+    title: "About - Prophet T.B. Joshua",
+    description: "Learn about Prophet Temitope Balogun Joshua, founder of The Synagogue Church of All Nations and Emmanuel TV",
     type: "website",
   },
 }
@@ -21,7 +21,7 @@ export default function TBJoshuaPage() {
       <SplashCursor />
       <Header />
       <main>
-        <AboutTBJoshua />
+        <AboutTBJoshuaSection />
       </main>
       <Footer />
     </div>

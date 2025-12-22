@@ -24,7 +24,7 @@ const audioTracks: AudioTrack[] = [
     category: "Sermon",
     duration: "45:30",
     date: "Nov 17, 2024",
-    audioUrl: "https://docs.google.com/uc?export=open&id=1R8YkOyCEY3mM1aLg4ifDlFzF4Rt-nXtZ",
+    // audioUrl: "https://docs.google.com/uc?export=open&id=1R8YkOyCEY3mM1aLg4ifDlFzF4Rt-nXtZ", // Removed Google Drive link
   },
   {
     id: 2,
@@ -65,7 +65,6 @@ export function AudioPlaylistSection() {
   const [currentTrack, setCurrentTrack] = useState<AudioTrack>(audioTracks[0])
   const [isPlaying, setIsPlaying] = useState(false)
   const [activeTab, setActiveTab] = useState("all")
-  const [showEmbedPlayer, setShowEmbedPlayer] = useState(false)
   const [isNavigating, setIsNavigating] = useState(false)
   const [audioBars, setAudioBars] = useState<number[]>([])
   const [currentTime, setCurrentTime] = useState(0)
@@ -98,10 +97,6 @@ export function AudioPlaylistSection() {
   }
 
   const handlePlayClick = async () => {
-    if (!showEmbedPlayer) {
-      setShowEmbedPlayer(true)
-    }
-    
     // Initialize audio context on first user interaction
     if (!audioContext && currentTrack.audioUrl) {
       await initializeAudioContext()
@@ -163,16 +158,9 @@ export function AudioPlaylistSection() {
   const handleTrackSelect = async (track: AudioTrack) => {
     setCurrentTrack(track)
     if (track.audioUrl) {
-      // Use iframe player for Google Drive files, audio element for direct URLs
-      if (track.audioUrl.includes('google.com')) {
-        setShowEmbedPlayer(true)
-        setIsPlaying(true)
-      } else {
-        setShowEmbedPlayer(false)
-        // Initialize audio context for direct audio files
-        if (!audioContext) {
-          await initializeAudioContext()
-        }
+      // Initialize audio context for direct audio files
+      if (!audioContext) {
+        await initializeAudioContext()
       }
     }
   }
@@ -294,18 +282,8 @@ export function AudioPlaylistSection() {
               <p className="text-white/80">{currentTrack.artist}</p>
             </div>
 
-            {/* Audio Visualization or Embed Player */}
-            {currentTrack.audioUrl && showEmbedPlayer && currentTrack.audioUrl.includes('google.com') ? (
-              <div className="mb-6 rounded-lg overflow-hidden">
-                <iframe
-                  src={`https://drive.google.com/file/d/${currentTrack.audioUrl.split('id=')[1] || '1R8YkOyCEY3mM1aLg4ifDlFzF4Rt-nXtZ'}/preview`}
-                  width="100%"
-                  height="100"
-                  allow="autoplay"
-                  className="border-none"
-                />
-              </div>
-            ) : (
+            {/* Audio Visualization */}
+            {currentTrack.audioUrl && (
               <div className="mb-6 flex items-end gap-1 h-20 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
                 {audioBars.map((height, i) => (
                   <div

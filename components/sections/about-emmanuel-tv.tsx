@@ -17,7 +17,7 @@ interface CarouselSlide {
   }
 }
 
-interface AboutEmmanuelTVProps {
+interface AboutCarouselProps {
   autoPlayInterval?: number
   showDots?: boolean
   showArrows?: boolean
@@ -27,127 +27,33 @@ interface AboutEmmanuelTVProps {
 const carouselSlides: CarouselSlide[] = [
   {
     id: 1,
-    title: "Introduction",
+    title: "Spreading Messages of Love, Hope and Salvation through the Gospel of Jesus Christ",
     subtitle: "Emmanuel TV",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        Emmanuel TV is a Christian television network founded by Prophet T.B. Joshua, dedicated to broadcasting the gospel of Jesus Christ to the world. The network has become one of the most watched Christian television stations globally, reaching millions of homes across multiple continents with its unique blend of spiritual content, healing services, and humanitarian programming.
+       Emmanuel TV was Founded by Prophet TB Joshua by the inspiration of the Holy Spirit with the main aim of ensuring that the Word of God and the manifestations of His loving-kindness reach every corner of the world, Emmanuel TV has maintained its God-given reputation as the most widely watched Christian station of the 21st century.
+         <div className="mt-5">
+          Its impact in Changing Lives, Changing Nations and Changing the World can be felt as multitudes from different nations of the world have been led to salvation through the finished works of our Lord and Saviour Jesus Christ.
+        </div>
+         <div className="mt-5">
+          All through the 18 impactful years of its existence, Emmanuel TV has continued to be a medium of change and transformation, with its influence breaking the barriers of race, age, gender and religion all over the world.
+        </div>
       </div>
     ),
     image: {
-      src: "/emmanuel-tv-studio.jpg",
-      alt: "Emmanuel TV Studio",
+      src: "/logo.png",
+      alt: "Emmanuel TV Logo",
       position: "right"
     }
   },
-  {
-    id: 2,
-    title: "Founding and Vision",
-    subtitle: "Emmanuel TV",
-    content: (
-      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          Emmanuel TV was established with the divine vision to reach the world with the gospel of Jesus Christ through modern media technology. The name "Emmanuel" means "God with us," reflecting the network's mission to demonstrate God's presence and power in the lives of people.
-        </div>
-        <div className="mt-5">
-          From its humble beginnings in Lagos, Nigeria, Emmanuel TV has grown to become a global phenomenon, broadcasting 24/7 to millions of viewers worldwide through satellite, cable, and digital platforms.
-        </div>
-      </div>
-    ),
-    image: {
-      src: "/emmanuel-tv-vision.jpg",
-      alt: "Emmanuel TV Broadcasting",
-      position: "left"
-    }
-  },
-  {
-    id: 3,
-    title: "Global Reach",
-    subtitle: "Emmanuel TV",
-    content: (
-      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          Emmanuel TV has established itself as one of the most influential Christian television networks globally, with a presence in over 100 countries. The network's programming reaches millions of viewers daily, making it a powerful tool for evangelism and spiritual transformation.
-        </div>
-        <div className="mt-5">
-          Through strategic partnerships with international broadcasters and digital platforms, Emmanuel TV continues to expand its reach, bringing the message of hope, healing, and deliverance to every corner of the world.
-        </div>
-      </div>
-    ),
-    image: {
-      src: "/emmanuel-tv-global.jpg",
-      alt: "Emmanuel TV Global Broadcast",
-      position: "right"
-    }
-  },
-  {
-    id: 4,
-    title: "Programming and Content",
-    subtitle: "Emmanuel TV",
-    content: (
-      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          Emmanuel TV offers diverse programming that caters to the spiritual needs of its global audience. The network features live services from The SCOAN, including healing sessions, deliverance services, and prophetic ministrations that have transformed countless lives.
-        </div>
-        <div className="mt-5">
-          Other popular programs include "Live from The SCOAN," "Distance is Not a Barrier," "Emmanuel TV Partners," and various humanitarian documentaries showcasing the network's charitable works around the world.
-        </div>
-      </div>
-    ),
-    image: {
-      src: "/emmanuel-tv-content.jpg",
-      alt: "Emmanuel TV Programming",
-      position: "left"
-    }
-  },
-  {
-    id: 5,
-    title: "Technology and Innovation",
-    subtitle: "Emmanuel TV",
-    content: (
-      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          Emmanuel TV has been at the forefront of Christian broadcasting technology, utilizing state-of-the-art equipment and innovative production techniques to deliver high-quality spiritual content. The network's studios in Lagos are equipped with modern facilities that enable professional programming.
-        </div>
-        <div className="mt-5">
-          The network has embraced digital transformation, offering streaming services, mobile applications, and social media integration to reach younger audiences and adapt to changing viewing habits in the digital age.
-        </div>
-      </div>
-    ),
-    image: {
-      src: "/emmanuel-tv-tech.jpg",
-      alt: "Emmanuel TV Technology",
-      position: "right"
-    }
-  },
-  {
-    id: 6,
-    title: "Leadership and Future",
-    subtitle: "Emmanuel TV",
-    content: (
-      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          Following the home call of Prophet T.B. Joshua in 2021, Emmanuel TV continues under the leadership of Pastor Evelyn Joshua, who carries forward the vision and mission of the network. Under her guidance, Emmanuel TV remains committed to spreading the gospel and demonstrating God's power.
-        </div>
-        <div className="mt-5">
-          The network continues to evolve and expand, with plans for enhanced programming, broader international coverage, and innovative digital initiatives that will ensure Emmanuel TV remains a leading voice in Christian broadcasting for generations to come.
-        </div>
-      </div>
-    ),
-    image: {
-      src: "/emmanuel-tv-future.jpg",
-      alt: "Emmanuel TV Future",
-      position: "left"
-    }
-  }
-]
+ ]
 
 export function AboutEmmanuelTVSection({ 
   autoPlayInterval = 5000, 
   showDots = true, 
   showArrows = true, 
   infiniteLoop = true 
-}: AboutEmmanuelTVProps) {
+}: AboutCarouselProps) {
   const { ref, isInView } = useInView({ threshold: 0.2 })
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
@@ -190,7 +96,30 @@ export function AboutEmmanuelTVSection({
     }
   }, [isAutoPlaying, isInView, nextSlide, autoPlayInterval])
 
-  // Touch/swipe functionality
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isInView) return
+      
+      switch (e.key) {
+        case 'ArrowLeft':
+          prevSlide()
+          break
+        case 'ArrowRight':
+          nextSlide()
+          break
+        case ' ':
+          e.preventDefault()
+          setIsAutoPlaying(prev => !prev)
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isInView, nextSlide, prevSlide])
+
+  // Touch/swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX)
   }
@@ -208,130 +137,154 @@ export function AboutEmmanuelTVSection({
 
     if (isLeftSwipe) {
       nextSlide()
-    }
-    if (isRightSwipe) {
+    } else if (isRightSwipe) {
       prevSlide()
     }
   }
 
-  const handleMouseEnter = () => setIsAutoPlaying(false)
-  const handleMouseLeave = () => setIsAutoPlaying(true)
+  const renderSlide = (slide: CarouselSlide, index: number) => {
+    const isActive = index === currentSlide
+    const isPrev = index === (currentSlide - 1 + totalSlides) % totalSlides
+    const isNext = index === (currentSlide + 1) % totalSlides
 
-  return (
-    <section ref={ref} className="py-16 sm:py-24 bg-background">
-      <Container className="max-w-7xl">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Emmanuel TV
-          </h2>
-          <p className="text-lg sm:text-xl text-foreground/60 max-w-3xl mx-auto">
-            Spreading the gospel of Jesus Christ to the world through television
-          </p>
-        </div>
-
-        <div 
-          className="relative"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div className="overflow-hidden rounded-2xl bg-card/50 backdrop-blur-sm border border-border/20">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {carouselSlides.map((slide, index) => (
-                <div key={slide.id} className="w-full flex-shrink-0">
-                  <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 p-6 sm:p-8 lg:p-12 min-h-[500px]">
-                    {slide.image.position === 'left' && (
-                      <div className="relative order-1 lg:order-1">
-                        <div className="aspect-[4/5] rounded-xl overflow-hidden bg-gradient-to-br from-accent/10 to-accent/20">
-                          <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/30 flex items-center justify-center text-accent/40">
-                            <span className="text-sm">Image: {slide.image.alt}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className={`flex flex-col justify-center ${slide.image.position === 'left' ? 'order-2 lg:order-2' : 'order-2 lg:order-1'}`}>
-                      <div className="mb-6">
-                        <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-                          {slide.title}
-                        </h3>
-                        <h4 className="text-lg sm:text-xl text-accent font-semibold mb-4">
-                          {slide.subtitle}
-                        </h4>
-                      </div>
-                      
-                      <div className="flex-1">
-                        {slide.content}
-                      </div>
-                    </div>
-
-                    {slide.image.position === 'right' && (
-                      <div className="relative order-1 lg:order-2">
-                        <div className="aspect-[4/5] rounded-xl overflow-hidden bg-gradient-to-br from-accent/10 to-accent/20">
-                          <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/30 flex items-center justify-center text-accent/40">
-                            <span className="text-sm">Image: {slide.image.alt}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+    return (
+      <div
+        key={slide.id}
+        className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+          isActive ? 'opacity-100 translate-x-0 z-10' : 
+          isPrev ? 'opacity-0 -translate-x-full pointer-events-none' : 
+          isNext ? 'opacity-0 translate-x-full pointer-events-none' : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden={!isActive}
+        role="tabpanel"
+        aria-labelledby={`slide-${slide.id}`}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start min-h-[500px] lg:min-h-[400px]">
+          {slide.image.position === 'left' && (
+            <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+              <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
+                <img
+                  src={slide.image.src}
+                  alt={slide.image.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+              </div>
+            </div>
+          )}
+          
+          <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className="text-accent font-semibold tracking-wide mb-2">{slide.subtitle}</div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary leading-tight">
+              {slide.title}
+            </h2>
+            <div className="mt-2 h-1 w-12 bg-accent rounded-full" />
+            <div className="mt-4 sm:mt-6 max-h-[400px] lg:max-h-[300px] overflow-y-auto">
+              {slide.content}
             </div>
           </div>
-
-          {/* Navigation Arrows */}
-          {showArrows && (
-            <>
-              <button
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border/20 flex items-center justify-center text-foreground hover:bg-background transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!infiniteLoop && currentSlide === 0}
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border/20 flex items-center justify-center text-foreground hover:bg-background transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!infiniteLoop && currentSlide === totalSlides - 1}
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </>
+          
+          {slide.image.position === 'right' && (
+            <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
+              <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
+                <img
+                  src={slide.image.src}
+                  alt={slide.image.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+              </div>
+            </div>
           )}
+        </div>
+      </div>
+    )
+  }
 
-          {/* Dots Indicator */}
-          {showDots && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {Array.from({ length: totalSlides }).map((_, index) => (
+  return (
+    <section id="about-emmanuel-tv" ref={ref} className="py-20 md:py-32 bg-muted">
+      <Container>
+        <div className="space-y-12">
+          {/* Carousel Container */}
+          <div 
+            className="relative min-h-[700px] lg:min-h-[600px] overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            role="region"
+            aria-label="About Emmanuel TV - Carousel"
+          >
+            {carouselSlides.map((slide, index) => renderSlide(slide, index))}
+            
+            {/* Navigation Arrows */}
+            {showArrows && totalSlides > 1 && (
+              <>
                 <button
-                  key={index}
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Previous slide"
+                  disabled={!infiniteLoop && currentSlide === 0}
+                >
+                  <ChevronLeft className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+                </button>
+                
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Next slide"
+                  disabled={!infiniteLoop && currentSlide === totalSlides - 1}
+                >
+                  <ChevronRight className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Dot Indicators */}
+          {showDots && totalSlides > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <button
+                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+                className="mr-4 px-3 py-1 text-sm rounded-full bg-primary/10 hover:bg-primary/20 transition-colors duration-300"
+                aria-label={isAutoPlaying ? "Pause auto-play" : "Start auto-play"}
+              >
+                {isAutoPlaying ? 'Pause' : 'Play'}
+              </button>
+              
+              {carouselSlides.map((slide, index) => (
+                <button
+                  key={slide.id}
                   onClick={() => goToSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentSlide
-                      ? 'bg-accent w-6'
-                      : 'bg-foreground/30 hover:bg-foreground/50'
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentSlide 
+                      ? "bg-accent w-8" 
+                      : "bg-primary/30 hover:bg-primary/50"
                   }`}
-                  aria-label={`Go to slide ${index + 1}`}
+                  aria-label={`Go to slide ${index + 1}: ${slide.title}`}
+                  aria-current={index === currentSlide}
+                  role="tab"
+                  id={`slide-${slide.id}`}
                 />
               ))}
             </div>
           )}
-        </div>
 
-        {/* Slide Counter */}
-        <div className="flex justify-center mt-6">
-          <div className="bg-card/50 backdrop-blur-sm border border-border/20 rounded-full px-4 py-2">
-            <span className="text-sm text-foreground/60">
-              {currentSlide + 1} / {totalSlides}
-            </span>
+          {/* Slide Counter */}
+          <div className="text-center text-sm text-foreground/60">
+            {currentSlide + 1} of {totalSlides}
+          </div>
+          
+          {/* Read More Button */}
+          <div className="text-center mt-4">
+            <a
+              href="https://emmanuel.tv/emmanuel-tv/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-6 py-3 bg-accent hover:bg-accent/90 text-primary font-bold rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              aria-label="Read more about Emmanuel TV"
+            >
+              Know More About Emmanuel TV
+            </a>
           </div>
         </div>
       </Container>

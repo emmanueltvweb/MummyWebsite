@@ -17,7 +17,7 @@ interface CarouselSlide {
   }
 }
 
-interface AboutTBJoshuaCarouselProps {
+interface AboutCarouselProps {
   autoPlayInterval?: number
   showDots?: boolean
   showArrows?: boolean
@@ -27,116 +27,237 @@ interface AboutTBJoshuaCarouselProps {
 const carouselSlides: CarouselSlide[] = [
   {
     id: 1,
-    title: "Introduction",
+    title: "Prophetic Birth Of TB Joshua",
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        Prophet Temitope Balogun Joshua (June 12, 1963 – June 5, 2021) was a Nigerian charismatic pastor, televangelist, and philanthropist. He was the founder and leader of The Synagogue, Church of All Nations (SCOAN), a Christian megachurch that runs the Emmanuel TV television station from Lagos, Nigeria. He was one of the most influential religious leaders in Africa and was known for his prophetic abilities, healing ministry, and charitable works.
+        In the mid-1800s, in the rural community of Aridigi in present-day Ondo State, a certain Balogun Okoorun, who was a warrior and farmer, had prophesied that from that rustic area would emerge a man who would be powerful, famous and have a large following all over the world.
+        <div className="mt-5">
+          Temitope Balogun (later to be called TB Joshua) was born a century later on 12 June 1963. TB Joshua’s father was Pa Kolawole Balogun from Osin Quarters, Imo, Arigidi, Akoko and his mother, Madam Folarin Aisha Adesiji Balogun, hailed from Ede, Agbaluku Quarters, both in Ondo State, Nigeria. The circumstances surrounding his birth were extraordinary.
+        </div>
+        <div className="mt-5">
+         “Unlike other babies, I spent 15 months in my mother’s womb! Even though my mother visited some medical centres for check-ups, the baby refused to come out. My mother carried me for 15 months until she was taken to Egbe Medical Hospital where I was at last delivered.”
+        </div>
       </div>
     ),
     image: {
-      src: "/tb-joshua-portrait.jpg",
+      src: "/dad1.jpg",
       alt: "Prophet T.B. Joshua",
       position: "right"
     }
   },
   {
     id: 2,
-    title: "Early Life and Calling",
+    title: "Naming Ceremony",
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-          Born on June 12, 1963, in the small village of Arigidi Akoko, Ondo State, Nigeria, T.B. Joshua came from a humble background. His birth was said to be accompanied by remarkable prophecies and supernatural signs that indicated his divine calling from an early age.
+         Eight days after TB Joshua’s supernatural birth, a remarkable event preceded his naming ceremony.
         </div>
         <div className="mt-5">
-          He spent 15 months in his mother's womb and was said to have started preaching and prophesying from a very young age. His early life was marked by spiritual experiences that set him apart from his peers and prepared him for his future ministry.
+          “On the day of the naming ceremony, people gathered with extraordinary excitement over the birth of a baby who had remained in his mother’s womb for 15 months. One would imagine the huge numbers of people that would gather for such a miraculous occasion!
+        </div>
+        <div className="mt-5">
+          We lived close to a site where rocks were blasted for water in my community. Suddenly one of the stones flew from across the blast site, through the roof of my house and landed on the baby net where I was laid. Miraculously, something took me away from that spot, and the net on which I was lying immediately caught fire from the heat of the stone. It even threw my mother into a coma and she was suddenly rushed to hospital.
+        </div>
+        <div className="mt-5">
+          At that moment, the visitors who came for the naming ceremony abruptly went into awe and confusion. With that shock, people started giving me various names to demonstrate their excitement and surprise over the wonder and miracle that took place.”
+        </div>
+        <div className="mt-5">
+         When it was finally time to name the baby, Joshua’s parents chose ‘Temitope’, which means ‘What You (God) have done for me is worthy of thanks’.
         </div>
       </div>
     ),
     image: {
-      src: "/tb-joshua-early.jpg",
-      alt: "Young Prophet T.B. Joshua",
+      src: "/dad2.jpg",
+      alt: "Young T.B. Joshua",
       position: "left"
     }
   },
   {
     id: 3,
-    title: "Ministry Beginnings",
+    title: "Early Life Of TB Joshua",
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          In 1987, Prophet T.B. Joshua founded The Synagogue, Church of All Nations (SCOAN) with just a handful of members. The ministry began in a small, humble structure in the swampy area of Ikotun-Egbe, Lagos State, Nigeria.
+        From Joshua’s early childhood years, signs of unusual spiritual gifts had become increasingly apparent.
+        
+        <div className="mt-5">
+         “I was so little before the death of my father. Consequently, I knew nothing about my late father and the entire family burden rested squarely on my mother’s shoulders. In my dreams, I was always taught the Scriptures, which gave me an edge over my colleagues in school. I was the smallest in the class but always led the prayer during school devotions. My colleagues and teachers always called me “small pastor”. During my elementary education, at St. Stephen’s Anglican Primary School in Agbalaku, Arigidi, I was a leader of the Students’ Christian Fellowship.”
         </div>
         <div className="mt-5">
-          Despite facing numerous challenges and persecutions in the early years, the ministry grew rapidly as people witnessed the manifestation of God's power through healings, deliverances, and accurate prophecies. The church's name, "Synagogue, Church of All Nations," was divinely inspired, reflecting its global calling.
+         One particular incident from those early days clearly signalled the supernatural ministry that lay ahead. A madman came to the school with a cutlass, causing pupils and teachers alike to run away in fear. However, the ‘small pastor’ confidently approached the madman and commanded him to hand over the cutlass in Jesus’ name – and the madman did.
+        </div>
+        <div className="mt-5">
+          “I found myself in a simple and humble family background. In those early years of my life, I knew I would be blamed for whatever I gave my attention to. Consequently, I did not want my focus to be broken. I continued to choose to direct my focus on what is right and anytime I felt I was missing my focus, it became a very strong motivation to pray and be closer to God. The more I prayed, the less people would see me and the more isolated I became. This affected all of my social life. In those days, my colleagues and age-mates complained that I was not social and civilized enough like them. In this way, wrong became an incentive that drew me closer to God, instead of otherwise. If you make a mistake, don’t run from God; run to Him.”
         </div>
       </div>
     ),
     image: {
-      src: "/tb-joshua-ministry.jpg",
-      alt: "Prophet T.B. Joshua preaching",
+      src: "/dad3.jpg",
+      alt: "SCOAN Building",
       position: "right"
     }
   },
   {
     id: 4,
-    title: "Global Impact",
+    title: "Joshua's Epileptic Education",
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-          Prophet T.B. Joshua's ministry became a global phenomenon, attracting visitors from all over the world to SCOAN. His Emmanuel TV became one of the most watched Christian television stations globally, reaching millions of homes across multiple continents.
+         TB Joshua’s secondary school experiences were marked by enormous challenges, despite his academic brilliance.
         </div>
         <div className="mt-5">
-          His prophetic ministry was marked by accurate predictions about global events, political developments, and natural disasters. He was sought after by world leaders, celebrities, and ordinary people alike for counsel, healing, and spiritual guidance.
+          “In my spiritual walk with God I have experienced both good and hard times. Who knows what would have happened if those temporary stops did not come at intervals? Consider how my education suffered epileptic fits. I attended six different colleges in less than one year, not because I was not smart in school. Today I was in school, the next day I was out, especially for want of money.
+        </div>
+        <div className="mt-5">
+         I don’t want to call it poverty because children of destiny can never be poor, though they may experience temporary lack. Before I knew it, I had gone around six different colleges in less than one year. I enrolled for JAMB four times and on each occasion, it was either I forgot my acknowledgement card and other necessary documents or there was an accident on the way to the examination venue. People who saw what was happening to me simply attributed my predicament to either sin or non-seriousness on my part. But rather than despair and blame my situation on family background, I began to take God at His Word in order to have His way.”
+        </div>
+        <div className="mt-5">
+         TB Joshua managed to gain late entry into a Muslim college known as Ansar-Ud-Deen Grammar School, Ikare, near his hometown. However, Joshua was there for only a few months before his academic ambitions again hit the rocks of disappointment because of insufficient funds.
         </div>
       </div>
     ),
     image: {
-      src: "/tb-joshua-global.jpg",
-      alt: "Prophet T.B. Joshua with international visitors",
+      src: "/dad4.jpg",
+      alt: "Emmanuel TV Studio",
       position: "left"
     }
   },
   {
     id: 5,
-    title: "Philanthropy and Charity",
+    title: "Joshua's Military Ambitions Aborted",
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-          Prophet T.B. Joshua was renowned for his extensive charitable works through the Emmanuel Global Network. He provided scholarships to thousands of students, supported widows and orphans, built schools and hospitals, and provided relief materials during natural disasters.
+          Lying on top of a cassava truck, Joshua hitchhiked a four-day ride from Ondo to Lagos. In Lagos Joshua struggled to make a living, engaging in menial jobs such as disposing of chicken dung at a nearby poultry farm. Amidst repeated disappointments in academic pursuits, he attempted to join the Nigerian military.
         </div>
         <div className="mt-5">
-          His philanthropic efforts extended to over 50 countries, where he provided humanitarian aid, medical assistance, and educational support. He believed strongly that "the beauty of Christianity is in giving" and lived this principle throughout his life.
+          “I could still remember vividly when I sat for and passed the entrance examination into the Nigerian Defence Academy, Kaduna. I was invited for the interview and I had to board the train from Lagos to Kaduna. Behold, on our journey, the train developed some serious faults that kept us in the bush in Jebba for six horrible days with little or no provision. This was how the ambition to enlist into the military was aborted by what was obviously an act of fate. Who knows what would have happened if I had successfully attended that interview? I actually felt very bitter that I had missed another chance of making it in life.”
+        </div>
+        <div className="mt-5">
+         Returning to his village despondent and discouraged, he recounts his mother’s comforting words: “My son, do not mind the seeming appearance of things as of today. Do not be afraid of what the future holds for you. So be patient and you would see what God would do in your life. I am so sure of your future breakthrough, considering the strength of the predictions/prophecies about you even before you were born. I cannot forget so easily what I experienced when I was pregnant with you and I know God cannot lie. My son, whatever you may be going through today, just take it as a temporary setback which is meant to prepare you for the challenges ahead. Don’t forget your name is ‘Temitope’ and, by the grace of God, the whole world shall have cause to thank God for your sake.”
         </div>
       </div>
     ),
     image: {
-      src: "/tb-joshua-charity.jpg",
-      alt: "Prophet T.B. Joshua helping the needy",
+      src: "/dad5.jpg",
+      alt: "T.B. Joshua Humanitarian Work",
       position: "right"
     }
   },
   {
     id: 6,
-    title: "Legacy and Home Call",
+    title: "Divine Calling – Life After Life",
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        <div>
-          On June 5, 2021, Prophet T.B. Joshua answered the glorious home call, leaving behind a rich legacy of faith, service, and impact. His transition marked the end of an era but the beginning of a new chapter in the ministry he founded.
-        </div>
+        The Holy Spirit instructed TB Joshua to undertake a prolonged time of seeking God’s face on a prayer mountain near his hometown of Arigidi. After fasting and praying for 40 days and 40 nights, he experienced a heavenly vision.
+
         <div className="mt-5">
-          His legacy continues through the ministry he established, the countless lives he touched, and the spiritual foundation he laid. He was succeeded by his wife, Pastor Evelyn Joshua, who continues to carry the mantle of leadership at SCOAN and Emmanuel TV.
+         “I was in a trance for three consecutive days. Then I saw a hand that pointed a Bible to my heart and the Bible entered my heart and my former heart seemed to immerse with the Bible immediately. Then the awareness came and I saw the apostles and prophets of old with someone whose head I could not see because He was tall to the Heaven and suspended, which I believe was our Lord, Jesus Christ, sitting in their midst. I also saw myself in their midst. After a while, I saw a hand of the same tall man; I could not behold His face, which was glittering with an unimaginable light, tall to the high Heavens and suspended in the air. But other apostles, I could see their faces, particularly Apostles Peter and Paul, Prophets Moses, Elijah and others. Their names were boldly written on their chests.
+        </div>
+          <div className="mt-5">
+          I heard a voice saying, ‘I am your God; I am giving you a divine commission to go and carry out the work of the Heavenly Father’. At the same time, the same hand of the tall man gave me a small cross and a big Bible, bigger than the one that entered my heart, with a promise that as I keep pressing in His time and name, I would be given a bigger cross but if I failed the opposite would occur. I also heard the voice of the same tall man (I could not see His head), saying, ‘I am the Lord your God who was and who is – Jesus Christ’, giving orders to all the apostles and prophets. The same voice said to me, ‘I will show you the wonderful ways I will reveal myself through you, in teaching, preaching, miracles, signs and wonders for the salvation of souls’. Since then, I have been receiving in my vision, every year according to my faithfulness to God, a bigger cross that means to me more responsibilities.
         </div>
       </div>
+      
     ),
     image: {
-      src: "/tb-joshua-legacy.jpg",
-      alt: "Prophet T.B. Joshua's legacy",
+      src: "/dad6.jpg",
+      alt: "T.B. Joshua Legacy",
+      position: "left"
+    }
+  },
+  {
+    id: 7,
+    title: "Joshua's Humble Beginnings",
+    subtitle: "Prophet T.B. Joshua",
+    content: (
+      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
+       “Right from the beginning of my ministry, I have been staying close to nature. Nature enhances spirituality.” An abandoned swampy area in Agodo-Egbe, Lagos was where the young prophet with a divine commission burning in his heart spent countless days in prayer, fasting and solitude.
+        <div className="mt-5">
+         After returning from a visit to The Synagogue of Old in Jerusalem, Israel – where Jesus Christ ministered during His earthly ministry – Prophet TB Joshua was inspired by God to start a church. With just eight members, the church was prophetically named ‘The Synagogue, Church Of All Nations’. Laying the foundation for the first church in 1989, he walked joyfully among the first set of members, who were seated under trees in the open air.
+        </div>
+        <div className="mt-5">
+          “My coming to your midst is just to lay a foundation. I am here to lay a foundation, that today we start The Synagogue here! The Synagogue has started here! I have come to launch a good foundation for the church. You should know that this man always says things in proverbs.”
+        </div>
+      </div>
+      
+    ),
+    image: {
+      src: "/dad7.jpg",
+      alt: "T.B. Joshua Legacy",
+      position: "left"
+    }
+  },
+  {
+    id: 8,
+    title: "Move To Ikotun-Egbe",
+    subtitle: "Prophet T.B. Joshua",
+    content: (
+      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
+       When the first three church structures were destroyed by adverse weather and the number of worshippers began increasing exponentially, the Holy Spirit instructed TB Joshua to move to a new location about two miles away. Thus, in 1994, the church moved to Ikotun-Egbe, the current location of The Synagogue, Church Of All Nations!
+
+        <div className="mt-5">
+         “In the College of God, however brilliant you may be, you will not be given double promotion; you will take every course. My first church with eight children – without a roof – was blown off by a storm. That was a stage. The second church was washed away by a flood; that was another stage. The third church also collapsed; that was yet another stage. Shall we say all these happened without God’s knowledge? No. In every situation, God is still saying something, which we may not understand because of our inability to understand the things of the Spirit.”
+        </div>
+        
+      </div>
+      
+    ),
+    image: {
+      src: "/dad8.jpg",
+      alt: "T.B. Joshua Legacy",
+      position: "left"
+    }
+  },
+  {
+    id: 9,
+    title: "Joshua's Divine Union",
+    subtitle: "Prophet T.B. Joshua",
+    content: (
+      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
+        Like everything in the life of TB Joshua, meeting his wife, Evelyn, was also by divine arrangement. As news of a young prophet who “spoke the mind of God” continued to spread, people came to seek divine intervention and Heavenly counsel from him. Evelyn, a young woman from Delta State, Nigeria, was among those who came but the prophecy she received was unique indeed. In their first conversation, before any formal introduction, he wrote her name on a piece of paper. After prophetically revealing many details of her life, the remarkable 45-minute conversation ended with a marriage proposal and there was a heart agreement. It was later he told her that he had seen their divine union in a vision days before their first meeting. Evelyn has been an avid supporter of her husband’s ministerial journey, accompanying him on numerous international charitable events and crusades. Their happy union of 31 years has been blessed with three beautiful daughters: Serah, Promise and Heart.
+
+        <div className="mt-5">
+         Serah Oyindamola Joshua, Esq. has a Bachelor of Laws from London School of Economics, a Master of Laws from New York University School of Law and an M.B.A. from Washington University in St. Louis. Promise graduated from London School of Economics and Political Science (LSE) with a BSc. in Politics and International Relations and studied a Dual Master of Public Administration at LSE and Columbia University, New York. Heart, the youngest daughter is still in high school.
+        </div>
+      </div>
+      
+    ),
+    image: {
+      src: "/mumanddad.jpg",
+      alt: "T.B. Joshua Legacy",
+      position: "left"
+    }
+  },
+  {
+    id: 10,
+    title: "Anointing Attracts",
+    subtitle: "Prophet T.B. Joshua",
+    content: (
+      <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
+        From the very outset, the supernatural power of God was evident in every service at The SCOAN. As the news of the miraculous move of God’s power spread, coupled with countless testimonies of divine healing, supernatural deliverance and prophetic accuracy, Ikotun-Egbe began attracting visitors from across the globe – people who were hungry to see God’s power.
+
+        <div className="mt-5">
+         True to its prophetic name, The SCOAN rose from eight members to become “Nigeria’s biggest tourist attraction.”
+        </div>
+          <div className="mt-5">
+          Figures released by the Nigerian Immigration Service show that six out of every ten foreign travellers coming into Nigeria are bound for The SCOAN. The popularity of the church has resulted in an enormous boost for local businesses and hoteliers, as well as an increase in flight routes to Lagos from several countries.
+        </div>
+          <div className="mt-5">
+         “In our ministry here, The SCOAN, the Word has been a living and growing force. It is not our logic; it is not our philosophy; it is not our knowledge; it is not our preaching but the Living Word. The mighty One that is in us is taken out of the Word, Jesus Christ. As we begin to do the Word, it begins to do in us and through us. He is with me in the Living Word.”
+        </div>
+      </div>
+      
+    ),
+    image: {
+      src: "/dad9.jpg",
+      alt: "T.B. Joshua Legacy",
       position: "left"
     }
   }
@@ -147,7 +268,7 @@ export function AboutTBJoshuaSection({
   showDots = true, 
   showArrows = true, 
   infiniteLoop = true 
-}: AboutTBJoshuaCarouselProps) {
+}: AboutCarouselProps) {
   const { ref, isInView } = useInView({ threshold: 0.2 })
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
@@ -190,7 +311,30 @@ export function AboutTBJoshuaSection({
     }
   }, [isAutoPlaying, isInView, nextSlide, autoPlayInterval])
 
-  // Touch/swipe functionality
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isInView) return
+      
+      switch (e.key) {
+        case 'ArrowLeft':
+          prevSlide()
+          break
+        case 'ArrowRight':
+          nextSlide()
+          break
+        case ' ':
+          e.preventDefault()
+          setIsAutoPlaying(prev => !prev)
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isInView, nextSlide, prevSlide])
+
+  // Touch/swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX)
   }
@@ -208,133 +352,157 @@ export function AboutTBJoshuaSection({
 
     if (isLeftSwipe) {
       nextSlide()
-    }
-    if (isRightSwipe) {
+    } else if (isRightSwipe) {
       prevSlide()
     }
   }
 
-  const handleMouseEnter = () => setIsAutoPlaying(false)
-  const handleMouseLeave = () => setIsAutoPlaying(true)
+  const renderSlide = (slide: CarouselSlide, index: number) => {
+    const isActive = index === currentSlide
+    const isPrev = index === (currentSlide - 1 + totalSlides) % totalSlides
+    const isNext = index === (currentSlide + 1) % totalSlides
 
-  return (
-    <section ref={ref} className="py-16 sm:py-24 bg-background">
-      <Container className="max-w-7xl">
-        <div className="text-center mb-12 sm:mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-4">
-            Prophet T.B. Joshua
-          </h2>
-          <p className="text-lg sm:text-xl text-foreground/60 max-w-3xl mx-auto">
-            A life dedicated to serving God and humanity
-          </p>
-        </div>
-
-        <div 
-          className="relative"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div className="overflow-hidden rounded-2xl bg-card/50 backdrop-blur-sm border border-border/20">
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-            >
-              {carouselSlides.map((slide, index) => (
-                <div key={slide.id} className="w-full flex-shrink-0">
-                  <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 p-6 sm:p-8 lg:p-12 min-h-[500px]">
-                    {slide.image.position === 'left' && (
-                      <div className="relative order-1 lg:order-1">
-                        <div className="aspect-[4/5] rounded-xl overflow-hidden bg-gradient-to-br from-accent/10 to-accent/20">
-                          <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/30 flex items-center justify-center text-accent/40">
-                            <span className="text-sm">Image: {slide.image.alt}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    <div className={`flex flex-col justify-center ${slide.image.position === 'left' ? 'order-2 lg:order-2' : 'order-2 lg:order-1'}`}>
-                      <div className="mb-6">
-                        <h3 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-                          {slide.title}
-                        </h3>
-                        <h4 className="text-lg sm:text-xl text-accent font-semibold mb-4">
-                          {slide.subtitle}
-                        </h4>
-                      </div>
-                      
-                      <div className="flex-1">
-                        {slide.content}
-                      </div>
-                    </div>
-
-                    {slide.image.position === 'right' && (
-                      <div className="relative order-1 lg:order-2">
-                        <div className="aspect-[4/5] rounded-xl overflow-hidden bg-gradient-to-br from-accent/10 to-accent/20">
-                          <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/30 flex items-center justify-center text-accent/40">
-                            <span className="text-sm">Image: {slide.image.alt}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
+    return (
+      <div
+        key={slide.id}
+        className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+          isActive ? 'opacity-100 translate-x-0 z-10' : 
+          isPrev ? 'opacity-0 -translate-x-full pointer-events-none' : 
+          isNext ? 'opacity-0 translate-x-full pointer-events-none' : 'opacity-0 pointer-events-none'
+        }`}
+        aria-hidden={!isActive}
+        role="tabpanel"
+        aria-labelledby={`slide-${slide.id}`}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start min-h-[500px] lg:min-h-[400px]">
+          {slide.image.position === 'left' && (
+            <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
+              <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
+                <img
+                  src={slide.image.src}
+                  alt={slide.image.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+              </div>
+            </div>
+          )}
+          
+          <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+            <div className="text-accent font-semibold tracking-wide mb-2">{slide.subtitle}</div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary leading-tight">
+              {slide.title}
+            </h2>
+            <div className="mt-2 h-1 w-12 bg-accent rounded-full" />
+            <div className="mt-4 sm:mt-6 max-h-[400px] lg:max-h-[300px] overflow-y-auto">
+              {slide.content}
             </div>
           </div>
-
-          {/* Navigation Arrows */}
-          {showArrows && (
-            <>
-              <button
-                onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border/20 flex items-center justify-center text-foreground hover:bg-background transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!infiniteLoop && currentSlide === 0}
-                aria-label="Previous slide"
-              >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm border border-border/20 flex items-center justify-center text-foreground hover:bg-background transition-all duration-200 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!infiniteLoop && currentSlide === totalSlides - 1}
-                aria-label="Next slide"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </>
+          
+          {slide.image.position === 'right' && (
+            <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
+              <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
+                <img
+                  src={slide.image.src}
+                  alt={slide.image.alt}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
+              </div>
+            </div>
           )}
+        </div>
+      </div>
+    )
+  }
 
-          {/* Dots Indicator */}
-          {showDots && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              {Array.from({ length: totalSlides }).map((_, index) => (
+  return (
+    <section id="about-tb-joshua" ref={ref} className="py-20 md:py-32 bg-muted">
+      <Container>
+        <div className="space-y-12">
+          {/* Carousel Container */}
+          <div 
+            className="relative min-h-[700px] lg:min-h-[600px] overflow-hidden"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            role="region"
+            aria-label="About Prophet T.B. Joshua - Carousel"
+          >
+            {carouselSlides.map((slide, index) => renderSlide(slide, index))}
+            
+            {/* Navigation Arrows */}
+            {showArrows && totalSlides > 1 && (
+              <>
                 <button
-                  key={index}
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Previous slide"
+                  disabled={!infiniteLoop && currentSlide === 0}
+                >
+                  <ChevronLeft className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+                </button>
+                
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full bg-white/90 dark:bg-gray-800/90 shadow-lg hover:bg-white dark:hover:bg-gray-800 transition-all duration-300 flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label="Next slide"
+                  disabled={!infiniteLoop && currentSlide === totalSlides - 1}
+                >
+                  <ChevronRight className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Dot Indicators */}
+          {showDots && totalSlides > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-8">
+              <button
+                onClick={() => setIsAutoPlaying(!isAutoPlaying)}
+                className="mr-4 px-3 py-1 text-sm rounded-full bg-primary/10 hover:bg-primary/20 transition-colors duration-300"
+                aria-label={isAutoPlaying ? "Pause auto-play" : "Start auto-play"}
+              >
+                {isAutoPlaying ? 'Pause' : 'Play'}
+              </button>
+              
+              {carouselSlides.map((slide, index) => (
+                <button
+                  key={slide.id}
                   onClick={() => goToSlide(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    index === currentSlide
-                      ? 'bg-accent w-6'
-                      : 'bg-foreground/30 hover:bg-foreground/50'
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    index === currentSlide 
+                      ? "bg-accent w-8" 
+                      : "bg-primary/30 hover:bg-primary/50"
                   }`}
-                  aria-label={`Go to slide ${index + 1}`}
+                  aria-label={`Go to slide ${index + 1}: ${slide.title}`}
+                  aria-current={index === currentSlide}
+                  role="tab"
+                  id={`slide-${slide.id}`}
                 />
               ))}
             </div>
           )}
-        </div>
-
-        {/* Slide Counter */}
-        <div className="flex justify-center mt-6">
-          <div className="bg-card/50 backdrop-blur-sm border border-border/20 rounded-full px-4 py-2">
-            <span className="text-sm text-foreground/60">
-              {currentSlide + 1} / {totalSlides}
-            </span>
+          {/* Slide Counter */}
+          <div className="text-center text-sm text-foreground/60 ">
+            {currentSlide + 1} of {totalSlides}
+          </div>
+          
+          {/* Read More Button */}
+          <div className="text-center mt-4">
+            <a
+              href="https://www.scoan.org/tb-joshua/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-6 py-3 bg-accent hover:bg-accent/90 text-white font-medium rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              aria-label="Read more about Prophet T.B. Joshua's biography"
+            >
+              Read More Prophet T.B. Joshua
+            </a>
           </div>
         </div>
       </Container>
+      
     </section>
   )
 }
