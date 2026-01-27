@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import Image from "next/image"
 import { Container } from "@/components/layout/container"
-import { ArrowRight, X, Circle } from "lucide-react"
+import { ArrowRight, X, Circle, Calendar, Clock, User } from "lucide-react"
 import Link from "next/link"
 
 import { useInView } from "@/hooks/use-in-view"
@@ -17,15 +18,31 @@ import {
 
 export function HeroSection() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
   const [isFading, setIsFading] = useState(false)
+  const [showFacebookVideo, setShowFacebookVideo] = useState(false)
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false)
   
   const phrases = ["And Win Today", "Win Tomorrow", "And Win Forever"]
 
   useEffect(() => {
     setIsLoaded(true)
   }, [])
+
+  useEffect(() => {
+    if (videoRef.current && isLoaded) {
+      const video = videoRef.current
+      console.log('Video element found, attempting to load and play...')
+      video.load()
+      video.play().then(() => {
+        console.log('Video playback started successfully')
+      }).catch(error => {
+        console.log('Video autoplay failed:', error)
+      })
+    }
+  }, [isLoaded])
 
   useEffect(() => {
     if (!isLoaded) return
@@ -53,19 +70,39 @@ export function HeroSection() {
     return () => clearInterval(id)
   }, [api])
 
+  const handleWatchNow = () => {
+    setIsLoadingVideo(true)
+    setShowFacebookVideo(true)
+    setTimeout(() => {
+      setIsLoadingVideo(false)
+    }, 1000)
+  }
+
   return (
     <>
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-muted" />
-        <img
-          src="/placeholder.svg?key=vw80m&width=1920&height=1080"
-          alt="Pastoral background"
-          loading="lazy"
-          className="w-full h-full object-cover opacity-30"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+      {/* Background Video with Overlay */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        {/* Video (fills the area) */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          key="hero-background-video"
+        >
+          <source src="/daddyvid.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+
+        {/* subtle top-to-bottom tint (reduced opacity so video shows) */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/40 to-muted/20 pointer-events-none" />
+
+        {/* soft top overlay to improve foreground contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
       </div>
 
       {/* Decorative Elements */}
@@ -131,7 +168,7 @@ export function HeroSection() {
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
                         <img
-                          src="/Evelyn-Joshua3.jpg"
+                          src="/mummypix/1.jpg"
                           alt="Slide visual"
                           loading="lazy"
                           decoding="async"
@@ -149,7 +186,7 @@ export function HeroSection() {
                      
                       <div className="relative w-full h-full">
                         <img
-                          src="/Mummy.jpg"
+                          src="/mummypix/9.jpg"
                           alt="Slide visual"
                           loading="lazy"
                           decoding="async"
@@ -167,7 +204,7 @@ export function HeroSection() {
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
                         <img
-                          src="/Evelyn-Joshua3.jpg"
+                          src="/mummypix/4.jpg"
                           alt="Slide visual"
                           loading="lazy"
                           decoding="async"
@@ -198,6 +235,9 @@ export function HeroSection() {
       <div className="relative -mt-20 md:-mt-32">
         <LegacyAboutSection />
       </div>
+
+      {/* Latest Sermon Section */}
+      <LatestSermonSection />
     </>
   )
 }
@@ -222,7 +262,7 @@ export function LegacyAboutSection() {
             style={{ transitionDuration: "1000ms", transitionProperty: "opacity, transform" }}
           >
             <img
-              src="/Evelyn-Joshua3.jpg"
+              src="/mummypix/9.jpg"
               alt="Pastor Evelyn Onyisi Joshua"
               className="w-full h-full object-cover hover:scale-105"
               style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
@@ -258,6 +298,151 @@ export function LegacyAboutSection() {
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
               </div>
+          </div>
+        </div>
+      </Container>
+    </section>
+  )
+}
+
+function LatestSermonSection() {
+  const [showFacebookVideo, setShowFacebookVideo] = useState(false)
+  const [isLoadingVideo, setIsLoadingVideo] = useState(false)
+
+  const handleWatchNow = () => {
+    setIsLoadingVideo(true)
+    setShowFacebookVideo(true)
+    setTimeout(() => {
+      setIsLoadingVideo(false)
+    }, 1000)
+  }
+
+  return (
+    <section className="py-12 sm:py-20 bg-gradient-to-b from-primary/5 to-transparent">
+      <Container>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center animate-scale-up">
+          {/* Featured Image */}
+          <div className="order-2 lg:order-1">
+            <div className="relative rounded-2xl overflow-hidden shadow-xl hover-lift group">
+              {!showFacebookVideo ? (
+                <>
+                  <Image
+                    src="/sermonpix/sermon2026.png"
+                    alt="Featured sermon"
+                    width={1280}
+                    height={720}
+                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  {/* Play Button Overlay */}
+                  <div className="absolute inset-0 transition-all duration-300 flex items-center justify-center">
+                    <button 
+                      onClick={() => setShowFacebookVideo(true)}
+                      className="w-16 h-16 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
+                      aria-label="Play Facebook video"
+                    >
+                      <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="relative w-full bg-black aspect-video">
+                  <iframe
+                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1521598525791035%2F&show_text=false&width=560&t=0"
+                    width="560"
+                    height="314"
+                    style={{ border: 'none', overflow: 'hidden' }}
+                    scrolling="no"
+                    frameBorder="0"
+                    allowFullScreen={true}
+                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    className="w-full h-full"
+                  />
+                  <button
+                    onClick={() => setShowFacebookVideo(false)}
+                    className="absolute top-4 right-4 w-8 h-8 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors z-10"
+                    aria-label="Close video"
+                  >
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Sermon Details */}
+          <div className="order-1 lg:order-2 space-y-6 animate-slide-in-right">
+            {/* Category Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20">
+              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">Latest Sermon</span>
+            </div>
+
+            {/* Title */}
+            <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-primary leading-tight">
+              THE YEAR OF OVERFLOWING JOY 2026<span className="text-accent"></span> 
+            </h2>
+
+            {/* Meta Information */}
+            <div className="space-y-3 text-foreground/70">
+              <div className="flex items-center gap-3">
+                <Calendar size={20} className="text-accent" />
+                <span className="text-sm sm:text-base">January 01, 2026</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Clock size={20} className="text-accent" />
+                <span className="text-sm sm:text-base">50 minutes</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <User size={20} className="text-accent" />
+                <span className="text-sm sm:text-base">Pastor Evelyn Joshua Sermon</span>
+              </div>
+            </div>
+
+            {/* Summary */}
+            <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
+              “2026 IS THE YEAR OF OVERFLOWING JOY!”
+
+              <p className="mt-4">So did the Lord Almighty declare through Pastor Evelyn Joshua to believers across the world during the SCOAN Candlelight Service 2025.</p>
+
+
+
+              <p className="mt-4">In this new year, joy becomes your conquering power. As Pastor Evelyn Joshua reminds us, “We may have reasons to be worried, but we have more reasons not to be worried.” A Christian who worries is simply saying he does not trust God. Therefore, this is a year to replace worry with trust and fear with rightful focus. </p>
+
+            </div>
+
+            {/* Key Points */}
+            <div className="space-y-2">
+              <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">Key Topics</h3>
+              <div className="flex flex-wrap gap-2">
+                {["Trust in God", "Faith", "Perseverance", "Joyful Life"].map((topic, index) => (
+                  <span
+                    key={`hero-${topic}-${index}`}
+                    className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm"
+                  >
+                    {topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <button 
+                onClick={() => window.open('https://www.stream.emmanuel.tv/title/the-year-of-overflowing-joy-2026/en?id=6957c6c7e4b0c901a5ad7b4e&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')}
+                className="px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Watch Now
+              </button>
+              <button 
+                onClick={() => window.open('https://emmanuel.tv/download/', '_blank', 'noopener,noreferrer')}
+                className="px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/5 transition-all duration-300"
+              >
+                Download App
+              </button>
+            </div>
           </div>
         </div>
       </Container>

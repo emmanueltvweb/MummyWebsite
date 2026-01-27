@@ -339,3 +339,52 @@
     opacity: 0.7;
   }
 }
+
+/* Gallery background styles */
+.gallery-background {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Mobile optimization for background attachment */
+@media (max-width: 768px) {
+  .gallery-background {
+    background-attachment: scroll;
+  }
+}
+
+/* High contrast mode support for gallery */
+@media (prefers-contrast: high) {
+  .gallery-background-overlay {
+    opacity: 0.9;
+  }
+}
+
+/* Reduced motion support for gallery */
+@media (prefers-reduced-motion: reduce) {
+  .gallery-background {
+    background-attachment: scroll;
+  }
+}
+
+
+
+/* Video background styles */
+.video-background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+
+/* Ensure video displays properly */
+video {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+}

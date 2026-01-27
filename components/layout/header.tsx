@@ -24,117 +24,109 @@ export function Header() {
   ]
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="pointer-events-none">
+      {/* Centered pill container */}
+      <div className="fixed left-1/2 top-4 z-50 w-[min(1100px,94%)] -translate-x-1/2 rounded-full px-4 py-2 backdrop-blur-md bg-white/70 dark:bg-slate-900/40 border border-gray-200/10 dark:border-slate-800/30 shadow-lg pointer-events-auto">
+        <nav className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/70 rounded-full flex items-center justify-center">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/70 rounded-full flex items-center justify-center shadow-sm">
               <span className="text-foreground font-bold text-sm">Pst.</span>
             </div>
-            <span className="hidden sm:inline font-bold text-primary text-lg">
-              Evelyn Joshua
-            </span>
+            <span className="hidden sm:inline font-bold text-primary text-lg">Evelyn Joshua</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-1">
-            <Link
-              href="/"
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                pathname === '/'
-                  ? 'bg-accent text-accent-foreground'
-                  : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground'
-              }`}
-            >
-              Home
-            </Link>
-            
-            <NavDropdown
-              items={aboutDropdownItems}
-              triggerLabel="About"
-            />
-            
+          {/* Center navigation (pill-style links) */}
+          <ul className="hidden md:flex items-center gap-2 px-2">
+            {/* Home */}
+            <li>
+              <Link
+                href="/"
+                className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                  pathname === '/'
+                    ? 'bg-accent text-accent-foreground shadow-md'
+                    : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'
+                }`}
+              >
+                Home
+              </Link>
+            </li>
+
+            {/* About dropdown keep existing component but style the trigger */}
+            <li>
+              <NavDropdown
+                items={aboutDropdownItems}
+                triggerLabel="About"
+                className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${pathname.startsWith('/about') ? 'bg-accent text-accent-foreground shadow-md' : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'}`}
+              />
+            </li>
+
+            {/* Other nav items */}
             {navItems.slice(1).map((item) => {
               const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
-              
               return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground'
-                  }`}
-                >
-                  {item.label}
-                </Link>
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium transition-all duration-150 ${
+                      isActive
+                        ? 'bg-accent text-accent-foreground shadow-md'
+                        : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
               )
             })}
-          </div>
+          </ul>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center">
+          {/* Right actions */}
+          <div className="flex items-center gap-3">
+            {/* Contact CTA - pill */}
             <Link
               href="/contact"
-              className="px-6 py-2 bg-accent text-accent-foreground rounded-lg hover:shadow-lg hover:shadow-accent/30 transition-all duration-300 hover:-translate-y-0.5"
+              className="hidden md:inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-accent to-accent/80 text-accent-foreground shadow-md hover:translate-y-[-1px] transition-transform duration-150"
             >
               Contact
             </Link>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-foreground hover:bg-accent/50"
-            aria-label="Toggle menu"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden p-2 rounded-full text-foreground hover:bg-accent/20"
+              aria-label="Toggle menu"
             >
-              {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              )}
-            </svg>
-          </button>
-        </div>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {isMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
+        </nav>
 
-        {/* Mobile Navigation */}
+        {/* Mobile menu (popover under pill) */}
         {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
+          <div className="mt-3 rounded-xl bg-white/85 dark:bg-slate-900/75 border border-gray-200/10 dark:border-slate-800/30 backdrop-blur-md p-4 shadow-lg md:hidden">
             <div className="flex flex-col gap-2">
               <Link
                 href="/"
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                   pathname === '/'
                     ? 'bg-accent text-accent-foreground'
-                    : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                    : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'
                 }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 Home
               </Link>
-              
-              {/* About section with dropdown items */}
-              <div className="px-4 py-2">
+
+              <div className="px-1 py-2">
                 <div className="text-sm font-medium text-foreground mb-2">About</div>
-                <div className="ml-4 space-y-1">
+                <div className="ml-2 space-y-1">
                   {aboutDropdownItems.map((item) => (
                     <Link
                       key={item.href}
@@ -143,25 +135,22 @@ export function Header() {
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item.label}
-                      { (
-                        <span className="text-xs text-muted-foreground/70 ml-1"></span>
-                      )}
                     </Link>
                   ))}
                 </div>
               </div>
-              
+
               {navItems.slice(1).map((item) => {
                 const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href))
-                
+
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                       isActive
                         ? 'bg-accent text-accent-foreground'
-                        : 'text-foreground hover:bg-accent/50 hover:text-accent-foreground'
+                        : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'
                     }`}
                     onClick={() => setIsMenuOpen(false)}
                   >
@@ -169,9 +158,10 @@ export function Header() {
                   </Link>
                 )
               })}
+
               <Link
                 href="/contact"
-                className="mt-2 px-4 py-2 bg-accent text-accent-foreground rounded-lg hover:shadow-lg hover:shadow-accent/30 transition-all duration-300"
+                className="mt-2 block px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
@@ -179,7 +169,10 @@ export function Header() {
             </div>
           </div>
         )}
-      </nav>
+      </div>
+
+      {/* Spacer so content doesn't hide under the fixed pill */}
+      <div className="h-20" aria-hidden />
     </header>
   )
 }

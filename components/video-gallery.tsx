@@ -426,24 +426,24 @@ function VideoCard({ video, index, isFocused, onFocus, onBlur, onSelect }: Video
 const defaultVideos: VideoItem[] = [
   {
     id: '1',
-    title: 'DIVINE HEALING',
-    thumbnail: '/divinehealing.jpeg',
-    description: 'In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.',
-    embedUrl: 'https://www.youtube.com/embed/xsqB51wXasw',
+    title: 'THE TRUE SOLUTION',
+    thumbnail: '/sermonpix/sermon.jpeg',
+    description: 'What is the true solution to life’s challenges?; When all that glitters fades and worldly possessions can’t fill the emptiness within, where do you turn?',
+    embedUrl: 'https://www.youtube.com/embed/xCIwOK0Shx8?si=pkj7CFLmRu4kviRS',
     type: 'youtube'
   },
   {
     id: '2',
     title: 'The Character of a True Beliver',
-    thumbnail: '/sermon2.jpeg',
+    thumbnail: '/sermonpix/sermon2.jpeg',
     description: 'What is the character of a true believer? Is it about the words of their mouth, their outward appearance, or the paraphernalia of their Christian office?',
     embedUrl: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D1340651834319725&show_text=0&width=560&mute=0',
-    type: 'facebook'
+    type: 'youtube'
   },
   {
     id: '3',
-   title: 'WATCH AND PRAY',
-    thumbnail: '/watchandpray.jpeg',
+    title: 'WATCH AND PRAY',
+    thumbnail: '/sermonpix/watchandpray.jpeg',
     description: 'In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.',
     embedUrl: 'https://www.youtube.com/embed/03dvo9F4zww?si=rLnfzBs4PUPwvkR6',
     type: 'youtube'
@@ -451,7 +451,7 @@ const defaultVideos: VideoItem[] = [
   {
     id: '4',
     title: 'INVITING GOD\'S PRESENCE AND POWER',
-    thumbnail: '/invitinggods.jpeg',
+    thumbnail: '/sermonpix/invitinggods.jpeg',
     description: 'What does it take to invite God\'s presence and power into your situation?',
     embedUrl: 'https://www.youtube.com/embed/qTM0g-OOzcs?si=ryT3efLCXy61Tis7',
     type: 'youtube'
@@ -459,7 +459,7 @@ const defaultVideos: VideoItem[] = [
   {
     id: '5',
     title: 'A WORTHY PARTNER IN GOD\'S WORK',
-    thumbnail: '/worthypartner.jpeg',
+    thumbnail: '/sermonpix/worthypartner.jpeg',
     description: 'What is it about a threefold cord that makes it so special, as affirmed by the Scriptures?',
     embedUrl: 'https://www.youtube.com/embed/CLRYl-eb34Y?si=HaNt6qWTctqCImwH',
     type: 'youtube'
@@ -467,7 +467,7 @@ const defaultVideos: VideoItem[] = [
   {
     id: '6',
     title: 'THE POWER OF BELIEF',
-    thumbnail: '/belief.jpeg',
+    thumbnail: '/sermonpix/belief.jpeg',
     description: 'Reading from John 14:12, Pastor Evelyn Joshua speaks categorically about the link between faith and confession.',
     embedUrl: 'https://www.youtube.com/embed/Q6FrrncMEDM?si=aQtxYlHFjYWknqFj',
     type: 'youtube'
@@ -475,17 +475,9 @@ const defaultVideos: VideoItem[] = [
   {
     id: '7',
     title: 'GOD\'S LOVE',
-    thumbnail: '/godslove.jpeg',
+    thumbnail: '/sermonpix/Godslove.jpeg',
     description: 'As a Christian, do you know the source of power for exploits in the spiritual realm that manifest in the physical?',
-    embedUrl: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D16Ub6gZHUq&show_text=0&width=560&mute=0',
-    type: 'facebook'
+    embedUrl: 'https://www.youtube.com/embed/4LpXP2Gc1bo?si=SSkRBm7yYIBA0zjp',
+    type: 'youtube'
   },
-  {
-  id: '8',
-  title: 'THE LOVE OF GOD',
-  thumbnail: '/Godslove.jpeg',
-  description: 'In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.',
-  embedUrl: 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D1D6Xa14WWd&show_text=0&width=560&mute=0',
-  type: 'facebook'
-  }
 ]

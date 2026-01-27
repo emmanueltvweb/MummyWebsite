@@ -31,11 +31,11 @@ const carouselSlides: CarouselSlide[] = [
     subtitle: "The Synagogue, Church Of All Nations",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-       The physical structure of The SCOAN has gone through different stages. Each stage served a purpose! Before moving to our present position, The SCOAN has had three previous locations. The roof of the first church was blown off by a storm, the second church was washed away by a flood while the third church also collapsed due to severe weather conditions. Shall we say all these happened without God’s knowledge? No. In every situation, God is still saying something. Today, The SCOAN is an architectural masterpiece located in the heart of Ikotun-Egbe, Lagos.
+       The physical structure of <a href="https://www.scoan.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">The SCOAN</a> has gone through different stages. Each stage served a purpose! Before moving to our present position, <a href="https://www.scoan.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">The SCOAN</a> has had three previous locations. The roof of the first church was blown off by a storm, the second church was washed away by a flood while the third church also collapsed due to severe weather conditions. Shall we say all these happened without God's knowledge? No. In every situation, God is still saying something. Today, <a href="https://www.scoan.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">The SCOAN</a> is an architectural masterpiece located in the heart of Ikotun-Egbe, Lagos.
       </div>
     ),
     image: {
-      src: "/Church2.jpg",
+      src: "/churchvisit/Church2.jpg",
       alt: "SCOAN Building",
       position: "right"
     }
@@ -56,7 +56,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/scoan-early-days.jpg",
+      src: "/churchvisit/insidechurch.jpg",
       alt: "SCOAN Early Days",
       position: "left"
     }
@@ -82,7 +82,7 @@ const carouselSlides: CarouselSlide[] = [
          Many years ago, a small gathering of eight members came together to hold their first meeting in a humble shelter in a squalid, swampy jungle, in the location of Agodo-Egbe in Lagos, Nigeria. For everything God created, He allotted a specific and definite purpose. The purpose and mission of the church was simple and clear – to seek and save the lost (Luke 19:10).
         </div>
         <div className="mt-5">
-         As time went on, it became increasingly clear that T.B. Joshua was not just an ordinary pastor, preaching ‘ordinary’ words and doing ‘ordinary things’. Right from the onset, he believed that serving God is not doing what many do but doing what the best do.
+         As time went on, it became increasingly clear that <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">T.B. Joshua</a> was not just an ordinary pastor, preaching 'ordinary' words and doing 'ordinary things'. Right from the onset, he believed that serving God is not doing what many do but doing what the best do.
         </div>
         <div className="mt-5 font-bold">
           “Everyone has a calling. If you follow the direction of your calling, you will surprise yourself, you will astonish yourself – you will make a difference in your world.”
@@ -91,10 +91,10 @@ const carouselSlides: CarouselSlide[] = [
           Clear evidence of outstanding miraculous occurrences began to arise. The lame began to walk, hopeless cancer patients were lifted from despair, desperate situations were turned to scenes of life, joy and peace. On seeing the extraordinary power of God in the life of this man, one cannot but ask questions: ‘Can this be true in our days?’ ‘Can a human being perform such feats?’ ‘Is the Bible still true for us today?’
         </div>
         <div className="mt-5">
-         Anointing does not work through plans, methods or machinery. It works through suitable men. T.B. Joshua was simply utilising the power that has been given to all believers (Luke 10:19). ” Jesus is disappointed that men lack the necessary faith to release the power that has been given to them. ”God has no hands but our hands to do His work.
+         Anointing does not work through plans, methods or machinery. It works through suitable men. <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">T.B. Joshua</a> was simply utilising the power that has been given to all believers (Luke 10:19). " Jesus is disappointed that men lack the necessary faith to release the power that has been given to them. "God has no hands but our hands to do His work.
         </div>
         <div className="mt-5">
-          Right from day one, the focus in The SCOAN has never been on the healing but on the Healer, whose name is Jesus Christ. As T.B. Joshua always said: “I am not here to introduce you to healing, but to the Healer .” The only genuine reason for receiving is salvation (Matthew 6:33).
+          Right from day one, the focus in <a href="https://www.scoan.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">The SCOAN</a> has never been on the healing but on the Healer, whose name is Jesus Christ. As <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">T.B. Joshua</a> always said: "I am not here to introduce you to healing, but to the Healer ." The only genuine reason for receiving is salvation (Matthew 6:33).
         </div>
         <div className="mt-5">
          He said: “I am not the healer. I know the Healer. His name is Jesus Christ. It is not my work but my faith in His finished works. It is God’s strength that is made manifest in my weakness” (2 Corinthians 12:7-10).
@@ -102,7 +102,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/scoan-international.jpg",
+      src: "/churchvisit/insidechurch1.jpg",
       alt: "International Congregation at SCOAN",
       position: "right"
     }
@@ -114,7 +114,7 @@ const carouselSlides: CarouselSlide[] = [
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-          God had planted a vision in the heart of T.B. Joshua. Some would think it strange for a church of just a small number in a humble area in Lagos, Nigeria to be prophetically named a church of all nations but for the vision in the life of T.B. Joshua. The name given to the church is testimony to the prophetic insight given to Prophet T.B. Joshua and his calm and determined focus on that vision.
+          God had planted a vision in the heart of <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">T.B. Joshua</a>. Some would think it strange for a church of just a small number in a humble area in Lagos, Nigeria to be prophetically named a church of all nations but for the vision in the life of <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">T.B. Joshua</a>. The name given to the church is testimony to the prophetic insight given to <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> and his calm and determined focus on that vision.
         </div>
         <div className="mt-5 font-bold">
          “Your future must move into you before you can move into your future.”
@@ -126,12 +126,12 @@ const carouselSlides: CarouselSlide[] = [
           “If your mind agrees in your relationship with God, what your circumstances look like, what you see, what people say or do concerning that relationship cannot affect it.”
         </div>
         <div className="mt-5">
-          Prophet T.B. Joshua knew that the service of the Lord is a thing of the mind, and your mind will always ask you to do something uncommon, rare and different. For you to have what you have never had before, you must do what you have never done before (Matthew 14:28-31).
+          <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> knew that the service of the Lord is a thing of the mind, and your mind will always ask you to do something uncommon, rare and different. For you to have what you have never had before, you must do what you have never done before (Matthew 14:28-31).
         </div>
       </div>
     ),
     image: {
-      src: "/scoan-healing-service.jpg",
+      src: "/churchvisit/Church1.jpg",
       alt: "Healing Service at SCOAN",
       position: "left"
     }

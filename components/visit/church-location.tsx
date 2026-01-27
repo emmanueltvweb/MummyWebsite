@@ -74,8 +74,12 @@ export function ChurchLocation() {
           {/* Visual Element */}
           <div className="relative">
             <div className="aspect-square bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl p-8">
-              <div className="w-full h-full bg-background rounded-xl flex items-center justify-center">
-                <MapPin className="w-24 h-24 text-accent opacity-50" />
+              <div className="w-full h-full bg-background rounded-xl flex items-center justify-center overflow-hidden">
+                <img
+                  src="/churchvisit/Church2.jpg"
+                  alt="The Synagogue, Church Of All Nations main building in Lagos, Nigeria"
+                  className="w-full h-full object-cover rounded-xl"
+                />
               </div>
             </div>
             <div className="absolute -top-4 -right-4 w-32 h-32 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-2xl" />

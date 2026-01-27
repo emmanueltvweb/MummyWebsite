@@ -33,7 +33,7 @@ const carouselSlides: CarouselSlide[] = [
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         In the mid-1800s, in the rural community of Aridigi in present-day Ondo State, a certain Balogun Okoorun, who was a warrior and farmer, had prophesied that from that rustic area would emerge a man who would be powerful, famous and have a large following all over the world.
         <div className="mt-5">
-          Temitope Balogun (later to be called TB Joshua) was born a century later on 12 June 1963. TB Joshua’s father was Pa Kolawole Balogun from Osin Quarters, Imo, Arigidi, Akoko and his mother, Madam Folarin Aisha Adesiji Balogun, hailed from Ede, Agbaluku Quarters, both in Ondo State, Nigeria. The circumstances surrounding his birth were extraordinary.
+          Temitope Balogun (later to be called <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua</a>) was born a century later on 12 June 1963. <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua's</a> father was Pa Kolawole Balogun from Osin Quarters, Imo, Arigidi, Akoko and his mother, Madam Folarin Aisha Adesiji Balogun, hailed from Ede, Agbaluku Quarters, both in Ondo State, Nigeria. The circumstances surrounding his birth were extraordinary.
         </div>
         <div className="mt-5">
          “Unlike other babies, I spent 15 months in my mother’s womb! Even though my mother visited some medical centres for check-ups, the baby refused to come out. My mother carried me for 15 months until she was taken to Egbe Medical Hospital where I was at last delivered.”
@@ -41,7 +41,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/dad1.jpg",
+      src: "/daddypix/dad1.jpg",
       alt: "Prophet T.B. Joshua",
       position: "right"
     }
@@ -53,7 +53,7 @@ const carouselSlides: CarouselSlide[] = [
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-         Eight days after TB Joshua’s supernatural birth, a remarkable event preceded his naming ceremony.
+         Eight days after <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua's</a> supernatural birth, a remarkable event preceded his naming ceremony.
         </div>
         <div className="mt-5">
           “On the day of the naming ceremony, people gathered with extraordinary excitement over the birth of a baby who had remained in his mother’s womb for 15 months. One would imagine the huge numbers of people that would gather for such a miraculous occasion!
@@ -70,7 +70,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/dad2.jpg",
+      src: "/daddypix/dad2.jpg",
       alt: "Young T.B. Joshua",
       position: "left"
     }
@@ -95,7 +95,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/dad3.jpg",
+      src: "/daddypix/dad3.jpg",
       alt: "SCOAN Building",
       position: "right"
     }
@@ -107,7 +107,7 @@ const carouselSlides: CarouselSlide[] = [
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-         TB Joshua’s secondary school experiences were marked by enormous challenges, despite his academic brilliance.
+         <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua's</a> secondary school experiences were marked by enormous challenges, despite his academic brilliance.
         </div>
         <div className="mt-5">
           “In my spiritual walk with God I have experienced both good and hard times. Who knows what would have happened if those temporary stops did not come at intervals? Consider how my education suffered epileptic fits. I attended six different colleges in less than one year, not because I was not smart in school. Today I was in school, the next day I was out, especially for want of money.
@@ -116,12 +116,12 @@ const carouselSlides: CarouselSlide[] = [
          I don’t want to call it poverty because children of destiny can never be poor, though they may experience temporary lack. Before I knew it, I had gone around six different colleges in less than one year. I enrolled for JAMB four times and on each occasion, it was either I forgot my acknowledgement card and other necessary documents or there was an accident on the way to the examination venue. People who saw what was happening to me simply attributed my predicament to either sin or non-seriousness on my part. But rather than despair and blame my situation on family background, I began to take God at His Word in order to have His way.”
         </div>
         <div className="mt-5">
-         TB Joshua managed to gain late entry into a Muslim college known as Ansar-Ud-Deen Grammar School, Ikare, near his hometown. However, Joshua was there for only a few months before his academic ambitions again hit the rocks of disappointment because of insufficient funds.
+         <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua</a> managed to gain late entry into a Muslim college known as Ansar-Ud-Deen Grammar School, Ikare, near his hometown. However, Joshua was there for only a few months before his academic ambitions again hit the rocks of disappointment because of insufficient funds.
         </div>
       </div>
     ),
     image: {
-      src: "/dad4.jpg",
+      src: "/daddypix/dad4.jpg",
       alt: "Emmanuel TV Studio",
       position: "left"
     }
@@ -144,7 +144,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/dad5.jpg",
+      src: "/daddypix/dad5.jpg",
       alt: "T.B. Joshua Humanitarian Work",
       position: "right"
     }
@@ -155,7 +155,7 @@ const carouselSlides: CarouselSlide[] = [
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        The Holy Spirit instructed TB Joshua to undertake a prolonged time of seeking God’s face on a prayer mountain near his hometown of Arigidi. After fasting and praying for 40 days and 40 nights, he experienced a heavenly vision.
+        The Holy Spirit instructed <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua</a> to undertake a prolonged time of seeking God's face on a prayer mountain near his hometown of Arigidi. After fasting and praying for 40 days and 40 nights, he experienced a heavenly vision.
 
         <div className="mt-5">
          “I was in a trance for three consecutive days. Then I saw a hand that pointed a Bible to my heart and the Bible entered my heart and my former heart seemed to immerse with the Bible immediately. Then the awareness came and I saw the apostles and prophets of old with someone whose head I could not see because He was tall to the Heaven and suspended, which I believe was our Lord, Jesus Christ, sitting in their midst. I also saw myself in their midst. After a while, I saw a hand of the same tall man; I could not behold His face, which was glittering with an unimaginable light, tall to the high Heavens and suspended in the air. But other apostles, I could see their faces, particularly Apostles Peter and Paul, Prophets Moses, Elijah and others. Their names were boldly written on their chests.
@@ -167,7 +167,7 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/dad6.jpg",
+      src: "/daddypix/dad6.jpg",
       alt: "T.B. Joshua Legacy",
       position: "left"
     }
@@ -180,7 +180,7 @@ const carouselSlides: CarouselSlide[] = [
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
        “Right from the beginning of my ministry, I have been staying close to nature. Nature enhances spirituality.” An abandoned swampy area in Agodo-Egbe, Lagos was where the young prophet with a divine commission burning in his heart spent countless days in prayer, fasting and solitude.
         <div className="mt-5">
-         After returning from a visit to The Synagogue of Old in Jerusalem, Israel – where Jesus Christ ministered during His earthly ministry – Prophet TB Joshua was inspired by God to start a church. With just eight members, the church was prophetically named ‘The Synagogue, Church Of All Nations’. Laying the foundation for the first church in 1989, he walked joyfully among the first set of members, who were seated under trees in the open air.
+         After returning from a visit to The Synagogue of Old in Jerusalem, Israel – where Jesus Christ ministered during His earthly ministry – <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet TB Joshua</a> was inspired by God to start a church. With just eight members, the church was prophetically named 'The Synagogue, Church Of All Nations'. Laying the foundation for the first church in 1989, he walked joyfully among the first set of members, who were seated under trees in the open air.
         </div>
         <div className="mt-5">
           “My coming to your midst is just to lay a foundation. I am here to lay a foundation, that today we start The Synagogue here! The Synagogue has started here! I have come to launch a good foundation for the church. You should know that this man always says things in proverbs.”
@@ -189,7 +189,7 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/dad7.jpg",
+      src: "/daddypix/dad7.jpg",
       alt: "T.B. Joshua Legacy",
       position: "left"
     }
@@ -200,7 +200,7 @@ const carouselSlides: CarouselSlide[] = [
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-       When the first three church structures were destroyed by adverse weather and the number of worshippers began increasing exponentially, the Holy Spirit instructed TB Joshua to move to a new location about two miles away. Thus, in 1994, the church moved to Ikotun-Egbe, the current location of The Synagogue, Church Of All Nations!
+       When the first three church structures were destroyed by adverse weather and the number of worshippers began increasing exponentially, the Holy Spirit instructed <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua</a> to move to a new location about two miles away. Thus, in 1994, the church moved to Ikotun-Egbe, the current location of The Synagogue, Church Of All Nations!
 
         <div className="mt-5">
          “In the College of God, however brilliant you may be, you will not be given double promotion; you will take every course. My first church with eight children – without a roof – was blown off by a storm. That was a stage. The second church was washed away by a flood; that was another stage. The third church also collapsed; that was yet another stage. Shall we say all these happened without God’s knowledge? No. In every situation, God is still saying something, which we may not understand because of our inability to understand the things of the Spirit.”
@@ -210,7 +210,7 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/dad8.jpg",
+      src: "/daddypix/dad8.jpg",
       alt: "T.B. Joshua Legacy",
       position: "left"
     }
@@ -221,7 +221,7 @@ const carouselSlides: CarouselSlide[] = [
     subtitle: "Prophet T.B. Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        Like everything in the life of TB Joshua, meeting his wife, Evelyn, was also by divine arrangement. As news of a young prophet who “spoke the mind of God” continued to spread, people came to seek divine intervention and Heavenly counsel from him. Evelyn, a young woman from Delta State, Nigeria, was among those who came but the prophecy she received was unique indeed. In their first conversation, before any formal introduction, he wrote her name on a piece of paper. After prophetically revealing many details of her life, the remarkable 45-minute conversation ended with a marriage proposal and there was a heart agreement. It was later he told her that he had seen their divine union in a vision days before their first meeting. Evelyn has been an avid supporter of her husband’s ministerial journey, accompanying him on numerous international charitable events and crusades. Their happy union of 31 years has been blessed with three beautiful daughters: Serah, Promise and Heart.
+        Like everything in the life of <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">TB Joshua</a>, meeting his wife, Evelyn, was also by divine arrangement. As news of a young prophet who "spoke the mind of God" continued to spread, people came to seek divine intervention and Heavenly counsel from him. Evelyn, a young woman from Delta State, Nigeria, was among those who came but the prophecy she received was unique indeed. In their first conversation, before any formal introduction, he wrote her name on a piece of paper. After prophetically revealing many details of her life, the remarkable 45-minute conversation ended with a marriage proposal and there was a heart agreement. It was later he told her that he had seen their divine union in a vision days before their first meeting. Evelyn has been an avid supporter of her husband's ministerial journey, accompanying him on numerous international charitable events and crusades. Their happy union of 31 years has been blessed with three beautiful daughters: Serah, Promise and Heart.
 
         <div className="mt-5">
          Serah Oyindamola Joshua, Esq. has a Bachelor of Laws from London School of Economics, a Master of Laws from New York University School of Law and an M.B.A. from Washington University in St. Louis. Promise graduated from London School of Economics and Political Science (LSE) with a BSc. in Politics and International Relations and studied a Dual Master of Public Administration at LSE and Columbia University, New York. Heart, the youngest daughter is still in high school.
@@ -230,7 +230,7 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/mumanddad.jpg",
+      src: "/daddypix/mumanddad.jpg",
       alt: "T.B. Joshua Legacy",
       position: "left"
     }
@@ -256,7 +256,7 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/dad9.jpg",
+      src: "/daddypix/dad10.jpg",
       alt: "T.B. Joshua Legacy",
       position: "left"
     }
@@ -494,10 +494,10 @@ export function AboutTBJoshuaSection({
               href="https://www.scoan.org/tb-joshua/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center px-6 py-3 bg-accent hover:bg-accent/90 text-white font-medium rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+              className="inline-flex items-center justify-center px-6 py-3 bg-accent hover:bg-accent/90 text-primary font-bold rounded-lg transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
               aria-label="Read more about Prophet T.B. Joshua's biography"
             >
-              Read More Prophet T.B. Joshua
+              Read More on Prophet T.B. Joshua
             </a>
           </div>
         </div>

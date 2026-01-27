@@ -1,0 +1,105 @@
+/* app/styles/app.scss */
+
+/* Floating lines section */
+.section-with-floating-lines {
+  .floating-lines-container {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    .floating-lines-container {
+      opacity: 0.8;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .floating-lines-container {
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-contrast: high) {
+    .floating-lines-container {
+      opacity: 0.3;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .floating-lines-container {
+      animation: none !important;
+    }
+  }
+}
+
+/* Category filters */
+.category-filter-desktop {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  @media (min-width: 640px) {
+    gap: 0.75rem;
+  }
+}
+
+.category-filter-mobile {
+  max-width: 20rem;
+  margin-inline: auto;
+}
+
+.category-filter-tablet {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Buttons */
+.category-button-mobile {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+}
+
+.category-button-tablet {
+  min-height: 40px;
+  padding: 0.5rem 0.75rem;
+}
+
+.category-button-desktop {
+  min-height: 44px;
+  padding: 0.75rem 1.5rem;
+
+  @media (min-width: 1440px) {
+    padding: 1rem 2rem;
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 1920px) {
+    padding: 1.25rem 2.5rem;
+    font-size: 1.25rem;
+  }
+}
+
+/* Touch interactions */
+.category-button-touch {
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+/* Scrollbar utility */
+.scrollbar-hide {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

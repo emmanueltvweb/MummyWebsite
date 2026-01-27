@@ -20,20 +20,20 @@ export function FeaturedSermonSection() {
     setTimeout(() => {
       setIsLoadingVideo(false)
       // Open video in new tab to avoid CORS issues
-      window.open('https://www.stream.emmanuel.tv/title/en/68fea181e4b0afc0623a7777?v3=true&type=vod', '_blank', 'noopener,noreferrer')
+      window.open('https://www.stream.emmanuel.tv/title/divine-healing-%7C-pastor-evelyn-joshua-sermon/en?id=693371d660b2170ab47749e6&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')
     }, 1000)
   }
   return (
     <section className="py-12 sm:py-20 bg-gradient-to-b from-primary/5 to-transparent">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center animate-scale-up">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center animate-scale-up">
           {/* Featured Image */}
           <div className="order-2 lg:order-1">
             <div className="relative rounded-2xl overflow-hidden shadow-xl hover-lift group">
               {!showFacebookVideo ? (
                 <>
                   <Image
-                    src="/sermon.jpeg"
+                    src="/sermonpix/divinehealing.jpeg"
                     alt="Featured sermon"
                     width={1280}
                     height={720}
@@ -55,14 +55,14 @@ export function FeaturedSermonSection() {
               ) : (
                 <div className="relative w-full bg-black aspect-video">
                   <iframe
-                    src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F801335522787767%2F&show_text=false&width=1280&height=720&appId"
-                    width="1280"
-                    height="720"
-                    style={{ border: 'none', overflow: 'hidden' }}
-                    scrolling="no"
+                    width="560"
+                    height="315"
+                    src="https://www.youtube.com/embed/xsqB51wXasw?si=y63MIKWR5WXtZ0Dx"
+                    title="YouTube video player"
                     frameBorder="0"
-                    allowFullScreen={true}
-                    allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
                     className="w-full h-full"
                   />
                   <button
@@ -88,18 +88,18 @@ export function FeaturedSermonSection() {
 
             {/* Title */}
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary leading-tight">
-              THE TRUE SOLUTION<span className="text-accent"></span> 
+              DIVINE HEALING<span className="text-accent"></span> 
             </h2>
 
             {/* Meta Information */}
             <div className="space-y-3 text-foreground/70">
               <div className="flex items-center gap-3">
                 <Calendar size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">November 17, 2025</span>
+                <span className="text-sm sm:text-base">December 05, 2025</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">25 minutes</span>
+                <span className="text-sm sm:text-base">34 minutes</span>
               </div>
               <div className="flex items-center gap-3">
                 <User size={20} className="text-accent" />
@@ -109,32 +109,21 @@ export function FeaturedSermonSection() {
 
             {/* Summary */}
             <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
-              What is the true solution to life’s challenges?
+              In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.
 
-              <p className="mt-4">When all that glitters fades and worldly possessions can’t fill the emptiness within, where do you turn?</p>
+              <p className="mt-4">In her words, "The will of God for us is to be physically healed and spiritually saved."</p>
 
+              <p className="mt-4">May the Lord bless His Word in the midst of your heart, in Jesus’ name! Amen. </p>
 
-
-              <p className="mt-4">In this powerful message from 2 Kings 5:1–10, Pastor Evelyn Joshua reminds us that no matter how powerful or wealthy we are, only God can truly cleanse, renew, and restore. </p>
-
-
-
-              <p className="mt-4">Open your heart — God is about to reveal The True Solution!</p>
-
-
-
-              <p className="mt-4">Learn the importance of humility, obedience, and following God’s process.</p>
-
-              <p className="mt-4">Open your heart — God is about to reveal The True Solution!</p>
             </div>
 
             {/* Key Points */}
             <div className="space-y-2">
               <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">Key Topics</h3>
               <div className="flex flex-wrap gap-2">
-                {["Trust in God", "Faith", "Perseverance", "Divine Plan"].map((topic) => (
+                {["Trust in God", "Faith", "Perseverance", "Divine Plan"].map((topic, index) => (
                   <span
-                    key={topic}
+                    key={`featured-${topic}-${index}`}
                     className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm"
                   >
                     {topic}

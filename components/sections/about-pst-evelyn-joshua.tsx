@@ -4,6 +4,7 @@ import { Container } from "@/components/layout/container"
 import { useInView } from "@/hooks/use-in-view"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import React from 'react'
 
 interface CarouselSlide {
   id: number
@@ -24,6 +25,26 @@ interface AboutCarouselProps {
   infiniteLoop?: boolean
 }
 
+// Helper function to replace "The SCOAN" with hyperlinks
+const createScoanLink = (text: string): React.ReactNode => {
+  const parts = text.split('The SCOAN')
+  return parts.map((part, index) => (
+    <React.Fragment key={index}>
+      {part}
+      {index < parts.length - 1 && (
+        <a
+          href="https://www.scoan.org/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:text-primary/80 underline transition-colors duration-200"
+        >
+          The SCOAN
+        </a>
+      )}
+    </React.Fragment>
+  ))
+}
+
 const carouselSlides: CarouselSlide[] = [
   {
     id: 1,
@@ -33,11 +54,11 @@ const carouselSlides: CarouselSlide[] = [
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         Pastor Evelyn Onyisi Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
         the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of
-        All Nations (The SCOAN). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).
+        All Nations ({createScoanLink('The SCOAN')}). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).
       </div>
     ),
     image: {
-      src: "/Evelyn-Joshua3.jpg",
+      src: "/mummypix/9.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "right"
     }
@@ -57,7 +78,7 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/Evelyn-Joshua3.jpg",
+      src: "/mummypix/mum1.jpg",
       alt: "Congregation",
       position: "left"
     }
@@ -68,11 +89,11 @@ const carouselSlides: CarouselSlide[] = [
     subtitle: "Pastor Evelyn Onyisi Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        Pastor Evelyn Joshua's marriage in 1990 to Prophet Temitope Balogun Joshua, one of the most famous ministers of God and tele-evangelists that the world has ever known, was nothing short of a pre-ordained divine arrangement. Prophet T.B. Joshua had, on their very first meeting, revealed to Pastor Evelyn in no uncertain terms that she was his God-ordained wife, life companion and ministry partner. The divinely ordained marriage which lasted for 31 years until the 5th of June, 2021 when Prophet T.B. Joshua answered the glorious home call was blessed with three amazing daughters, Serah, Promise and Heart.
+        Pastor Evelyn Joshua's marriage in 1990 to Prophet Temitope Balogun Joshua, one of the most famous ministers of God and tele-evangelists that the world has ever known, was nothing short of a pre-ordained divine arrangement. <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> had, on their very first meeting, revealed to Pastor Evelyn in no uncertain terms that she was his God-ordained wife, life companion and ministry partner. The divinely ordained marriage which lasted for 31 years until the 5th of June, 2021 when <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> answered the glorious home call was blessed with three amazing daughters, Serah, Promise and Heart.
       </div>
     ),
     image: {
-      src: "/mumanddad.jpg",
+      src: "/mummypix/mumanddad.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "right"
     }
@@ -84,24 +105,24 @@ const carouselSlides: CarouselSlide[] = [
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-          Shortly after their marriage, Prophet T.B. Joshua in furtherance of his uncommon ministerial calling established The Synagogue, Church of All Nations (The SCOAN) in the year 1991 in a swampy portion of land at a remote part of the outskirts of Lagos, Nigeria.
+          Shortly after their marriage, <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> in furtherance of his uncommon ministerial calling established The Synagogue, Church of All Nations ({createScoanLink('The SCOAN')}) in the year 1991 in a swampy portion of land at a remote part of the outskirts of Lagos, Nigeria.
         </div>
         <div className="mt-5">
           As a dutiful wife and a dependable Kingdom partner, Pastor Evelyn pioneered and nurtured the Sunday School Department of the young church, deployed her spiritual gifts and unique talents towards supporting her husband in every area of the ministry, while also keeping the home front intact and secure while her husband dedicated his life to the full service of God.
         </div>
         <div className="mt-5">
-          True to the literal meaning of the ministry's name, as revealed to Prophet T.B. Joshua by God, The SCOAN soon became a true Church of all Nations as worshippers trooped in from all parts of the world to witness God's uncommon power as evidently at work in the uncommon Ministry.
+          True to the literal meaning of the ministry's name, as revealed to <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> by God, {createScoanLink('The SCOAN')} soon became a true Church of all Nations as worshippers trooped in from all parts of the world to witness God's uncommon power as evidently at work in the uncommon Ministry.
         </div>
         <div className="mt-5">
-          As at 2018, The SCOAN had become the biggest attraction of foreign visitors to Nigeria. According to official figures released by the Nigeria Immigration Service, "Six out of every ten foreign travellers coming into Nigeria are bound for The Synagogue, Church of All Nations."
+          As at 2018, {createScoanLink('The SCOAN')} had become the biggest attraction of foreign visitors to Nigeria. According to official figures released by the Nigeria Immigration Service, "Six out of every ten foreign travellers coming into Nigeria are bound for The Synagogue, Church of All Nations."
         </div>
         <div className="mt-5">
-          The Church with very little beginnings soon became a universal arena of the manifestation of God's amazing wonders and, all through this period, Pastor Evelyn Joshua played key roles both as a dutiful wife, mother and as a minister in the vineyard of God. She was the co-coordinator (along with Prophet T.B. Joshua) of the globally acclaimed charity arm of the Ministry, the Emmanuel Global Network (EGN).
+          The Church with very little beginnings soon became a universal arena of the manifestation of God's amazing wonders and, all through this period, Pastor Evelyn Joshua played key roles both as a dutiful wife, mother and as a minister in the vineyard of God. She was the co-coordinator (along with <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a>) of the globally acclaimed charity arm of the Ministry, the Emmanuel Global Network (EGN).
         </div>
       </div>
     ),
     image: {
-      src: "/Evelyn-Joshua3.jpg",
+      src: "/mummypix/mum2.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "left"
     }
@@ -113,15 +134,15 @@ const carouselSlides: CarouselSlide[] = [
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
-          Upon the glorious home call of Prophet T.B. Joshua on the 5th of June, 2021 after an enthralling and fulfilled life dedicated to the service of God and humanity, the mantle of leadership of the global Church fell on Pastor Evelyn Joshua, according to God's divine mandate and plan.
+          Upon the glorious home call of <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> on the 5th of June, 2021 after an enthralling and fulfilled life dedicated to the service of God and humanity, the mantle of leadership of the global Church fell on Pastor Evelyn Joshua, according to God's divine mandate and plan.
         </div>
         <div className="mt-5">
-          Upon assumption of office as the leader of The SCOAN and the Global President of Emmanuel Global Network (EGN), it quickly became evident that Pastor Evelyn Joshua had been divinely moulded, delicately nurtured and carefully crafted over the course of her 31 years marital journey for a period such as God and fate had eventually thrust on her as the leader of the great commission of The SCOAN and EGN. A gifted teacher, anointed Preacher and a meticulous super administrator, Pastor Evelyn Joshua fully surrendered herself to the leading of God and the direction of the Holy Spirit which has, undoubtedly, accounted for the continued rapid and explosive advancement of the Ministry under her unique leadership.
+          Upon assumption of office as the leader of {createScoanLink('The SCOAN')} and the Global President of <a href="https://emmanuel.tv/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Emmanuel Global Network (EGN)</a>, it quickly became evident that Pastor Evelyn Joshua had been divinely moulded, delicately nurtured and carefully crafted over the course of her 31 years marital journey for a period such as God and fate had eventually thrust on her as the leader of the great commission of {createScoanLink('The SCOAN')} and EGN. A gifted teacher, anointed Preacher and a meticulous super administrator, Pastor Evelyn Joshua fully surrendered herself to the leading of God and the direction of the Holy Spirit which has, undoubtedly, accounted for the continued rapid and explosive advancement of the Ministry under her unique leadership.
         </div>
       </div>
     ),
     image: {
-      src: "/Evelyn-Joshua3.jpg",
+      src: "/mummypix/mum4.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "right"
     }
@@ -144,7 +165,7 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/Evelyn-Joshua3.jpg",
+      src: "/scoanhq/3.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "left"
     }
@@ -278,13 +299,15 @@ export function AboutSection({
           )}
           
           <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <div className="text-accent font-semibold tracking-wide mb-2">{slide.subtitle}</div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary leading-tight">
+            <div className="text-accent font-semibold tracking-wide mb-2 drop-shadow-sm">{slide.subtitle}</div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary leading-tight drop-shadow-md">
               {slide.title}
             </h2>
-            <div className="mt-2 h-1 w-12 bg-accent rounded-full" />
+            <div className="mt-2 h-1 w-12 bg-accent rounded-full shadow-sm" />
             <div className="mt-4 sm:mt-6 max-h-[400px] lg:max-h-[300px] overflow-y-auto">
-              {slide.content}
+              <div className="bg-muted/80 backdrop-blur-sm rounded-lg p-4 border border-muted-foreground/10">
+                {slide.content}
+              </div>
             </div>
           </div>
           
@@ -306,8 +329,9 @@ export function AboutSection({
   }
 
   return (
-    <section id="about" ref={ref} className="py-20 md:py-32 bg-muted">
-      <Container>
+    <section id="about" ref={ref} className="py-20 md:py-32 bg-muted relative overflow-hidden">
+      
+      <Container className="relative z-10">
         <div className="space-y-12">
           {/* Carousel Container */}
           <div 

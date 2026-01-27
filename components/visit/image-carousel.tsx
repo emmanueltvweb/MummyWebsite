@@ -7,31 +7,31 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const churchImages = [
   {
     id: 1,
-    src: "/Church1.jpg",
+    src: "/churchvisit/Church1.jpg",
     alt: "The SCOAN Church - Leadership and congregation",
     title: "Church Entrace Gate 4"
   },
   {
     id: 2,
-    src: "/insidechurch.jpg",
+    src: "/churchvisit/insidechurch.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
     title: "Church View"
   },
   {
     id: 3,
-    src: "/insidechurch2.jpg",
+    src: "/churchvisit/insidechurch2.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
     title: "Church View"
   },
   {
-    id: 2,
-    src: "/insidechurch1.jpg",
+    id: 4,
+    src: "/churchvisit/insidechurch1.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
     title: "Church View"
   },
   {
-    id: 2,
-    src: "/Church2.jpg",
+    id: 5,
+    src: "/churchvisit/Church2.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
     title: "Church View"
   },

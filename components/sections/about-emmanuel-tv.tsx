@@ -31,17 +31,17 @@ const carouselSlides: CarouselSlide[] = [
     subtitle: "Emmanuel TV",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-       Emmanuel TV was Founded by Prophet TB Joshua by the inspiration of the Holy Spirit with the main aim of ensuring that the Word of God and the manifestations of His loving-kindness reach every corner of the world, Emmanuel TV has maintained its God-given reputation as the most widely watched Christian station of the 21st century.
+       <a href="https://emmanuel.tv/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Emmanuel TV</a> was Founded by <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet TB Joshua</a> by the inspiration of the Holy Spirit with the main aim of ensuring that the Word of God and the manifestations of His loving-kindness reach every corner of the world, <a href="https://emmanuel.tv/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Emmanuel TV</a> has maintained its God-given reputation as the most widely watched Christian station of the 21st century.
          <div className="mt-5">
           Its impact in Changing Lives, Changing Nations and Changing the World can be felt as multitudes from different nations of the world have been led to salvation through the finished works of our Lord and Saviour Jesus Christ.
         </div>
          <div className="mt-5">
-          All through the 18 impactful years of its existence, Emmanuel TV has continued to be a medium of change and transformation, with its influence breaking the barriers of race, age, gender and religion all over the world.
+          All through the 18 impactful years of its existence, <a href="https://emmanuel.tv/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Emmanuel TV</a> has continued to be a medium of change and transformation, with its influence breaking the barriers of race, age, gender and religion all over the world.
         </div>
       </div>
     ),
     image: {
-      src: "/logo.png",
+      src: "/emmanueltv/logo.png",
       alt: "Emmanuel TV Logo",
       position: "right"
     }

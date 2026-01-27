@@ -131,7 +131,7 @@ export function GalleryFilter({ activeCategory, onCategoryChange }: GalleryFilte
                 aria-selected={activeCategory === category}
                 aria-label={`Filter by ${category}`}
                 tabIndex={0}
-              >
+              > 
                 {category}
               </button>
             ))}

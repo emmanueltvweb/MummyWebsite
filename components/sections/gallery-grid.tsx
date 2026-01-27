@@ -16,9 +16,10 @@ interface GalleryItem {
 
 interface GalleryGridProps {
   galleryItems: GalleryItem[]
+  activeCategory: string
 }
 
-export function GalleryGrid({ galleryItems }: GalleryGridProps) {
+export function GalleryGrid({ galleryItems, activeCategory }: GalleryGridProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set())
@@ -38,7 +39,7 @@ export function GalleryGrid({ galleryItems }: GalleryGridProps) {
     setCurrentIndex(0)
     const timer = setTimeout(() => setIsTransitioning(false), 50)
     return () => clearTimeout(timer)
-  }, [galleryItems])
+  }, [galleryItems, activeCategory])
 
   // Keyboard navigation
   useEffect(() => {
@@ -119,7 +120,7 @@ export function GalleryGrid({ galleryItems }: GalleryGridProps) {
 
             return (
               <div
-                key={item.id}
+                key={`${activeCategory}-${item.id}`}
                 className={`absolute w-72 sm:w-80 lg:w-96 h-80 sm:h-96 lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-700 ease-in-out ${
                   isActive 
                     ? "z-30 pointer-events-auto shadow-2xl" 
@@ -154,7 +155,6 @@ export function GalleryGrid({ galleryItems }: GalleryGridProps) {
                     setImageErrors(prev => new Set([...prev, item.id]));
                   }}
                   loading="lazy"
-                  quality={90}
                 />
 
                 {/* Video overlay */}
@@ -194,7 +194,7 @@ export function GalleryGrid({ galleryItems }: GalleryGridProps) {
         <div className="flex gap-2">
           {galleryItems.map((item, index) => (
             <button
-              key={`${item.id}-${index}`}
+              key={`${activeCategory}-dot-${index}`}
               onClick={() => setCurrentIndex(index)}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
                 index === currentIndex ? "bg-accent w-8" : "bg-primary/30 hover:bg-primary/50"

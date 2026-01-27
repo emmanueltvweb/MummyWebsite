@@ -1,0 +1,109 @@
+/* Floating Lines Background Styles */
+.floating-lines-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Enhanced contrast overlay for better readability */
+.floating-lines-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    135deg,
+    rgba(var(--muted-rgb, 248, 250, 252), 0.2) 0%,
+    transparent 50%,
+    rgba(var(--muted-rgb, 248, 250, 252), 0.3) 100%
+  );
+  pointer-events: none;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .floating-lines-overlay {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--muted-rgb, 17, 24, 39), 0.3) 0%,
+      transparent 50%,
+      rgba(var(--muted-rgb, 17, 24, 39), 0.4) 100%
+    );
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .floating-lines-container {
+    opacity: 0.8;
+  }
+}
+
+@media (max-width: 640px) {
+  .floating-lines-container {
+    opacity: 0.6;
+  }
+  
+  .floating-lines-overlay {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--muted-rgb, 248, 250, 252), 0.3) 0%,
+      transparent 50%,
+      rgba(var(--muted-rgb, 248, 250, 252), 0.4) 100%
+    );
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .floating-lines-container {
+    opacity: 0.4;
+  }
+  
+  .floating-lines-overlay {
+    background: linear-gradient(
+      135deg,
+      rgba(var(--muted-rgb, 248, 250, 252), 0.5) 0%,
+      transparent 50%,
+      rgba(var(--muted-rgb, 248, 250, 252), 0.6) 100%
+    );
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .floating-lines-container {
+    animation: none !important;
+  }
+}
+
+/* Section-specific enhancements - Original style preservation */
+#about .floating-lines-container {
+  opacity: 0.8;
+}
+
+#about .floating-lines-overlay {
+  background: linear-gradient(
+    135deg,
+    rgba(248, 250, 252, 0.2) 0%,
+    transparent 50%,
+    rgba(248, 250, 252, 0.3) 100%
+  );
+}
+
+/* Dark mode specific adjustments */
+@media (prefers-color-scheme: dark) {
+  #about .floating-lines-overlay {
+    background: linear-gradient(
+      135deg,
+      rgba(17, 24, 39, 0.3) 0%,
+      transparent 50%,
+      rgba(17, 24, 39, 0.4) 100%
+    );
+  }
+  
+  #about .floating-lines-container {
+    opacity: 0.6;
+  }
+}
