@@ -33,7 +33,7 @@ export function FeaturedSermonSection() {
               {!showFacebookVideo ? (
                 <>
                   <Image
-                    src="/sermonpix/divinehealing.jpeg"
+                    src="/sermonpix/grateful.jpeg"
                     alt="Featured sermon"
                     width={1280}
                     height={720}
@@ -57,8 +57,9 @@ export function FeaturedSermonSection() {
                   <iframe
                     width="560"
                     height="315"
-                    src="https://www.youtube.com/embed/xsqB51wXasw?si=y63MIKWR5WXtZ0Dx"
-                    title="YouTube video player"
+                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1416204296919341%2F&show_text=false&width=560&t=0"
+                    title="Facebook video player"
+                    style={{ border: 'none', overflow: 'hidden' }}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerPolicy="strict-origin-when-cross-origin"
@@ -87,19 +88,19 @@ export function FeaturedSermonSection() {
             </div>
 
             {/* Title */}
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary leading-tight">
-              DIVINE HEALING<span className="text-accent"></span> 
+            <h2 className="text-3xl sm:text-4xl lg:text-3xl font-extrabold text-primary leading-tight">
+              A Grateful Steward’s Account | Thanksgiving Message 2025<span className="text-accent"></span> 
             </h2>
 
             {/* Meta Information */}
             <div className="space-y-3 text-foreground/70">
               <div className="flex items-center gap-3">
                 <Calendar size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">December 05, 2025</span>
+                <span className="text-sm sm:text-base">December 09, 2025</span>
               </div>
               <div className="flex items-center gap-3">
                 <Clock size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">34 minutes</span>
+                <span className="text-sm sm:text-base">6 minutes</span>
               </div>
               <div className="flex items-center gap-3">
                 <User size={20} className="text-accent" />
@@ -109,11 +110,13 @@ export function FeaturedSermonSection() {
 
             {/* Summary */}
             <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
-              In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.
+              In this special Thanksgiving presentation, Pastor Evelyn Joshua delivers a Grateful Steward’s Account — a heartfelt reflection on God’s faithfulness, mercy, and guidance throughout the year 2025. Speaking as a true steward of God’s kingdom, she reminds the global SCOAN family that every steward must give an account of their work, not to men, but to God who rewards faithfulness.
 
-              <p className="mt-4">In her words, "The will of God for us is to be physically healed and spiritually saved."</p>
+              <p className="mt-4">In her own words:
 
-              <p className="mt-4">May the Lord bless His Word in the midst of your heart, in Jesus’ name! Amen. </p>
+                “A steward is worthy to give accounts of his works, knowing there is a reward that awaits him or her. I am not giving account to men but to God who has been there for us — our Helper, our Comforter, our All. To Him alone be the glory, honour, and praise. Hallelujah, Amen.”"</p>
+
+              <p className="mt-4">Watch, be blessed, and share your own testimony of gratitude. </p>
 
             </div>
 
