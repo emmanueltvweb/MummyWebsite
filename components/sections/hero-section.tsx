@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Container } from "@/components/layout/container"
 import { ArrowRight, X, Circle, Calendar, Clock, User } from "lucide-react"
 import Link from "next/link"
+import Autoplay from "embla-carousel-autoplay"
 
 import { useInView } from "@/hooks/use-in-view"
 import {
@@ -91,23 +92,19 @@ export function HeroSection() {
           muted
           playsInline
           preload="auto"
-          className="absolute inset-0 w-full h-full object-cover opacity-50"
+          className="absolute inset-0 w-full h-full object-cover opacity-100"
           key="hero-background-video"
         >
-          <source src="/daddyvid.mp4" type="video/mp4" />
+          <source src="/MUMMYWEBHEADER.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
-        {/* subtle top-to-bottom tint (reduced opacity so video shows) */}
-        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/40 to-muted/20 pointer-events-none" />
 
-        {/* soft top overlay to improve foreground contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" />
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute top-20 right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-40" />
-      <div className="absolute bottom-32 left-10 w-60 h-60 bg-secondary/10 rounded-full blur-3xl opacity-30" />
+      <div className="absolute top-20 right-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl" />
+      <div className="absolute bottom-32 left-10 w-60 h-60 bg-secondary/10 rounded-full blur-3xl" />
 
       <Container className="relative z-10 py-12 sm:py-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center px-4">
@@ -133,13 +130,7 @@ export function HeroSection() {
               }`}
               style={{ transitionDelay: isLoaded ? "300ms" : "0ms" }}
             >
-              {/* <p
-            className={`text-base sm:text-lg md:text-2xl text-foreground/70 mb-8 leading-relaxed transition-all duration-1000 delay-200 ${
-              isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-            }`}
-          >
-            Welcome to Pastor Evelyn Joshua Website
-          </p> */}
+             
               <Link href="https://www.scoan.org/" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
                 <button className="group w-full px-6 sm:px-8 py-3 sm:py-4 bg-accent text-accent-foreground rounded-lg font-semibold text-base sm:text-lg hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-1 flex items-center justify-center gap-2"
                   style={{ transitionDuration: "300ms", transitionProperty: "all" }}>
@@ -148,7 +139,7 @@ export function HeroSection() {
                 </button>
               </Link>
               <Link href="https://emmanuel.tv/" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                <button className="w-full px-6 sm:px-8 py-3 sm:py-4 border-2 border-primary text-primary rounded-lg font-semibold text-base sm:text-lg hover:bg-primary/10"
+                <button className="w-full px-6 sm:px-8 py-3 sm:py-4 border-2 bg-white border-white text-primary rounded-lg font-semibold text-base sm:text-lg hover:bg-primary/10"
                   style={{ transitionDuration: "300ms", transitionProperty: "all" }}>
                   Visit Emmanuel TV
                 </button>
@@ -261,13 +252,50 @@ export function LegacyAboutSection() {
             }`}
             style={{ transitionDuration: "1000ms", transitionProperty: "opacity, transform" }}
           >
-            <img
-              src="/mummypix/9.jpg"
-              alt="Pastor Evelyn Onyisi Joshua"
-              className="w-full h-full object-cover hover:scale-105"
-              style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
-            />
-            <div className="absolute inset-0 'bg-gradient-to-t' from-primary/30 via-transparent to-transparent" />
+            <Carousel 
+              className="w-full h-full"
+              plugins={[
+                Autoplay({
+                  delay: 3000,
+                  stopOnInteraction: false,
+                })
+              ]}
+              opts={{
+                loop: true,
+              }}
+            >
+              <CarouselContent className="h-full">
+                <CarouselItem className="h-full">
+                  <img
+                    src="/mummypix/1.jpg"
+                    alt="Pastor Evelyn Joshua"
+                    className="w-full h-full object-cover hover:scale-105"
+                    style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
+                  />
+                </CarouselItem>
+                <CarouselItem className="h-full">
+                  <img
+                    src="/mummypix/4.jpg"
+                    alt="Pastor Evelyn Joshua Ministry"
+                    className="w-full h-full object-cover hover:scale-105"
+                    style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
+                  />
+                </CarouselItem>
+                <CarouselItem className="h-full">
+                  <img
+                    src="/mummypix/8.jpg"
+                    alt="Pastor Evelyn Joshua Service"
+                    className="w-full h-full object-cover hover:scale-105"
+                    style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
+                  />
+                </CarouselItem>
+              </CarouselContent>
+              <div className="absolute inset-0 'bg-gradient-to-t' from-primary/30 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                <CarouselPrevious className="bg-white/20 hover:bg-white/30 border-none" />
+                <CarouselNext className="bg-white/20 hover:bg-white/30 border-none" />
+              </div>
+            </Carousel>
           </div>
           <div
             className={`${
@@ -280,7 +308,7 @@ export function LegacyAboutSection() {
             }}
           >
             <h2 className="text-4xl font-bold text-primary mb-6 bg">
-              About <span className="gold-accent font-bold">Pastor Evelyn Onyisi Joshua</span>
+              About <span className="gold-accent font-bold">Pastor Evelyn Joshua</span>
             </h2>
             <div className="mt-3 h-1 w-16 bg-accent rounded-full mb-6" />
             <p className="text-lg text-foreground/70 leading-relaxed mb-6 text-justify">

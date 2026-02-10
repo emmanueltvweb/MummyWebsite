@@ -9,18 +9,18 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Pastor Evelyn Onyisi Joshua website",
+  title: "Pastor Evelyn Joshua website",
   description:
     "Welcome to a ministry dedicated to spiritual growth, community service, and faith-based teachings with gold and blue elegance.",
   generator: "",
   icons: {
     icon: [
       {
-        url: "/icon-light-32x32.png",
+        url: "/android-chrome-192x192.png",
         media: "(prefers-color-scheme: light)",
       },
       {
-        url: "/icon-dark-32x32.png",
+        url: "/android-chrome-512x512.png",
         media: "(prefers-color-scheme: dark)",
       },
       {
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
         type: "image/svg+xml",
       },
     ],
-    apple: "/apple-icon.png",
+    apple: "/apple-touch-icon.png",
   },
 }
 

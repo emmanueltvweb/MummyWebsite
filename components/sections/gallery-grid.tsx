@@ -37,9 +37,19 @@ export function GalleryGrid({ galleryItems, activeCategory }: GalleryGridProps) 
   useEffect(() => {
     setIsTransitioning(true)
     setCurrentIndex(0)
-    const timer = setTimeout(() => setIsTransitioning(false), 50)
+    const timer = setTimeout(() => setIsTransitioning(false), 0)
     return () => clearTimeout(timer)
   }, [galleryItems, activeCategory])
+
+  // Immediate slide after category change
+  useEffect(() => {
+    if (activeCategory && galleryItems.length > 1) {
+      const immediateTimer = setTimeout(() => {
+        nextSlide()
+      }, 100)
+      return () => clearTimeout(immediateTimer)
+    }
+  }, [activeCategory])
 
   // Keyboard navigation
   useEffect(() => {
@@ -57,7 +67,7 @@ export function GalleryGrid({ galleryItems, activeCategory }: GalleryGridProps) 
 
   useEffect(() => {
     if (!isHovered && galleryItems.length > 1) {
-      const timer = setTimeout(nextSlide, 5000)
+      const timer = setTimeout(nextSlide, 2000)
       return () => clearTimeout(timer)
     }
   }, [isHovered, currentIndex, galleryItems.length])
@@ -71,7 +81,7 @@ export function GalleryGrid({ galleryItems, activeCategory }: GalleryGridProps) 
   }
 
   return (
-    <div className={`space-y-12 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+    <div className={`space-y-12 transition-opacity duration-200 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
       {/* Gallery Grid */}
       <div
         className="relative h-96 sm:h-[500px] lg:h-[600px] perspective isolate overflow-hidden"
@@ -121,7 +131,7 @@ export function GalleryGrid({ galleryItems, activeCategory }: GalleryGridProps) 
             return (
               <div
                 key={`${activeCategory}-${item.id}`}
-                className={`absolute w-72 sm:w-80 lg:w-96 h-80 sm:h-96 lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-700 ease-in-out ${
+                className={`absolute w-72 sm:w-80 lg:w-96 h-80 sm:h-96 lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden transition-all duration-400 ease-in-out ${
                   isActive 
                     ? "z-30 pointer-events-auto shadow-2xl" 
                     : "pointer-events-none shadow-xl"
