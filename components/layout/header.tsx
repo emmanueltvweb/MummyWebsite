@@ -25,8 +25,8 @@ export function Header() {
 
   return (
     <header className="pointer-events-none">
-      {/* Centered pill container */}
-      <div className="fixed left-1/2 top-4 z-50 w-[min(1100px,94%)] -translate-x-1/2 rounded-full px-4 py-2 backdrop-blur-md bg-white/70 dark:bg-slate-900/40 border border-gray-200/10 dark:border-slate-800/30 shadow-lg pointer-events-auto">
+      {/* Centered container - pill on desktop, normal on mobile */}
+      <div className="fixed left-1/2 top-4 z-50 w-[min(1100px,94%)] -translate-x-1/2 rounded-lg md:rounded-full px-4 py-2 backdrop-blur-md bg-white/70 dark:bg-slate-900/40 border border-gray-200/10 dark:border-slate-800/30 shadow-lg pointer-events-auto">
         <nav className="max-w-6xl mx-auto flex items-center justify-between gap-3">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
@@ -108,13 +108,13 @@ export function Header() {
           </div>
         </nav>
 
-        {/* Mobile menu (popover under pill) */}
+        {/* Mobile menu (normal rectangular style) */}
         {isMenuOpen && (
-          <div className="mt-3 rounded-xl bg-white/85 dark:bg-slate-900/75 border border-gray-200/10 dark:border-slate-800/30 backdrop-blur-md p-4 shadow-lg md:hidden">
+          <div className="mt-3 rounded-lg bg-white/85 dark:bg-slate-900/75 border border-gray-200/10 dark:border-slate-800/30 backdrop-blur-md p-4 shadow-lg md:hidden">
             <div className="flex flex-col gap-2">
               <Link
                 href="/"
-                className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`block px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                   pathname === '/'
                     ? 'bg-accent text-accent-foreground'
                     : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'
@@ -147,7 +147,7 @@ export function Header() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`block px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    className={`block px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                       isActive
                         ? 'bg-accent text-accent-foreground'
                         : 'text-foreground hover:bg-accent/20 hover:text-accent-foreground'
@@ -161,7 +161,7 @@ export function Header() {
 
               <Link
                 href="/contact"
-                className="mt-2 block px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-center"
+                className="mt-2 block px-4 py-3 rounded-md text-sm font-semibold bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-center"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Contact
@@ -171,7 +171,7 @@ export function Header() {
         )}
       </div>
 
-      {/* Spacer so content doesn't hide under the fixed pill */}
+      {/* Spacer so content doesn't hide under the fixed navbar */}
       <div className="h-20" aria-hidden />
     </header>
   )

@@ -19,12 +19,12 @@ interface AudioTrack {
 const audioTracks: AudioTrack[] = [
   {
     id: 1,
-    title: "Walking in Faith During Uncertain Times",
+    title: "DIVINE HEALING",
     artist: "Pastor Evelyn Joshua",
     category: "Sermon",
     duration: "45:30",
     date: "Nov 17, 2024",
-    // audioUrl: "https://docs.google.com/uc?export=open&id=1R8YkOyCEY3mM1aLg4ifDlFzF4Rt-nXtZ", // Removed Google Drive link
+    audioUrl: "", // Removed Google Drive link
   },
   {
     id: 2,
@@ -361,7 +361,7 @@ export function AudioPlaylistSection() {
 
         {/* Category Filter Tabs */}
         <div className="mb-8 flex flex-wrap gap-3 animate-fade-in">
-          {["all", "sermon", "worship-music", "devotional", "teaching-series"].map((category) => (
+          {["sermon", "worship-music", "devotional", "teaching-series"].map((category) => (
             <button
               key={category}
               onClick={() => setActiveTab(category)}

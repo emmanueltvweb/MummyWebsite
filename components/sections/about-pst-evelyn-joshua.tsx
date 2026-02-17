@@ -5,6 +5,7 @@ import { useInView } from "@/hooks/use-in-view"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import React from 'react'
+import CloudinaryImage from "@/components/cloudinary-image"
 
 interface CarouselSlide {
   id: number
@@ -15,6 +16,7 @@ interface CarouselSlide {
     src: string
     alt: string
     position: 'left' | 'right'
+    cloudinaryId?: string // Optional Cloudinary public ID for optimization
   }
 }
 
@@ -58,9 +60,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/mummypix/9.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987588/9_kx36sj.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
-      position: "right"
+      position: "right",
+      cloudinaryId: "9_kx36sj",
     }
   },
   {
@@ -78,9 +81,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/mummypix/mum1.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987587/mum1_t9htmg.jpg",
       alt: "Congregation",
-      position: "left"
+      position: "left",
+      cloudinaryId: "mum1_t9htmg",
     }
   },
   {
@@ -93,9 +97,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/mummypix/mumanddad.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987648/mumanddad_amdg7d.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
-      position: "right"
+      position: "right",
+      cloudinaryId: "mumanddad_amdg7d",
     }
   },
   {
@@ -122,9 +127,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/mummypix/mum2.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987646/mum2_yjcmhz.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
-      position: "left"
+      position: "left",
+      cloudinaryId: "mum2_yjcmhz",
     }
   },
   {
@@ -142,9 +148,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/mummypix/mum4.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987533/mum4_zmw7iw.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
-      position: "right"
+      position: "right",
+      cloudinaryId: "mum4_zmw7iw",
     }
   },
   {
@@ -165,9 +172,10 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/scoanhq/3.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770996143/3_pksx1q.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
-      position: "left"
+      position: "left",
+      cloudinaryId: "3_pksx1q",
     }
   }
 ]
@@ -288,11 +296,21 @@ export function AboutSection({
           {slide.image.position === 'left' && (
             <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
               <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {slide.image.cloudinaryId ? (
+                  <CloudinaryImage
+                    publicId={slide.image.cloudinaryId}
+                    alt={slide.image.alt}
+                    width={400}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
               </div>
             </div>
@@ -314,11 +332,21 @@ export function AboutSection({
           {slide.image.position === 'right' && (
             <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
               <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {slide.image.cloudinaryId ? (
+                  <CloudinaryImage
+                    publicId={slide.image.cloudinaryId}
+                    alt={slide.image.alt}
+                    width={400}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
               </div>
             </div>

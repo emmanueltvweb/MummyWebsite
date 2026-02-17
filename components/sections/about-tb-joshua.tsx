@@ -4,6 +4,8 @@ import { Container } from "@/components/layout/container"
 import { useInView } from "@/hooks/use-in-view"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import CloudinaryImage from "@/components/cloudinary-image"
+
 
 interface CarouselSlide {
   id: number
@@ -14,6 +16,7 @@ interface CarouselSlide {
     src: string
     alt: string
     position: 'left' | 'right'
+    cloudinaryPublicId?: string // Optional Cloudinary public ID for optimization
   }
 }
 
@@ -41,9 +44,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/daddypix/dad1.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987544/10-06-18_Prophet_TB_Joshua_1_vgcz80.jpg",
       alt: "Prophet T.B. Joshua",
-      position: "right"
+      position: "right",
+      cloudinaryPublicId: "10-06-18_Prophet_TB_Joshua_1_vgcz80"
     }
   },
   {
@@ -70,9 +74,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/daddypix/dad2.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987547/dad1_csqhvn.jpg",
       alt: "Young T.B. Joshua",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "dad1_csqhvn"
     }
   },
   {
@@ -95,9 +100,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/daddypix/dad3.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987525/11-02-18_Prophet_TB_Joshua_dwik9e.jpg",
       alt: "SCOAN Building",
-      position: "right"
+      position: "right",
+      cloudinaryPublicId: "11-02-18_Prophet_TB_Joshua_dwik9e"
     }
   },
   {
@@ -121,9 +127,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/daddypix/dad4.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995332/dad4_fyus7p.jpg",
       alt: "Emmanuel TV Studio",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "dad4_fyus7p"
     }
   },
   {
@@ -144,9 +151,10 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/daddypix/dad5.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995449/dad5_prtvbh.jpg",
       alt: "T.B. Joshua Humanitarian Work",
-      position: "right"
+      position: "right",
+      cloudinaryPublicId: "dad5_prtvbh"
     }
   },
   {
@@ -167,9 +175,10 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/daddypix/dad6.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987548/dad6_dpujk9.jpg",
       alt: "T.B. Joshua Legacy",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "dad6_dpujk9"
     }
   },
   {
@@ -189,9 +198,10 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/daddypix/dad7.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995347/dad7_z0vh5f.jpg",
       alt: "T.B. Joshua Legacy",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "dad7_z0vh5f"
     }
   },
   {
@@ -210,9 +220,10 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/daddypix/dad8.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987506/dad8_or2xts.jpg",
       alt: "T.B. Joshua Legacy",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "dad8_or2xts"
     }
   },
   {
@@ -230,9 +241,10 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/daddypix/mumanddad.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987622/mumanddad_snvor7.jpg",
       alt: "T.B. Joshua Legacy",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "mumanddad_snvor7"
     }
   },
   {
@@ -256,9 +268,10 @@ const carouselSlides: CarouselSlide[] = [
       
     ),
     image: {
-      src: "/daddypix/dad10.jpg",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987623/04-02-18_Prophet_TB_Joshua_rhsikt.jpg",
       alt: "T.B. Joshua Legacy",
-      position: "left"
+      position: "left",
+      cloudinaryPublicId: "04-02-18_Prophet_TB_Joshua_rhsikt"
     }
   }
 ]
@@ -378,11 +391,21 @@ export function AboutTBJoshuaSection({
           {slide.image.position === 'left' && (
             <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
               <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {slide.image.cloudinaryPublicId ? (
+                  <CloudinaryImage
+                    publicId={slide.image.cloudinaryPublicId}
+                    alt={slide.image.alt}
+                    width={400}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
               </div>
             </div>
@@ -402,11 +425,21 @@ export function AboutTBJoshuaSection({
           {slide.image.position === 'right' && (
             <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
               <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {slide.image.cloudinaryPublicId ? (
+                  <CloudinaryImage
+                    publicId={slide.image.cloudinaryPublicId}
+                    alt={slide.image.alt}
+                    width={400}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
               </div>
             </div>

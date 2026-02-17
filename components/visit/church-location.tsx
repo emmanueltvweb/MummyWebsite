@@ -1,4 +1,5 @@
 import { MapPin, Clock, Phone } from "lucide-react"
+import CloudinaryImage from "@/components/cloudinary-image"
 
 export function ChurchLocation() {
   const churchAddress = {
@@ -75,9 +76,11 @@ export function ChurchLocation() {
           <div className="relative">
             <div className="aspect-square bg-gradient-to-br from-accent/20 to-accent/10 rounded-2xl p-8">
               <div className="w-full h-full bg-background rounded-xl flex items-center justify-center overflow-hidden">
-                <img
-                  src="/churchvisit/Church2.jpg"
+                <CloudinaryImage
+                  publicId="Church2_mnzitx"
                   alt="The Synagogue, Church Of All Nations main building in Lagos, Nigeria"
+                  width={800}
+                  height={800}
                   className="w-full h-full object-cover rounded-xl"
                 />
               </div>

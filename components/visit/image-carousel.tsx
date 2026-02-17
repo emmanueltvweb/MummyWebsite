@@ -3,37 +3,43 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
+import CloudinaryImage from "@/components/cloudinary-image"
 
 const churchImages = [
   {
     id: 1,
-    src: "/churchvisit/Church1.jpg",
+    src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995136/church_njjksx.png",
     alt: "The SCOAN Church - Leadership and congregation",
-    title: "Church Entrace Gate 4"
+    title: "Church Entrace Gate 4",
+    cloudinaryPublicId: "church_njjksx",
   },
   {
     id: 2,
-    src: "/churchvisit/insidechurch.jpg",
+    src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995131/insidechurch_f1qtzs.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
-    title: "Church View"
+    title: "Church View",
+    cloudinaryPublicId: "insidechurch_f1qtzs",
   },
   {
     id: 3,
-    src: "/churchvisit/insidechurch2.jpg",
+    src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995129/insidechurch2_cmob3c.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
-    title: "Church View"
+    title: "Church View",
+    cloudinaryPublicId: "insidechurch2_cmob3c",
   },
   {
     id: 4,
-    src: "/churchvisit/insidechurch1.jpg",
+    src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995131/insidechurch_f1qtzs.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
-    title: "Church View"
+    title: "Church View",
+    cloudinaryPublicId: "insidechurch_f1qtzs",
   },
   {
     id: 5,
-    src: "/churchvisit/Church2.jpg",
+    src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770995134/Church2_mnzitx.jpg",
     alt: "The SCOAN Church - Worship and prayer service",
-    title: "Church View"
+    title: "Church View",
+    cloudinaryPublicId: "Church2_mnzitx",
   },
 ]
 
@@ -91,15 +97,26 @@ export function ImageCarousel() {
               index === currentIndex ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            <Image
-              src={image.src}
-              alt={image.alt}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
-              priority={index === 0}
-              loading={index === 0 ? "eager" : "lazy"}
-            />
+            {image.cloudinaryPublicId ? (
+              <CloudinaryImage
+                publicId={image.cloudinaryPublicId}
+                alt={image.alt}
+                width={1200}
+                height={800}
+                className="object-cover w-full h-full"
+                priority={index === 0}
+              />
+            ) : (
+              <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 70vw"
+                priority={index === 0}
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
             <div className="absolute bottom-6 left-6 text-white">
               <h3 className="text-xl font-semibold">{image.title}</h3>

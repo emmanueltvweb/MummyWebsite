@@ -6,6 +6,7 @@ import { Container } from "@/components/layout/container"
 import { ArrowRight, X, Circle, Calendar, Clock, User } from "lucide-react"
 import Link from "next/link"
 import Autoplay from "embla-carousel-autoplay"
+import CloudinaryImage from "@/components/cloudinary-image"
 
 import { useInView } from "@/hooks/use-in-view"
 import {
@@ -95,7 +96,7 @@ export function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover opacity-100"
           key="hero-background-video"
         >
-          <source src="/MUMMYWEBHEADER.mp4" type="video/mp4" />
+          <source src="https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771257266/HEADER_2026_HD_jltk79.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
 
@@ -158,11 +159,11 @@ export function HeroSection() {
                     style={{ transitionDuration: "500ms", transitionProperty: "all" }}>
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
-                        <img
-                          src="/mummypix/1.jpg"
+                         <CloudinaryImage
+                          publicId="1_x7bruj"
                           alt="Slide visual"
-                          loading="lazy"
-                          decoding="async"
+                          width={380}
+                          height={540}
                           className="absolute inset-0 w-full h-full object-cover rounded-[32px]"
                         />
                         <div className="absolute inset-0  "></div>
@@ -176,11 +177,11 @@ export function HeroSection() {
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card shadow-2xl overflow-hidden">
                      
                       <div className="relative w-full h-full">
-                        <img
-                          src="/mummypix/9.jpg"
+                        <CloudinaryImage
+                          publicId="9_kx36sj"
                           alt="Slide visual"
-                          loading="lazy"
-                          decoding="async"
+                          width={380}
+                          height={540}
                           className="absolute inset-0 w-full h-full object-cover rounded-[32px]"
                         />
                         <div className="absolute inset-0  rounded-[32px]"></div>
@@ -194,11 +195,11 @@ export function HeroSection() {
                     style={{ transitionDuration: "500ms", transitionProperty: "all" }}>
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
-                        <img
-                          src="/mummypix/4.jpg"
+                        <CloudinaryImage
+                          publicId="4_mzjoik"
                           alt="Slide visual"
-                          loading="lazy"
-                          decoding="async"
+                          width={380}
+                          height={540}
                           className="absolute inset-0 w-full h-full object-cover rounded-[32px]"
                         />
                         <div className="absolute inset-0 'bg-gradient-to-t' from-black/60 via-transparent to-transparent rounded-[32px]"></div>
@@ -213,13 +214,6 @@ export function HeroSection() {
           </div>
         </div>
       </Container>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-        <div className="w-8 h-12 border-2 border-accent rounded-full flex items-center justify-center">
-          <div className="w-1 h-2 bg-accent rounded-full animate-pulse" />
-        </div>
-      </div>
     </section>
       
       {/* Legacy About Section */}
@@ -255,10 +249,7 @@ export function LegacyAboutSection() {
             <Carousel 
               className="w-full h-full"
               plugins={[
-                Autoplay({
-                  delay: 3000,
-                  stopOnInteraction: false,
-                })
+               
               ]}
               opts={{
                 loop: true,
@@ -266,24 +257,24 @@ export function LegacyAboutSection() {
             >
               <CarouselContent className="h-full">
                 <CarouselItem className="h-full">
-                  <img
-                    src="/mummypix/1.jpg"
+                  <CloudinaryImage
+                    publicId="mum4_zmw7iw"
                     alt="Pastor Evelyn Joshua"
                     className="w-full h-full object-cover hover:scale-105"
                     style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
                   />
                 </CarouselItem>
                 <CarouselItem className="h-full">
-                  <img
-                    src="/mummypix/4.jpg"
+                  <CloudinaryImage
+                    publicId="mummy_uoj32n"
                     alt="Pastor Evelyn Joshua Ministry"
                     className="w-full h-full object-cover hover:scale-105"
                     style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
                   />
                 </CarouselItem>
                 <CarouselItem className="h-full">
-                  <img
-                    src="/mummypix/8.jpg"
+                  <CloudinaryImage
+                    publicId="mum3_gf7bo7"
                     alt="Pastor Evelyn Joshua Service"
                     className="w-full h-full object-cover hover:scale-105"
                     style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
@@ -312,7 +303,7 @@ export function LegacyAboutSection() {
             </h2>
             <div className="mt-3 h-1 w-16 bg-accent rounded-full mb-6" />
             <p className="text-lg text-foreground/70 leading-relaxed mb-6 text-justify">
-              Pastor Evelyn Onyisi Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
+              Pastor Evelyn Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
               the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of
               All Nations (The SCOAN). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).
             </p>

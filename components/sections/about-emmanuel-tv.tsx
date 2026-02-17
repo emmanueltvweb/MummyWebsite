@@ -4,6 +4,8 @@ import { Container } from "@/components/layout/container"
 import { useInView } from "@/hooks/use-in-view"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import CloudinaryImage from "@/components/cloudinary-image"
+
 
 interface CarouselSlide {
   id: number
@@ -14,6 +16,7 @@ interface CarouselSlide {
     src: string
     alt: string
     position: 'left' | 'right'
+    cloudinaryPublicId?: string // Optional Cloudinary public ID for optimization
   }
 }
 
@@ -41,9 +44,11 @@ const carouselSlides: CarouselSlide[] = [
       </div>
     ),
     image: {
-      src: "/emmanueltv/logo.png",
+      src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987505/logo_h2xfyh.png",
       alt: "Emmanuel TV Logo",
-      position: "right"
+      position: "right",
+      cloudinaryPublicId: "logo_h2xfyh",
+
     }
   },
  ]
@@ -163,11 +168,21 @@ export function AboutEmmanuelTVSection({
           {slide.image.position === 'left' && (
             <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
               <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {slide.image.cloudinaryPublicId ? (
+                  <CloudinaryImage
+                    publicId={slide.image.cloudinaryPublicId}
+                    alt={slide.image.alt}
+                    width={400}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
               </div>
             </div>
@@ -187,11 +202,21 @@ export function AboutEmmanuelTVSection({
           {slide.image.position === 'right' && (
             <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
               <div className="relative mx-auto aspect-square w-56 sm:w-64 md:w-80 lg:w-96 rounded-full overflow-hidden border group mb-6 lg:mb-0">
-                <img
-                  src={slide.image.src}
-                  alt={slide.image.alt}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
+                {slide.image.cloudinaryPublicId ? (
+                  <CloudinaryImage
+                    publicId={slide.image.cloudinaryPublicId}
+                    alt={slide.image.alt}
+                    width={400}
+                    height={400}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <img
+                    src={slide.image.src}
+                    alt={slide.image.alt}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/30 via-transparent to-transparent" />
               </div>
             </div>
