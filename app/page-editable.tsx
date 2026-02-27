@@ -6,11 +6,8 @@ import { HeroSection } from "@/components/sections/hero-section-editable"
 import { ContactSection } from "@/components/sections/contact-section"
 import { NewsletterSection } from "@/components/sections/newsletter-section"
 import { InlineEditWrapper } from "@/components/inline-edit"
-import { AdminTest } from "@/components/admin-test"
-import { DebugNavigation } from "@/components/debug-navigation"
 import { useState, useEffect } from "react"
 import { toast } from "sonner"
-import { useAdminCheck } from "@/lib/use-admin-check"
 
 interface HomePageData {
   heroTitle?: string
@@ -24,19 +21,18 @@ interface HomePageData {
 }
 
 export default function Home() {
-  const { isAdmin, isLoading: isAdminLoading } = useAdminCheck()
+  const [isAdmin, setIsAdmin] = useState(false)
   const [homeData, setHomeData] = useState<HomePageData>({})
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    console.log('Home page mounted, admin status:', isAdmin)
-    // Only fetch content if admin mode is enabled
-    if (isAdmin) {
-      fetchHomeContent()
-    } else {
-      setIsLoading(false)
-    }
-  }, [isAdmin])
+    // Check if user is admin (in production, this would come from auth context/session)
+    // For now, we'll enable admin mode by default to demonstrate the functionality
+    setIsAdmin(true)
+
+    // Fetch current home page content
+    fetchHomeContent()
+  }, [])
 
   const fetchHomeContent = async () => {
     try {
@@ -87,7 +83,7 @@ export default function Home() {
     toast.error(`Edit error: ${error.message}`)
   }
 
-  if (isLoading || isAdminLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

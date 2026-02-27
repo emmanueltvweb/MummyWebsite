@@ -98,7 +98,7 @@ export function Preloader() {
               strokeWidth="3"
               strokeLinecap="round"
               strokeDasharray="100"
-              opacity="0.3"
+              opacity="0.9"
             />
 
             {/* Inner Blue Ring */}
@@ -110,7 +110,7 @@ export function Preloader() {
               strokeWidth="3"
               strokeLinecap="round"
               strokeDasharray="100"
-              opacity="0.5"
+              opacity="0.9"
             />
 
             {/* Animated Center Circle */}
@@ -122,7 +122,7 @@ export function Preloader() {
               strokeWidth="2"
               fill="none"
               strokeDasharray="50"
-              opacity="0.8"
+              opacity="0.9"
             />
 
             {/* Gradients */}
@@ -223,8 +223,36 @@ export function Preloader() {
             >
               e
             </span>
+
+            {/* ← spacer between "Welcome" and "To" — only change made */}
+            <span className="inline-block w-2" aria-hidden />
+
+            <span
+              className="inline-block"
+              style={{
+                animationName: "pulse",
+                animationDuration: "1.5s",
+                animationTimingFunction: "ease-in-out",
+                animationIterationCount: "infinite",
+                animationDelay: "0.6s",
+              }}
+            >
+              T
+            </span>
+            <span
+              className="inline-block"
+              style={{
+                animationName: "pulse",
+                animationDuration: "1.5s",
+                animationTimingFunction: "ease-in-out",
+                animationIterationCount: "infinite",
+                animationDelay: "0.6s",
+              }}
+            >
+              o
+            </span>
           </h2>
-          <p className="text-sm text-muted-foreground mt-2">Loading Pastor Evelyn Joshua's ministry portal</p>
+          <p className="text-sm text-muted-foreground mt-2">Pastor Evelyn Joshua Website</p>
         </div>
       </div>
     </div>

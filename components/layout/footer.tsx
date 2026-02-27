@@ -1,4 +1,5 @@
 import { Facebook, Instagram, Youtube, Mail } from "lucide-react"
+import Link from "next/link"
 
 export function Footer() {
   const currentYear = new Date().getFullYear()
@@ -9,9 +10,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div className="md:col-span-1">
-            <div className="w-12 h-12 bg-gradient-to-br from-accent to-accent/70 rounded-lg flex items-center justify-center mb-4">
-              <span className="text-primary font-bold text-lg">Pst.</span>
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/70 rounded-full flex items-center justify-center shadow-sm">
+              <span className="text-foreground font-extrabold text-sm">Pst.</span>
             </div>
+            <span className="font-bold text-white text-lg">Evelyn Joshua</span>
+          </Link>
             <p className="text-primary-foreground/70 text-sm">
               Serving the world with faith, love, and spiritual guidance.
             </p>

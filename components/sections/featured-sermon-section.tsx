@@ -20,7 +20,7 @@ export function FeaturedSermonSection() {
     setTimeout(() => {
       setIsLoadingVideo(false)
       // Open video in new tab to avoid CORS issues
-      window.open('https://www.stream.emmanuel.tv/title/divine-healing-%7C-pastor-evelyn-joshua-sermon/en?id=693371d660b2170ab47749e6&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')
+      window.open('https://www.stream.emmanuel.tv/title/a-grateful-steward%E2%80%99s-account-%7C-thanksgiving-message-2025-%7C-pastor-evelyn-joshua/en?id=6937f6a8e4b0425d920b8319&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')
     }, 1000)
   }
   return (
@@ -84,7 +84,7 @@ export function FeaturedSermonSection() {
           <div className="order-1 lg:order-2 space-y-6 animate-slide-in-right">
             {/* Category Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20">
-              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">Latest Sermon</span>
+              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">Sermon</span>
             </div>
 
             {/* Title */}
