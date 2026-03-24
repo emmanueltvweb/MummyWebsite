@@ -10,15 +10,41 @@ import { Mail } from "lucide-react"
 export function NewsletterSection() {
   const { ref, isInView } = useInView({ threshold: 0.3 })
   const [email, setEmail] = useState("")
-  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "success" | "error">("idle")
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "success" | "error" | "loading">("idle")
 
   const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Simulate subscription
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    setSubscribeStatus("success")
-    setEmail("")
-    setTimeout(() => setSubscribeStatus("idle"), 3000)
+    
+    if (!email) {
+      setSubscribeStatus("error")
+      return
+    }
+
+    try {
+      setSubscribeStatus("loading")
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const result = await response.json()
+
+      if (response.ok && result.success) {
+        setSubscribeStatus("success")
+        setEmail("")
+        setTimeout(() => setSubscribeStatus("idle"), 5000)
+      } else {
+        setSubscribeStatus("error")
+        setTimeout(() => setSubscribeStatus("idle"), 3000)
+      }
+    } catch (error) {
+      console.error('Subscription error:', error)
+      setSubscribeStatus("error")
+      setTimeout(() => setSubscribeStatus("idle"), 3000)
+    }
   }
 
   return (
@@ -33,7 +59,7 @@ export function NewsletterSection() {
             Stay Connected with Our <span className="gold-accent">Ministry</span>
           </h2>
           <p className="text-foreground/70 mb-8">
-            Subscribe to receive updates on events, teachings, and community service opportunities.
+            Subscribe to receive updates on events, teachings, and Special Programs.
           </p>
 
           <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
@@ -43,18 +69,29 @@ export function NewsletterSection() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               required
-              className="flex-1 px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-foreground/40 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all"
+              disabled={subscribeStatus === "loading"}
+              className="flex-1 px-4 py-3 rounded-lg border border-border bg-background text-foreground placeholder-foreground/40 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             />
             <button
               type="submit"
+              disabled={subscribeStatus === "loading"}
               className={`px-8 py-3 rounded-lg font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                 subscribeStatus === "success"
                   ? "bg-green-600 text-white"
+                  : subscribeStatus === "error"
+                  ? "bg-red-600 text-white"
                   : "bg-accent text-accent-foreground hover:shadow-lg hover:shadow-accent/30"
-              }`}
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
-              {subscribeStatus === "success" ? (
+              {subscribeStatus === "loading" ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  Subscribing...
+                </>
+              ) : subscribeStatus === "success" ? (
                 "Subscribed!"
+              ) : subscribeStatus === "error" ? (
+                "Try Again"
               ) : (
                 <>
                   <Mail className="w-5 h-5" />
@@ -63,6 +100,9 @@ export function NewsletterSection() {
               )}
             </button>
           </form>
+          {subscribeStatus === "error" && (
+            <p className="text-red-600 text-sm mt-2">Subscription failed. Please try again.</p>
+          )}
         </div>
       </Container>
     </section>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 export function useAdminCheck() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [shouldEdit, setShouldEdit] = useState(false)
 
   useEffect(() => {
     // Simple admin check - in production, this would check actual authentication
@@ -14,11 +15,14 @@ export function useAdminCheck() {
       const adminMode = localStorage.getItem('admin-mode') === 'true'
       const urlParams = new URLSearchParams(window.location.search)
       const adminParam = urlParams.get('admin') === 'true'
+      const editParam = urlParams.get('edit') === 'true'
 
-      console.log('Admin check:', { isDev, adminMode, adminParam, url: window.location.href })
+      console.log('Admin check:', { isDev, adminMode, adminParam, editParam, url: window.location.href })
 
       // Enable admin mode if any of these conditions are met
-      setIsAdmin(isDev || adminMode || adminParam)
+      const adminStatus = isDev || adminMode || adminParam
+      setIsAdmin(adminStatus)
+      setShouldEdit(adminStatus && editParam)
       setIsLoading(false)
     }
 
@@ -38,6 +42,7 @@ export function useAdminCheck() {
   return {
     isAdmin,
     isLoading,
+    shouldEdit,
     enableAdminMode,
     disableAdminMode,
   }

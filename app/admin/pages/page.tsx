@@ -18,6 +18,7 @@ interface Page {
 
 const mockPages: Page[] = [
   { id: '1', title: 'Home', slug: '/', status: 'published', lastModified: '2024-01-15', lastModifiedBy: 'Admin User' },
+  { id: '8', title: 'About Pastor Evelyn Joshua', slug: '/about/pst-evelyn-joshua', status: 'published', lastModified: '2024-01-15', lastModifiedBy: 'Admin User' },
   { id: '2', title: 'About TB Joshua', slug: '/about/tb-joshua', status: 'published', lastModified: '2024-01-14', lastModifiedBy: 'Editor User' },
   { id: '3', title: 'About SCOAN', slug: '/about/scoan', status: 'published', lastModified: '2024-01-13', lastModifiedBy: 'Admin User' },
   { id: '4', title: 'About Emmanuel TV', slug: '/about/emmanuel-tv', status: 'published', lastModified: '2024-01-12', lastModifiedBy: 'Editor User' },
@@ -36,8 +37,13 @@ export default function PagesManagement() {
   )
 
   const handleEdit = (pageId: string) => {
-    // Navigate to edit page
-    window.location.href = `/admin/pages/${pageId}/edit`
+    // For home page, redirect to dedicated home page editor
+    if (pageId === '1') {
+      window.location.href = '/admin/pages/home'
+    } else {
+      // For other pages, navigate to the existing edit page
+      window.location.href = `/admin/pages/${pageId}/edit`
+    }
   }
 
   const handlePreview = (slug: string) => {

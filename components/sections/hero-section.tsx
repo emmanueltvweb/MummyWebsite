@@ -99,8 +99,6 @@ export function HeroSection() {
           <source src="https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771257266/HEADER_2026_HD_jltk79.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
-
-
       </div>
 
       {/* Decorative Elements */}
@@ -346,7 +344,7 @@ function LatestSermonSection() {
               {!showFacebookVideo ? (
                 <>
                   <Image
-                    src="/sermonpix/sermon2026.png"
+                    src="https://res.cloudinary.com/dvlcc2r5w/image/upload/v1773053310/EMMANUEL_TV_-_20_YEARS_OF_GOD_S_GLORY_-_Pastor_Evelyn_Joshua_Sermon_Landscape_co6hnh.png"
                     alt="Featured sermon"
                     width={1280}
                     height={720}
@@ -368,7 +366,7 @@ function LatestSermonSection() {
               ) : (
                 <div className="relative w-full bg-black aspect-video">
                   <iframe
-                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1521598525791035%2F&show_text=false&width=560&t=0"
+                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1429301158950052%2F&show_text=false&width=560&t=0"
                     width="560"
                     height="314"
                     style={{ border: 'none', overflow: 'hidden' }}
@@ -401,34 +399,34 @@ function LatestSermonSection() {
 
             {/* Title */}
             <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-primary leading-tight">
-              THE YEAR OF OVERFLOWING JOY 2026<span className="text-accent"></span> 
+              EMMANUEL TV - 20 YEARS OF GOD'S GLORY<span className="text-accent"></span> 
             </h2>
 
             {/* Meta Information */}
             <div className="space-y-3 text-foreground/70">
               <div className="flex items-center gap-3">
-                <Calendar size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">January 01, 2026</span>
+                <Calendar size={20} className="text-accent"/>
+                <span className="text-sm sm:text-base">March 08, 2026</span>
               </div>
               <div className="flex items-center gap-3">
-                <Clock size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">50 minutes</span>
+                <Clock size={20} className="text-accent"/>
+                <span className="text-sm sm:text-base">22 minutes</span>
               </div>
               <div className="flex items-center gap-3">
-                <User size={20} className="text-accent" />
+                <User size={20} className="text-accent"/>
                 <span className="text-sm sm:text-base">Pastor Evelyn Joshua Sermon</span>
               </div>
             </div>
 
             {/* Summary */}
             <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
-              “2026 IS THE YEAR OF OVERFLOWING JOY!”
+              In her address during The Emmanuel TV 20th Anniversary, Pastor Evelyn Joshua gives a message on love, faith and standing firm during trials.
 
-              <p className="mt-4">So did the Lord Almighty declare through Pastor Evelyn Joshua to believers across the world during the SCOAN Candlelight Service 2025.</p>
+              <p className="mt-4">Reading from James 1:2-8, The SCOAN Leader enjoins us to persevere in faith, love and the rendering of service to fellow humans - in the manner taught by Prophet TB Joshua via the example of Emmanuel TV.</p>
 
 
 
-              <p className="mt-4">In this new year, joy becomes your conquering power. As Pastor Evelyn Joshua reminds us, “We may have reasons to be worried, but we have more reasons not to be worried.” A Christian who worries is simply saying he does not trust God. Therefore, this is a year to replace worry with trust and fear with rightful focus. </p>
+              <p className="mt-4">"Your faith will not grow until you are placed in a situation that requires more than you have ever had." - Pastor Evelyn Joshua.</p>
 
             </div>
 
@@ -450,7 +448,7 @@ function LatestSermonSection() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <button 
-                onClick={() => window.open('https://www.stream.emmanuel.tv/title/the-year-of-overflowing-joy-2026/en?id=6957c6c7e4b0c901a5ad7b4e&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open('https://www.stream.emmanuel.tv/title/conquering-with-faith-and-love-%7C-pastor-evelyn-joshua-sermon/en?id=69adfbcde4b064133a2afdd4&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')}
                 className="px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Watch Now
