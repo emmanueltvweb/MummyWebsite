@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
+
 import { NavDropdown } from './nav-dropdown'
 
 export function Header() {
@@ -33,7 +34,7 @@ export function Header() {
             <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/70 rounded-full flex items-center justify-center shadow-sm">
               <span className="text-foreground font-bold text-sm">Pst.</span>
             </div>
-            <span className="hidden sm:inline font-bold text-primary text-lg">Evelyn Joshua</span>
+            <span className="font-bold text-primary text-lg">Evelyn Joshua</span>
           </Link>
 
           {/* Center navigation (pill-style links) */}

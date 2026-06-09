@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { AboutSCOANSection } from "@/components/sections/about-scoan"

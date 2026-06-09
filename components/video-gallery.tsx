@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+
 import { VideoModal } from './video-modal'
 
 interface VideoItem {

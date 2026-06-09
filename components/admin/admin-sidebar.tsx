@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from "@/components/ui/button"
 import { 
   Home, 
   FileText, 
@@ -15,6 +14,8 @@ import {
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
+
+import { Button } from "@/components/ui/button"
 
 const sidebarItems = [
   { href: "/admin", label: "Dashboard", icon: Home },

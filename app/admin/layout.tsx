@@ -1,4 +1,5 @@
 import type React from "react"
+
 import { AdminSidebar } from "@/components/admin/admin-sidebar"
 import { AdminHeader } from "@/components/admin/admin-header"
 import { AdminAuthProvider } from "@/components/admin/admin-auth-provider"

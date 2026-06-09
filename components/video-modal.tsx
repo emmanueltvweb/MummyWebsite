@@ -24,14 +24,11 @@ export function VideoModal({ isOpen, onClose, video }: VideoModalProps) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [hasStarted, setHasStarted] = useState(false)
   const [isEmbed, setIsEmbed] = useState(false)
   
   const videoRef = useRef<HTMLVideoElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
   const focusableElementsRef = useRef<HTMLElement[]>([])
-  const playTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Detect if this is an embed video (Facebook, YouTube, etc.)
   useEffect(() => {

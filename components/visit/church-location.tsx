@@ -1,11 +1,10 @@
 import { MapPin, Clock, Phone } from "lucide-react"
+
 import CloudinaryImage from "@/components/cloudinary-image"
 
 export function ChurchLocation() {
   const churchAddress = {
-    street: "1, Segun Irefin Street,",
-    area: "Agodo, Egbe,",
-    city: "Lagos, Nigeria",
+    street: "1 Prophet T.B Joshua St, Egbe Rd, Alimosho, Lagos 100265, Lagos",
     fullAddress: "1, Segun Irefin Street, Agodo, Egbe, Lagos, Nigeria"
   }
 
@@ -34,11 +33,11 @@ export function ChurchLocation() {
               <div className="flex items-start gap-4">
                 <MapPin className="w-6 h-6 text-accent mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Address</h3>
+                  <h3 className="font-extrabold text-foreground mb-1">Address</h3>
                   <address className="text-muted-foreground not-italic">
                     <div className="select-text">{churchAddress.street}</div>
-                    <div className="select-text">{churchAddress.area}</div>
-                    <div className="select-text">{churchAddress.city}</div>
+                    {/* <div className="select-text">{churchAddress.area}</div>
+                    <div className="select-text">{churchAddress.city}</div> */}
                   </address>
                 </div>
               </div>
@@ -47,7 +46,7 @@ export function ChurchLocation() {
               <div className="flex items-start gap-4">
                 <Clock className="w-6 h-6 text-accent mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Service Time</h3>
+                  <h3 className="font-extrabold text-foreground mb-1">Service Time</h3>
                   <div className="space-y-2 text-muted-foreground">
                     {serviceTimes.map((service, index) => (
                       <div key={index} className="flex justify-between">
@@ -63,9 +62,18 @@ export function ChurchLocation() {
               <div className="flex items-start gap-4">
                 <Phone className="w-6 h-6 text-accent mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1">Contact</h3>
+                  <h3 className="font-extrabold text-foreground mb-1">Contact</h3>
+                  <p className="text-foreground font-semibold">
+                    For inquiries, please call:
+                  </p>
                   <p className="text-muted-foreground">
-                    For inquiries, please call: +234 123 456 7890
+                    Nigeria: +234 (0) 808 809 6917
+                  </p>
+                  <p className="text-muted-foreground">
+                    Français: +234 (0) 808 749 2208
+                  </p>
+                  <p className="text-muted-foreground">
+                   Español: +234 (0) 812 528 3478
                   </p>
                 </div>
               </div>

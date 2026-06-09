@@ -1,6 +1,8 @@
 'use client'
 
 import { Bell, Search, User } from "lucide-react"
+import { usePathname } from "next/navigation"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -11,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { usePathname } from "next/navigation"
 
 export function AdminHeader() {
   const pathname = usePathname()

@@ -1,6 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Save, Eye, RotateCcw, Upload } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,8 +11,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import { Save, Eye, RotateCcw, Upload } from 'lucide-react'
-import dynamic from 'next/dynamic'
 
 // Dynamically import the WYSIWYG editor to avoid SSR issues
 const RichTextEditor = dynamic(

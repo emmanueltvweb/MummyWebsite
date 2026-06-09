@@ -1,8 +1,6 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import { 
   Bold, 
   Italic, 
@@ -18,6 +16,9 @@ import {
   Undo,
   Redo
 } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 
 interface RichTextEditorProps {
   content: string

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import Image from "next/image"
+
 import CloudinaryImage from "@/components/cloudinary-image"
 
 interface GalleryItem {

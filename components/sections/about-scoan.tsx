@@ -1,9 +1,10 @@
 "use client"
 
-import { Container } from "@/components/layout/container"
-import { useInView } from "@/hooks/use-in-view"
 import { useState, useEffect, useCallback, useRef } from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+
+import { Container } from "@/components/layout/container"
+import { useInView } from "@/hooks/use-in-view"
 import CloudinaryImage from "@/components/cloudinary-image"
 
 interface CarouselSlide {

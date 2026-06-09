@@ -1,10 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { Edit, Eye, Trash2, Plus, Search } from 'lucide-react'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Edit, Eye, Trash2, Plus, Search } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 
 interface Page {

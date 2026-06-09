@@ -1,11 +1,11 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
+import { Mail } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
 import { useInView } from "@/hooks/use-in-view"
-import { useState } from "react"
-import { Mail } from "lucide-react"
 
 export function NewsletterSection() {
   const { ref, isInView } = useInView({ threshold: 0.3 })

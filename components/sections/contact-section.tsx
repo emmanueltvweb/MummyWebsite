@@ -1,11 +1,11 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
+import { Mail, Phone, MapPin, Send } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
 import { useInView } from "@/hooks/use-in-view"
-import { useState } from "react"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
 
 export function ContactSection() {
   const { ref, isInView } = useInView({ threshold: 0.2 })
