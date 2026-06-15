@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
@@ -7,7 +7,6 @@ import { ArrowRight, X, Circle, Calendar, Clock, User } from "lucide-react"
 import Link from "next/link"
 import Autoplay from "embla-carousel-autoplay"
 import CloudinaryImage from "@/components/cloudinary-image"
-
 import { useInView } from "@/hooks/use-in-view"
 import {
   Carousel,
@@ -17,8 +16,20 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel"
+import { EditableText, EditableHTML } from "@/components/inline-edit"
+import { useEditable } from "@/components/inline-edit"
 
-export function HeroSection() {
+interface HeroSectionProps {
+  isAdmin?: boolean
+  initialData?: {
+    heroTitle?: string
+    heroSubtitle?: string
+    heroPhrases?: string[]
+    heroDescription?: string
+  }
+}
+
+export function HeroSection({ isAdmin = false, initialData }: HeroSectionProps) {
   const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [api, setApi] = useState<CarouselApi | null>(null)
@@ -27,7 +38,23 @@ export function HeroSection() {
   const [showFacebookVideo, setShowFacebookVideo] = useState(false)
   const [isLoadingVideo, setIsLoadingVideo] = useState(false)
   
-  const phrases = ["And Win Today", "Win Tomorrow", "And Win Forever"]
+  const phrases = initialData?.heroPhrases || ["And Win Today", "Win Tomorrow", "And Win Forever"]
+
+  // Set up editable content
+  const { content: heroTitle } = useEditable({
+    id: 'hero-title',
+    content: initialData?.heroTitle || "Good Morning,",
+  })
+
+  const { content: heroSubtitle } = useEditable({
+    id: 'hero-subtitle',
+    content: initialData?.heroSubtitle || phrases[currentPhraseIndex],
+  })
+
+  const { content: heroDescription } = useEditable({
+    id: 'hero-description',
+    content: initialData?.heroDescription || "Serving the world with faith, love, and spiritual guidance.",
+  })
 
   useEffect(() => {
     setIsLoaded(true)
@@ -62,7 +89,7 @@ export function HeroSection() {
     }, 3000) // Change phrase every 3 seconds
 
     return () => clearInterval(animationInterval)
-  }, [isLoaded])
+  }, [isLoaded, phrases.length])
 
   useEffect(() => {
     if (!api) return
@@ -99,6 +126,8 @@ export function HeroSection() {
           <source src="https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771257266/HEADER_2026_HD_jltk79.mp4" type="video/mp4" />
           Your browser does not support the video tag.
         </video>
+
+
       </div>
 
       {/* Decorative Elements */}
@@ -118,9 +147,27 @@ export function HeroSection() {
                 transitionDelay: isLoaded ? "0ms" : "0ms"
               }}
             >
-              Good Morning,{" "}
+              {isAdmin ? (
+                <EditableText
+                  id="hero-title"
+                  text={heroTitle}
+                  className="inline"
+                  validation={{ required: true, minLength: 5 }}
+                />
+              ) : (
+                heroTitle
+              )}{" "}
               <span className={`text-transparent text-5xl bg-clip-text bg-gradient-to-r from-accent via-accent to-secondary transition-opacity duration-500 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
-                {phrases[currentPhraseIndex]}
+                {isAdmin ? (
+                  <EditableText
+                    id="hero-subtitle"
+                    text={heroSubtitle}
+                    className="inline"
+                    validation={{ required: true, minLength: 5 }}
+                  />
+                ) : (
+                  heroSubtitle
+                )}
               </span>
             </h1>
             <div
@@ -216,17 +263,27 @@ export function HeroSection() {
       
       {/* Legacy About Section */}
       <div className="relative -mt-20 md:-mt-32">
-        <LegacyAboutSection />
+        <LegacyAboutSection isAdmin={isAdmin} />
       </div>
 
       {/* Latest Sermon Section */}
-      <LatestSermonSection />
+      <LatestSermonSection isAdmin={isAdmin} />
     </>
   )
 }
 
-export function LegacyAboutSection() {
+export function LegacyAboutSection({ isAdmin = false }: { isAdmin?: boolean }) {
   const { ref, isInView } = useInView({ threshold: 0.2 })
+
+  const { content: aboutTitle } = useEditable({
+    id: 'about-title',
+    content: "About Pastor Evelyn Joshua",
+  })
+
+  const { content: aboutContent } = useEditable({
+    id: 'about-content',
+    content: "Pastor Evelyn Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of All Nations (The SCOAN). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).",
+  })
 
   return (
     <section id="about-legacy" ref={ref} className="py-20 md:py-32 bg-muted relative">
@@ -297,24 +354,38 @@ export function LegacyAboutSection() {
             }}
           >
             <h2 className="text-4xl font-bold text-primary mb-6 bg">
-              About <span className="gold-accent font-bold">Pastor Evelyn Joshua</span>
+              {isAdmin ? (
+                <EditableText
+                  id="about-title"
+                  text={aboutTitle}
+                  className="inline"
+                  validation={{ required: true, minLength: 10 }}
+                />
+              ) : (
+                aboutTitle
+              )}
             </h2>
             <div className="mt-3 h-1 w-16 bg-accent rounded-full mb-6" />
-            <p className="text-lg text-foreground/70 leading-relaxed mb-6 text-justify">
-              Pastor Evelyn Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
-              the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of
-              All Nations (The SCOAN). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).
-            </p>
+            <div className="text-lg text-foreground/70 leading-relaxed mb-6 text-justify">
+              {isAdmin ? (
+                <EditableHTML
+                  id="about-content"
+                  html={aboutContent}
+                  validation={{ required: true, minLength: 50 }}
+                />
+              ) : (
+                aboutContent
+              )}
+            </div>
              <div className="mt-8">
                 <Link 
-                  href="/about/pst-evelyn-joshua" 
+                  href="/about" 
                   className="inline-flex items-center px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-1"
                   style={{ transition: "all 300ms ease-out" }}
                 >
                   Learn More
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
-              
               </div>
           </div>
         </div>
@@ -323,9 +394,19 @@ export function LegacyAboutSection() {
   )
 }
 
-function LatestSermonSection() {
+function LatestSermonSection({ isAdmin = false }: { isAdmin?: boolean }) {
   const [showFacebookVideo, setShowFacebookVideo] = useState(false)
   const [isLoadingVideo, setIsLoadingVideo] = useState(false)
+
+  const { content: sermonTitle } = useEditable({
+    id: 'sermon-title',
+    content: "THE YEAR OF OVERFLOWING JOY 2026",
+  })
+
+  const { content: sermonContent } = useEditable({
+    id: 'sermon-content',
+    content: "So did the Lord Almighty declare through Pastor Evelyn Joshua to believers across the world during the SCOAN Candlelight Service 2025.",
+  })
 
   const handleWatchNow = () => {
     setIsLoadingVideo(true)
@@ -345,7 +426,7 @@ function LatestSermonSection() {
               {!showFacebookVideo ? (
                 <>
                   <Image
-                    src="https://res.cloudinary.com/dvlcc2r5w/image/upload/v1773053310/EMMANUEL_TV_-_20_YEARS_OF_GOD_S_GLORY_-_Pastor_Evelyn_Joshua_Sermon_Landscape_co6hnh.png"
+                    src="/sermonpix/sermon2026.png"
                     alt="Featured sermon"
                     width={1280}
                     height={720}
@@ -367,7 +448,7 @@ function LatestSermonSection() {
               ) : (
                 <div className="relative w-full bg-black aspect-video">
                   <iframe
-                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1429301158950052%2F&show_text=false&width=560&t=0"
+                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1521598525791035%2F&show_text=false&width=560&t=0"
                     width="560"
                     height="314"
                     style={{ border: 'none', overflow: 'hidden' }}
@@ -400,34 +481,50 @@ function LatestSermonSection() {
 
             {/* Title */}
             <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-primary leading-tight">
-              EMMANUEL TV - 20 YEARS OF GOD'S GLORY<span className="text-accent"></span> 
+              {isAdmin ? (
+                <EditableText
+                  id="sermon-title"
+                  text={sermonTitle}
+                  className="inline"
+                  validation={{ required: true, minLength: 10 }}
+                />
+              ) : (
+                sermonTitle
+              )}
+              <span className="text-accent"></span> 
             </h2>
 
             {/* Meta Information */}
             <div className="space-y-3 text-foreground/70">
               <div className="flex items-center gap-3">
-                <Calendar size={20} className="text-accent"/>
-                <span className="text-sm sm:text-base">March 08, 2026</span>
+                <Calendar size={20} className="text-accent" />
+                <span className="text-sm sm:text-base">January 01, 2026</span>
               </div>
               <div className="flex items-center gap-3">
-                <Clock size={20} className="text-accent"/>
-                <span className="text-sm sm:text-base">22 minutes</span>
+                <Clock size={20} className="text-accent" />
+                <span className="text-sm sm:text-base">50 minutes</span>
               </div>
               <div className="flex items-center gap-3">
-                <User size={20} className="text-accent"/>
+                <User size={20} className="text-accent" />
                 <span className="text-sm sm:text-base">Pastor Evelyn Joshua Sermon</span>
               </div>
             </div>
 
             {/* Summary */}
             <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
-              In her address during The Emmanuel TV 20th Anniversary, Pastor Evelyn Joshua gives a message on love, faith and standing firm during trials.
+              <div>
+                {isAdmin ? (
+                  <EditableHTML
+                    id="sermon-content"
+                    html={sermonContent}
+                    validation={{ required: true, minLength: 20 }}
+                  />
+                ) : (
+                  sermonContent
+                )}
+              </div>
 
-              <p className="mt-4">Reading from James 1:2-8, The SCOAN Leader enjoins us to persevere in faith, love and the rendering of service to fellow humans - in the manner taught by Prophet TB Joshua via the example of Emmanuel TV.</p>
-
-
-
-              <p className="mt-4">"Your faith will not grow until you are placed in a situation that requires more than you have ever had." - Pastor Evelyn Joshua.</p>
+              <p className="mt-4">In this new year, joy becomes your conquering power. As Pastor Evelyn Joshua reminds us, "We may have reasons to be worried, but we have more reasons not to be worried." A Christian who worries is simply saying he does not trust God. Therefore, this is a year to replace worry with trust and fear with rightful focus. </p>
 
             </div>
 
@@ -449,7 +546,7 @@ function LatestSermonSection() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 pt-4">
               <button 
-                onClick={() => window.open('https://www.stream.emmanuel.tv/title/conquering-with-faith-and-love-%7C-pastor-evelyn-joshua-sermon/en?id=69adfbcde4b064133a2afdd4&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open('https://www.stream.emmanuel.tv/title/the-year-of-overflowing-joy-2026/en?id=6957c6c7e4b0c901a5ad7b4e&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')}
                 className="px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Watch Now
@@ -467,8 +564,3 @@ function LatestSermonSection() {
     </section>
   )
 }
-
-
-
-
-

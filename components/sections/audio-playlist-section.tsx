@@ -1,11 +1,9 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react"
-import { Play, Pause, SkipBack, SkipForward, Volume2, Music, AlertTriangle } from 'lucide-react'
+import { Play, Pause, SkipBack, SkipForward, Volume2, Music, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
-
 import { Container } from "@/components/layout/container"
-
 // -------------------- Helpers --------------------
 
 // Format seconds to mm:ss
@@ -1117,8 +1115,8 @@ export function AudioPlaylistSection() {
         {/* Section Header */}
         <div className="text-center mb-12 animate-fade-in">
           <p className="text-accent font-semibold tracking-wider uppercase text-xs sm:text-sm mb-3">Audio Library</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">Sermons, Music & <span className="text-accent">Devotionals</span></h2>
-          <p className="text-foreground/70 max-w-2xl mx-auto">Explore our collection of inspiring sermons, worship music, and daily devotionals</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">Sermons, Music & <span className="text-accent">Teaching Series</span></h2>
+          <p className="text-foreground/70 max-w-2xl mx-auto">Explore our collection of inspiring sermons, worship music, and daily teaching series</p>
         </div>
 
         {/* Audio Player UI (unchanged visually) */}
@@ -1200,7 +1198,7 @@ export function AudioPlaylistSection() {
         </div>
 
         <div className="mb-8 flex flex-wrap gap-3 animate-fade-in" role="tablist" aria-label="Audio categories">
-          {["all", "sermon", "worship-music", "devotional", "teaching-series"].map((category) => (
+          {["all", "sermon", "worship-music", "teaching-series"].map((category) => (
             <button key={category} onClick={() => setActiveTab(category)} className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-300 text-sm sm:text-base ${activeTab === category ? "bg-accent text-accent-foreground shadow-lg" : "bg-muted text-foreground hover:bg-muted/80"}`} role="tab" aria-selected={activeTab === category} aria-label={`Filter by ${category.replace("-", " ")} category`} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveTab(category) } }}>{category === "all" ? "All" : category.replace("-", " ").toUpperCase()}</button>
           ))}
         </div>
