@@ -158,7 +158,7 @@ export function HeroSection() {
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
                          <CloudinaryImage
-                          publicId="1_x7bruj"
+                          publicId="10_cdpaih"
                           alt="Slide visual"
                           width={380}
                           height={540}
@@ -176,7 +176,7 @@ export function HeroSection() {
                      
                       <div className="relative w-full h-full">
                         <CloudinaryImage
-                          publicId="9_kx36sj"
+                          publicId="1A_1_luhi2h"
                           alt="Slide visual"
                           width={380}
                           height={540}
@@ -194,7 +194,7 @@ export function HeroSection() {
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
                         <CloudinaryImage
-                          publicId="4_mzjoik"
+                          publicId="C_8_gcmkxe"
                           alt="Slide visual"
                           width={380}
                           height={540}
@@ -256,7 +256,7 @@ export function LegacyAboutSection() {
               <CarouselContent className="h-full">
                 <CarouselItem className="h-full">
                   <CloudinaryImage
-                    publicId="mum4_zmw7iw"
+                    publicId="1A_40_ime6ny"
                     alt="Pastor Evelyn Joshua"
                     className="w-full h-full object-cover hover:scale-105"
                     style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
@@ -264,7 +264,7 @@ export function LegacyAboutSection() {
                 </CarouselItem>
                 <CarouselItem className="h-full">
                   <CloudinaryImage
-                    publicId="mummy_uoj32n"
+                    publicId="E_4_retutw"
                     alt="Pastor Evelyn Joshua Ministry"
                     className="w-full h-full object-cover hover:scale-105"
                     style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
@@ -272,7 +272,7 @@ export function LegacyAboutSection() {
                 </CarouselItem>
                 <CarouselItem className="h-full">
                   <CloudinaryImage
-                    publicId="mum3_gf7bo7"
+                    publicId="1A_40_ime6ny"
                     alt="Pastor Evelyn Joshua Service"
                     className="w-full h-full object-cover hover:scale-105"
                     style={{ transitionDuration: "500ms", transitionProperty: "transform" }}

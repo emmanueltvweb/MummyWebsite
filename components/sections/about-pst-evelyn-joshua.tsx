@@ -51,10 +51,10 @@ const carouselSlides: CarouselSlide[] = [
   {
     id: 1,
     title: "Introduction",
-    subtitle: "Pst. Evelyn Onyisi Joshua",
+    subtitle: "Pst. Evelyn Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
-        Pastor Evelyn Onyisi Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
+        Pastor Evelyn Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
         the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of
         All Nations ({createScoanLink('The SCOAN')}). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).
       </div>
@@ -63,13 +63,13 @@ const carouselSlides: CarouselSlide[] = [
       src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987588/9_kx36sj.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "right",
-      cloudinaryId: "9_kx36sj",
+      cloudinaryId: "12_bdrosn",
     }
   },
   {
     id: 2,
     title: "Family Background and Education",
-    subtitle: "Pastor Evelyn Onyisi Joshua",
+    subtitle: "Pastor Evelyn Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
@@ -90,7 +90,7 @@ const carouselSlides: CarouselSlide[] = [
   {
     id: 3,
     title: "Marriage",
-    subtitle: "Pastor Evelyn Onyisi Joshua",
+    subtitle: "Pastor Evelyn Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         Pastor Evelyn Joshua's marriage in 1990 to Prophet Temitope Balogun Joshua, one of the most famous ministers of God and tele-evangelists that the world has ever known, was nothing short of a pre-ordained divine arrangement. <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> had, on their very first meeting, revealed to Pastor Evelyn in no uncertain terms that she was his God-ordained wife, life companion and ministry partner. The divinely ordained marriage which lasted for 31 years until the 5th of June, 2021 when <a href="https://tbjoshua.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/80 underline transition-colors duration-200">Prophet T.B. Joshua</a> answered the glorious home call was blessed with three amazing daughters, Serah, Promise and Heart.
@@ -106,7 +106,7 @@ const carouselSlides: CarouselSlide[] = [
   {
     id: 4,
     title: "Ministry",
-    subtitle: "Pastor Evelyn Onyisi Joshua",
+    subtitle: "Pastor Evelyn Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
@@ -128,15 +128,15 @@ const carouselSlides: CarouselSlide[] = [
     ),
     image: {
       src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987646/mum2_yjcmhz.jpg",
-      alt: "Pastor Evelyn Onyisi Joshua",
+      alt: "Pastor Evelyn Joshua",
       position: "left",
-      cloudinaryId: "mum2_yjcmhz",
+      cloudinaryId: "8_nlpxis",
     }
   },
   {
     id: 5,
     title: "The New Dawn and Mantle of Leadership",
-    subtitle: "Pastor Evelyn Onyisi Joshua",
+    subtitle: "Pastor Evelyn Joshua",
     content: (
       <div className="text-base sm:text-lg text-foreground/70 leading-relaxed text-justify">
         <div>
@@ -151,7 +151,7 @@ const carouselSlides: CarouselSlide[] = [
       src: "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1770987533/mum4_zmw7iw.jpg",
       alt: "Pastor Evelyn Onyisi Joshua",
       position: "right",
-      cloudinaryId: "mum4_zmw7iw",
+      cloudinaryId: "1A_65_lafygc",
     }
   },
   {
@@ -318,7 +318,7 @@ export function AboutSection({
           
           <div className={`transition-all duration-700 ${isActive ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
             <div className="text-accent font-semibold tracking-wide mb-2 drop-shadow-sm">{slide.subtitle}</div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-primary leading-tight drop-shadow-md">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold text-primary leading-tight drop-shadow-md">
               {slide.title}
             </h2>
             <div className="mt-2 h-1 w-12 bg-accent rounded-full shadow-sm" />
