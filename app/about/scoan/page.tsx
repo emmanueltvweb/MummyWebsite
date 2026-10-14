@@ -2,7 +2,8 @@ import { Metadata } from "next"
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { AboutSCOANSection } from "@/components/sections/about-scoan"
+import { AboutCarousel } from "@/components/sections/about-carousel"
+import { getAboutPageContent } from "@/lib/content/page-store"
 import SplashCursor from "@/components/SplashCursor"
 
 export const metadata: Metadata = {
@@ -16,13 +17,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SCOANPage() {
+// Content is edited in Admin → Pages.
+export const dynamic = "force-dynamic"
+
+export default async function SCOANPage() {
+  const content = await getAboutPageContent("scoan")
+
   return (
     <div className="min-h-screen bg-background">
       <SplashCursor />
       <Header />
       <main>
-        <AboutSCOANSection />
+        <AboutCarousel content={content} sectionId="about-scoan" label="About The Synagogue, Church Of All Nations" />
       </main>
       <Footer />
     </div>

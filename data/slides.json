@@ -1,0 +1,41 @@
+[
+  {
+    "title": "Brazil Crusade 2026",
+    "subtitle": "Crusade in Brazil 2026",
+    "description": "The wind of Glory in the Brazil",
+    "buttonText": "Learn More",
+    "buttonUrl": "https://emmanuel.tv/",
+    "backgroundImage": "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1771005093/10_du6n9i.jpg",
+    "enabled": true,
+    "order": 0,
+    "id": "49e222b3-8d5b-42cd-8d4b-66f7b8e2d05b",
+    "createdAt": "2026-10-02T15:51:25.594Z",
+    "updatedAt": "2026-10-02T15:51:25.594Z"
+  },
+  {
+    "title": "Next Mummys Sermon",
+    "subtitle": "Mummy's Next sermon",
+    "description": "Ready for the next sermon",
+    "buttonText": "Read More",
+    "buttonUrl": "https://www.scoan.org/",
+    "backgroundImage": "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1773053310/EMMANUEL_TV_-_20_YEARS_OF_GOD_S_GLORY_-_Pastor_Evelyn_Joshua_Sermon_Landscape_co6hnh.png",
+    "enabled": true,
+    "order": 1,
+    "id": "167aa3b4-5e15-4459-9937-b41704a40512",
+    "createdAt": "2026-10-02T16:07:00.994Z",
+    "updatedAt": "2026-10-02T16:07:00.994Z"
+  },
+  {
+    "title": "Mexico Crusade 2026",
+    "subtitle": "Mexico Crusade With Pastor Evelyn Joshua",
+    "description": "Mexico Crusade With Pastor Evelyn Joshua",
+    "buttonText": "Learn More",
+    "buttonUrl": "https://emmanuel.tv",
+    "backgroundImage": "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1791195269/website-uploads/blog/kinjph6yqvxmy6knimez.png",
+    "enabled": true,
+    "order": 2,
+    "id": "a57e75ac-2a09-4279-a4a5-675da1a81928",
+    "createdAt": "2026-10-05T14:51:24.776Z",
+    "updatedAt": "2026-10-05T14:51:24.776Z"
+  }
+]

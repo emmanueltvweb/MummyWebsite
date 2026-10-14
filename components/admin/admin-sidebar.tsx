@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button"
 
 const sidebarItems = [
   { href: "/admin", label: "Dashboard", icon: Home },
+  { href: "/admin/content", label: "Website Content", icon: FileText },
   { href: "/admin/pages", label: "Pages", icon: FileText },
   { href: "/admin/sermons", label: "Sermons", icon: Video },
   { href: "/admin/media", label: "Media Library", icon: Image },
@@ -57,7 +58,7 @@ export function AdminSidebar() {
           <nav className="flex-1 px-4 py-4 space-y-2">
             {sidebarItems.map((item) => {
               const Icon = item.icon
-              const isActive = pathname === item.href
+              const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href))
               
               return (
                 <Link

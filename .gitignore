@@ -25,3 +25,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+# Admin CMS runtime data containing credentials / personal data
+/data/users.json
+/data/subscribers.json
+/data/comments.json
+/data/audit-log.json
+/data/notifications.json
+/data/campaigns.json
+/data/*.tmp
+/data/sessions.json

@@ -1,65 +1,66 @@
 "use client"
 
-import { Calendar, Clock, User } from 'lucide-react'
-import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { Calendar, ChevronDown, User } from 'lucide-react'
 import { useState } from "react"
 
 import { Container } from "@/components/layout/container"
+import { Reveal } from "@/components/ui/reveal"
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary/optimize"
+import type { SermonPageContent } from "@/lib/content/page-types"
 
-export function FeaturedSermonSection() {
-  const router = useRouter()
-  const [isNavigating, setIsNavigating] = useState(false)
-  const [isLoadingVideo, setIsLoadingVideo] = useState(false)
+/** "Sermon of the week" on the Sermon page. Content is managed in Admin → Pages → Sermon. */
+export function FeaturedSermonSection({ content }: { content: SermonPageContent["featured"] }) {
   const [showFacebookVideo, setShowFacebookVideo] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  // "Read more" only when the summary has more than one paragraph/block.
+  const hasMore = (content.summaryHtml.match(/<\/(p|ul|ol|blockquote|h[1-6]|figure|div)>/gi) ?? []).length > 1
+  const canPlay = Boolean(content.videoEmbedUrl)
 
-  const handleWatchNow = () => {
-    setIsLoadingVideo(true)
-    
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-      setIsLoadingVideo(false)
-      // Open video in new tab to avoid CORS issues
-      window.open('https://www.stream.emmanuel.tv/title/en/6937f6a8e4b0425d920b8319?v3=true&type=vod', '_blank', 'noopener,noreferrer')
-    }, 1000)
+  const open = (url: string) => {
+    if (url) window.open(url, '_blank', 'noopener,noreferrer')
   }
+
   return (
     <section className="py-12 sm:py-20 bg-gradient-to-b from-primary/5 to-transparent">
       <Container>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center animate-scale-up">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Featured Image */}
-          <div className="order-2 lg:order-1">
+          <Reveal variant="left" className="order-2 lg:order-1">
             <div className="relative rounded-2xl overflow-hidden shadow-xl hover-lift group">
               {!showFacebookVideo ? (
                 <>
-                  <Image
-                    src="/sermonpix/grateful.jpeg"
-                    alt="Featured sermon"
-                    width={1280}
-                    height={720}
-                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
-                    <button 
-                      onClick={() => setShowFacebookVideo(true)}
-                      className="w-16 h-16 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
-                      aria-label="Play Facebook video"
-                    >
-                      <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                      </svg>
-                    </button>
-                  </div>
+                  {content.imageUrl ? (
+                    <img
+                      src={optimizeCloudinaryUrl(content.imageUrl, { width: 1280 })}
+                      alt={content.title || "Featured sermon"}
+                      width={1280}
+                      height={720}
+                      className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="aspect-video w-full bg-gradient-to-br from-primary/20 to-accent/20" />
+                  )}
+                  {canPlay && (
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                      <button
+                        onClick={() => setShowFacebookVideo(true)}
+                        className="w-16 h-16 bg-accent text-accent-foreground rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300 shadow-lg"
+                        aria-label="Play video"
+                      >
+                        <svg className="w-8 h-8 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </>
               ) : (
                 <div className="relative w-full bg-black aspect-video">
                   <iframe
                     width="560"
                     height="315"
-                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1416204296919341%2F&show_text=false&width=560&t=0"
-                    title="Facebook video player"
+                    src={content.videoEmbedUrl}
+                    title="Sermon video player"
                     style={{ border: 'none', overflow: 'hidden' }}
                     frameBorder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
@@ -79,81 +80,98 @@ export function FeaturedSermonSection() {
                 </div>
               )}
             </div>
-          </div>
+          </Reveal>
 
-          {/* Sermon Details */}
-          <div className="order-1 lg:order-2 space-y-6 animate-slide-in-right">
-            {/* Category Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20">
-              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">Sermon of the Week</span>
-            </div>
+          {/* Sermon Details. On mobile this wrapper "dissolves" (display: contents) so its parts
+              join the grid and the image/video sits between the description and the buttons. */}
+          <div className="contents lg:order-2 lg:block lg:space-y-6">
+            <div className="order-1 space-y-6">
+            {content.badge && (
+              <Reveal variant="up">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20">
+                  <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">{content.badge}</span>
+                </div>
+              </Reveal>
+            )}
 
-            {/* Title */}
-            <h2 className="text-3xl sm:text-4xl lg:text-3xl font-extrabold text-primary leading-tight">
-              A Grateful Steward’s Account | Thanksgiving Message 2025<span className="text-accent"></span> 
-            </h2>
+            <Reveal as="h2" variant="up" delay={120} className="text-3xl sm:text-4xl lg:text-3xl font-extrabold text-primary leading-tight">
+              {content.title}
+            </Reveal>
 
-            {/* Meta Information */}
-            <div className="space-y-3 text-foreground/70">
-              <div className="flex items-center gap-3">
-                <Calendar size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">December 09, 2025</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">6 minutes</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <User size={20} className="text-accent" />
-                <span className="text-sm sm:text-base">Pastor Evelyn Joshua Sermon</span>
-              </div>
-            </div>
+            <Reveal variant="up" delay={220} className="space-y-3 text-foreground/70">
+              {content.date && (
+                <div className="flex items-center gap-3">
+                  <Calendar size={20} className="text-accent" />
+                  <span className="text-sm sm:text-base">{content.date}</span>
+                </div>
+              )}
+              {content.speaker && (
+                <div className="flex items-center gap-3">
+                  <User size={20} className="text-accent" />
+                  <span className="text-sm sm:text-base">{content.speaker}</span>
+                </div>
+              )}
+            </Reveal>
 
-            {/* Summary */}
-            <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
-              In this special Thanksgiving presentation, Pastor Evelyn Joshua delivers a Grateful Steward’s Account — a heartfelt reflection on God’s faithfulness, mercy, and guidance throughout the year 2025. Speaking as a true steward of God’s kingdom, she reminds the global SCOAN family that every steward must give an account of their work, not to men, but to God who rewards faithfulness.
-
-              <p className="mt-4">In her own words:
-
-                “A steward is worthy to give accounts of his works, knowing there is a reward that awaits him or her. I am not giving account to men but to God who has been there for us — our Helper, our Comforter, our All. To Him alone be the glory, honour, and praise. Hallelujah, Amen.”"</p>
-
-              <p className="mt-4">Watch, be blessed, and share your own testimony of gratitude. </p>
-
-            </div>
-
-            {/* Key Points */}
-            <div className="space-y-2">
-              <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">Key Topics</h3>
-              <div className="flex flex-wrap gap-2">
-                {["Trust in God", "Faith", "Perseverance", "Divine Plan"].map((topic, index) => (
-                  <span
-                    key={`featured-${topic}-${index}`}
-                    className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm"
+            {content.summaryHtml && (
+              <Reveal variant="up" delay={320}>
+                <div
+                  id="sermon-summary"
+                  className={`about-rich text-base sm:text-lg text-foreground/80 leading-relaxed text-justify [&>*+*]:!mt-4 ${
+                    hasMore && !expanded ? '[&>*:not(:first-child)]:hidden' : ''
+                  }`}
+                  dangerouslySetInnerHTML={{ __html: content.summaryHtml }}
+                />
+                {hasMore && (
+                  <button
+                    type="button"
+                    onClick={() => setExpanded((e) => !e)}
+                    aria-expanded={expanded}
+                    aria-controls="sermon-summary"
+                    className="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
                   >
-                    {topic}
-                  </span>
-                ))}
-              </div>
+                    {expanded ? 'Show less' : 'Read more'}
+                    <ChevronDown className={`size-4 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+                  </button>
+                )}
+              </Reveal>
+            )}
+
+            {content.keyTopics.length > 0 && (
+              <Reveal variant="up" delay={420} className="space-y-2">
+                <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">Key Topics</h3>
+                <div className="flex flex-wrap gap-2">
+                  {content.keyTopics.map((topic, index) => (
+                    <span
+                      key={`featured-${topic}-${index}`}
+                      className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm"
+                    >
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </Reveal>
+            )}
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              <button 
-                onClick={handleWatchNow}
-                disabled={isLoadingVideo}
-                className={`px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
-                  isLoadingVideo ? 'animate-pulse' : ''
-                }`}
-              >
-                {isLoadingVideo ? 'Loading Video...' : 'Watch Now'}
-              </button>
-              <button 
-                onClick={() => window.open('https://emmanuel.tv/download/', '_blank', 'noopener,noreferrer')}
-                className="px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/5 transition-all duration-300"
-              >
-                Download App
-              </button>
-            </div>
+            <Reveal variant="up" delay={200} className="order-3 flex flex-col sm:flex-row gap-3 lg:pt-4">
+              {content.watchNowUrl && (
+                <button
+                  onClick={() => open(content.watchNowUrl)}
+                  className="px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  {content.watchNowLabel || 'Watch Now'}
+                </button>
+              )}
+              {content.downloadAppUrl && (
+                <button
+                  onClick={() => open(content.downloadAppUrl)}
+                  className="px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/5 transition-all duration-300"
+                >
+                  {content.downloadAppLabel || 'Download App'}
+                </button>
+              )}
+            </Reveal>
           </div>
         </div>
       </Container>

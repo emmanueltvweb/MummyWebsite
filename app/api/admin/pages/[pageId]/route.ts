@@ -1,69 +1,36 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { audit } from "@/lib/server/audit"
+import { notFound, parseBody, route } from "@/lib/server/api"
+import { sanitizeRichText, uniqueSlug } from "@/lib/cms/html"
+import { pageInput } from "@/lib/cms/schemas"
+import { pages } from "@/lib/cms/store"
 
-// This is a placeholder API route for admin page editing
-// In a real application, this would connect to your database
+type Params = { pageId: string }
 
-export async function GET(request: NextRequest, { params }: { params: { pageId: string } }) {
-  try {
-    const { pageId } = params
-    
-    // Mock page data - in production, fetch from database
-    const pageData = {
-      id: pageId,
-      title: 'Sample Page',
-      slug: '/sample-page',
-      content: '<p>This is sample page content.</p>',
-      excerpt: 'Sample page excerpt',
-      featuredImage: '',
-      status: 'published' as const,
-      metaTitle: 'Sample Page',
-      metaDescription: 'Sample page description',
-      lastModified: new Date().toISOString(),
-      lastModifiedBy: 'Admin User'
-    }
+export const GET = route<Params>({ permission: "website.view" }, async ({ params }) => {
+  const page = await pages.get(params.pageId)
+  if (!page) throw notFound("Page")
+  return page
+})
 
-    return NextResponse.json({
-      success: true,
-      data: pageData
-    })
-  } catch (error) {
-    console.error('Error fetching page:', error)
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch page data' 
-      },
-      { status: 500 }
-    )
-  }
-}
+export const PUT = route<Params>({ permission: "website.manage" }, async ({ request, params, user, ip }) => {
+  const existing = await pages.get(params.pageId)
+  if (!existing) throw notFound("Page")
+  const input = await parseBody(request, pageInput)
+  const others = (await pages.all()).filter((p) => p.id !== existing.id).map((p) => p.slug)
+  const updated = await pages.update(existing.id, {
+    ...input,
+    slug: uniqueSlug(input.slug || existing.slug, others),
+    content: sanitizeRichText(input.content),
+    updatedBy: user!.name,
+  })
+  await audit(user, "page.update", "page", `Updated page “${updated!.title}”`, { entityId: existing.id, ip })
+  return updated
+})
 
-export async function PUT(request: NextRequest, { params }: { params: { pageId: string } }) {
-  try {
-    const { pageId } = params
-    const body = await request.json()
-    
-    // Mock save operation - in production, update database
-    console.log('Saving page:', pageId, body)
-
-    return NextResponse.json({
-      success: true,
-      message: 'Page saved successfully',
-      data: {
-        ...body,
-        id: pageId,
-        lastModified: new Date().toISOString(),
-        lastModifiedBy: 'Admin User'
-      }
-    })
-  } catch (error) {
-    console.error('Error saving page:', error)
-    return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to save page' 
-      },
-      { status: 500 }
-    )
-  }
-}
+export const DELETE = route<Params>({ permission: "website.manage" }, async ({ params, user, ip }) => {
+  const existing = await pages.get(params.pageId)
+  if (!existing) throw notFound("Page")
+  await pages.remove(existing.id)
+  await audit(user, "page.delete", "page", `Deleted page “${existing.title}”`, { entityId: existing.id, ip })
+  return { deleted: 1 }
+})

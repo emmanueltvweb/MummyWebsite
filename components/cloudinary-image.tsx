@@ -6,6 +6,8 @@ import { auto } from '@cloudinary/url-gen/actions/resize'
 import { autoGravity } from '@cloudinary/url-gen/qualifiers/gravity'
 import { AdvancedImage } from '@cloudinary/react'
 
+import { CLOUDINARY_CLOUD_NAME } from '@/lib/cloudinary/client'
+
 interface CloudinaryImageProps {
   publicId: string
   alt: string
@@ -27,7 +29,7 @@ const CloudinaryImage: React.FC<CloudinaryImageProps> = ({
 }) => {
   const cld = new Cloudinary({ 
     cloud: { 
-      cloudName: 'dvlcc2r5w' 
+      cloudName: CLOUDINARY_CLOUD_NAME 
     } 
   })
 

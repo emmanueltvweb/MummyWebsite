@@ -5,24 +5,16 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 import { NavDropdown } from './nav-dropdown'
+import { useSiteContent } from '@/components/content/site-content-provider'
 
 export function Header() {
+  const { content } = useSiteContent()
+  const { branding, header } = content
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const aboutDropdownItems = [
-    { label: "Evelyn Joshua Biography", href: "/about/pst-evelyn-joshua" },
-    { label: "TB Joshua Biography", href: "/about/tb-joshua"},
-    { label: "Emmanuel TV", href: "/about/emmanuel-tv" },
-    { label: "The SCOAN", href: "/about/scoan" },
-  ]
-
-  const navItems = [
-    { label: "Home", href: "/" },
-    { label: "Crusade/Outreach", href: "/gallery" },
-    { label: "Sermon", href: "/Sermon" },
-    { label: "Visit", href: "/visit" },
-  ]
+  const aboutDropdownItems = header.aboutDropdownItems
+  const navItems = header.navItems
 
   return (
     <header className="pointer-events-none">
@@ -32,9 +24,9 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-accent to-accent/70 rounded-full flex items-center justify-center shadow-sm">
-              <span className="text-foreground font-bold text-sm">Pst.</span>
+              <span className="text-foreground font-bold text-sm">{branding.brandInitial}</span>
             </div>
-            <span className="font-bold text-primary text-lg">Evelyn Joshua</span>
+            <span className="font-bold text-primary text-lg">{branding.brandName}</span>
           </Link>
 
           {/* Center navigation (pill-style links) */}

@@ -5,10 +5,12 @@ import { useState } from "react"
 import { Mail } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
-import { useInView } from "@/hooks/use-in-view"
+import { useSiteContent } from "@/components/content/site-content-provider"
+import { Reveal } from "@/components/ui/reveal"
 
 export function NewsletterSection() {
-  const { ref, isInView } = useInView({ threshold: 0.3 })
+  const { content } = useSiteContent()
+  const newsletter = content.home.newsletter
   const [email, setEmail] = useState("")
   const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "success" | "error" | "loading">("idle")
 
@@ -48,20 +50,17 @@ export function NewsletterSection() {
   }
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-gradient-to-r from-secondary/20 via-accent/10 to-secondary/20">
+    <section className="py-16 md:py-24 bg-gradient-to-r from-secondary/20 via-accent/10 to-secondary/20">
       <Container>
-        <div
-          className={`max-w-2xl mx-auto text-center transition-all duration-1000 ${
-            isInView ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          }`}
-        >
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-            Stay Connected with Our <span className="gold-accent">Ministry</span>
-          </h2>
-          <p className="text-foreground/70 mb-8">
-            Subscribe to receive updates on events, teachings, and Special Programs.
-          </p>
+        <div className="max-w-2xl mx-auto text-center">
+          <Reveal as="h2" variant="up" className="text-3xl md:text-4xl font-bold text-primary mb-4">
+            {newsletter.title} <span className="gold-accent">{newsletter.titleHighlight}</span>
+          </Reveal>
+          <Reveal as="p" variant="up" delay={120} className="text-foreground/70 mb-8">
+            {newsletter.description}
+          </Reveal>
 
+          <Reveal variant="zoom" delay={240}>
           <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
             <input
               type="email"
@@ -100,6 +99,7 @@ export function NewsletterSection() {
               )}
             </button>
           </form>
+          </Reveal>
           {subscribeStatus === "error" && (
             <p className="text-red-600 text-sm mt-2">Subscription failed. Please try again.</p>
           )}

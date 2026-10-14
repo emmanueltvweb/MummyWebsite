@@ -3,21 +3,13 @@
 import { useState, useEffect } from "react"
 
 interface GalleryFilterProps {
+  /** Categories to show, in order (from the gallery saved in Admin). */
+  categories: string[]
   activeCategory: string
   onCategoryChange: (category: string) => void
 }
 
-const categories = [
-  "SCOAN HQ",
-  "Ghana",
-  "Kenya",
-  "Lagos",
-  "South Africa",
-  "Argentina",
-  "Spain",
-]
-
-export function GalleryFilter({ activeCategory, onCategoryChange }: GalleryFilterProps) {
+export function GalleryFilter({ categories, activeCategory, onCategoryChange }: GalleryFilterProps) {
   const [isMobile, setIsMobile] = useState(false)
   const [isTablet, setIsTablet] = useState(false)
   const [showDropdown, setShowDropdown] = useState(false)

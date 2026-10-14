@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/footer"
 import { FeaturedSermonSection } from "@/components/sections/featured-sermon-section"
 import { VideoGallery } from "@/components/video-gallery"
 import SplashCursor from "@/components/SplashCursor"
+import { getPageContent } from "@/lib/content/page-store"
 
 /**
  * Sermon Page with Integrated Video Gallery
@@ -11,7 +12,11 @@ import SplashCursor from "@/components/SplashCursor"
  * below the Featured Sermon section, maintaining visual consistency
  * with the existing design system.
  */
-export default function SermonPage() {
+export const dynamic = "force-dynamic"
+
+export default async function SermonPage() {
+  const { featured } = await getPageContent("sermon")
+
   return (
     <div className="min-h-screen bg-background">
       <SplashCursor />
@@ -19,7 +24,7 @@ export default function SermonPage() {
 
       <main>
         {/* Featured Sermon Section */}
-        <FeaturedSermonSection />
+        <FeaturedSermonSection content={featured} />
 
         {/* Video Gallery Section - Added Below Featured Sermon */}
         <section className="py-16 bg-gradient-to-b from-background to-muted/20">

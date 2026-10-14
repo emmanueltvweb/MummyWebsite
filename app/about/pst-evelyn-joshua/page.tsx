@@ -2,7 +2,8 @@ import { Metadata } from "next"
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { AboutSection } from "@/components/sections/about-pst-evelyn-joshua"
+import { AboutCarousel } from "@/components/sections/about-carousel"
+import { getAboutPageContent } from "@/lib/content/page-store"
 import SplashCursor from "@/components/SplashCursor"
 
 export const metadata: Metadata = {
@@ -16,13 +17,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function PastorEvelynJoshuaPage() {
+// Content is edited in Admin → Pages.
+export const dynamic = "force-dynamic"
+
+export default async function PastorEvelynJoshuaPage() {
+  const content = await getAboutPageContent("pst-evelyn-joshua")
+
   return (
     <div className="min-h-screen bg-background">
       <SplashCursor />
       <Header />
       <main>
-        <AboutSection />
+        <AboutCarousel content={content} sectionId="about" label="About Pastor Evelyn Joshua" variant="boxed" />
       </main>
       <Footer />
     </div>

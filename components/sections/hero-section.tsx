@@ -3,12 +3,12 @@
 import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import { Container } from "@/components/layout/container"
-import { ArrowRight, X, Circle, Calendar, Clock, User } from "lucide-react"
+import { ArrowRight, Calendar, User } from "lucide-react"
 import Link from "next/link"
-import Autoplay from "embla-carousel-autoplay"
 import CloudinaryImage from "@/components/cloudinary-image"
+import { useSiteContent } from "@/components/content/site-content-provider"
 
-import { useInView } from "@/hooks/use-in-view"
+import { Reveal } from "@/components/ui/reveal"
 import {
   Carousel,
   CarouselContent,
@@ -19,15 +19,15 @@ import {
 } from "@/components/ui/carousel"
 
 export function HeroSection() {
+  const { content } = useSiteContent()
+  const { hero } = content.home
   const [isLoaded, setIsLoaded] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [api, setApi] = useState<CarouselApi | null>(null)
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0)
   const [isFading, setIsFading] = useState(false)
-  const [showFacebookVideo, setShowFacebookVideo] = useState(false)
-  const [isLoadingVideo, setIsLoadingVideo] = useState(false)
   
-  const phrases = ["And Win Today", "Win Tomorrow", "And Win Forever"]
+  const phrases = hero.phrases
 
   useEffect(() => {
     setIsLoaded(true)
@@ -62,23 +62,30 @@ export function HeroSection() {
     }, 3000) // Change phrase every 3 seconds
 
     return () => clearInterval(animationInterval)
-  }, [isLoaded])
+  }, [isLoaded, phrases.length])
 
+  const [heroPaused, setHeroPaused] = useState(false)
+  const [heroIndex, setHeroIndex] = useState(0)
+
+  // Track the visible hero photo so it gets the slow Ken Burns zoom.
   useEffect(() => {
     if (!api) return
-    const id = setInterval(() => {
-      api.scrollNext()
-    }, 4000)
-    return () => clearInterval(id)
+    const onSelect = () => setHeroIndex(api.selectedScrollSnap())
+    onSelect()
+    api.on("select", onSelect)
+    return () => {
+      api.off("select", onSelect)
+    }
   }, [api])
 
-  const handleWatchNow = () => {
-    setIsLoadingVideo(true)
-    setShowFacebookVideo(true)
-    setTimeout(() => {
-      setIsLoadingVideo(false)
-    }, 1000)
-  }
+  // Auto-advance 1 → 2 → 3 → 1…; pauses while hovered/focused or when the tab is hidden.
+  useEffect(() => {
+    if (!api || heroPaused) return
+    const id = setInterval(() => {
+      if (!document.hidden) api.scrollNext()
+    }, 4000)
+    return () => clearInterval(id)
+  }, [api, heroPaused])
 
   return (
     <>
@@ -96,7 +103,7 @@ export function HeroSection() {
           className="absolute inset-0 w-full h-full object-cover opacity-100"
           key="hero-background-video"
         >
-          <source src="https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771257266/HEADER_2026_HD_jltk79.mp4" type="video/mp4" />
+          <source src={hero.backgroundVideoUrl} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </div>
@@ -118,7 +125,7 @@ export function HeroSection() {
                 transitionDelay: isLoaded ? "0ms" : "0ms"
               }}
             >
-              Good Morning,{" "}
+              {hero.title}{" "}
               <span className={`text-transparent text-5xl bg-clip-text bg-gradient-to-r from-accent via-accent to-secondary transition-opacity duration-500 ${isFading ? 'opacity-0' : 'opacity-100'}`}>
                 {phrases[currentPhraseIndex]}
               </span>
@@ -130,85 +137,70 @@ export function HeroSection() {
               style={{ transitionDelay: isLoaded ? "300ms" : "0ms" }}
             >
              
-              <Link href="https://www.scoan.org/" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                <button className="group w-full px-6 sm:px-8 py-3 sm:py-4 bg-accent text-accent-foreground rounded-lg font-semibold text-base sm:text-lg hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-1 flex items-center justify-center gap-2"
-                  style={{ transitionDuration: "300ms", transitionProperty: "all" }}>
-                  Visit SCOAN
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </Link>
-              <Link href="https://emmanuel.tv/" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
-                <button className="w-full px-6 sm:px-8 py-3 sm:py-4 border-2 bg-white border-white text-primary rounded-lg font-semibold text-base sm:text-lg hover:bg-primary/10"
-                  style={{ transitionDuration: "300ms", transitionProperty: "all" }}>
-                  Visit Emmanuel TV
-                </button>
-              </Link>
+              {hero.buttons.map((button) => (
+                <Link key={button.label} href={button.href} target={button.href.startsWith("http") ? "_blank" : undefined} rel={button.href.startsWith("http") ? "noopener noreferrer" : undefined} className="w-full sm:w-auto">
+                  <button
+                    className={
+                      button.variant === "primary"
+                        ? "group w-full px-6 sm:px-8 py-3 sm:py-4 bg-accent text-accent-foreground rounded-lg font-semibold text-base sm:text-lg hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-1 flex items-center justify-center gap-2"
+                        : "w-full px-6 sm:px-8 py-3 sm:py-4 border-2 bg-white border-white text-primary rounded-lg font-semibold text-base sm:text-lg hover:bg-primary/10"
+                    }
+                    style={{ transitionDuration: "300ms", transitionProperty: "all" }}
+                  >
+                    {button.label}
+                    {button.variant === "primary" && (
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    )}
+                  </button>
+                </Link>
+              ))}
             </div>
           </div>
           <div className="hidden lg:flex justify-center lg:justify-end">
-            <div className="relative">
-              <Carousel 
-                setApi={setApi} 
-                opts={{ loop: true }} 
+            <Reveal variant="right" delay={250} className="relative">
+              <Carousel
+                setApi={setApi}
+                opts={{ loop: true }}
                 className="w-[320px] sm:w-[360px] md:w-[400px]"
+                onMouseEnter={() => setHeroPaused(true)}
+                onMouseLeave={() => setHeroPaused(false)}
+                onFocusCapture={() => setHeroPaused(true)}
+                onBlurCapture={() => setHeroPaused(false)}
               >
                 <CarouselContent>
-                  <CarouselItem className="ease-out data-[active]:scale-100 data-[active]:opacity-100 data-[inactive]:scale-95 data-[inactive]:opacity-70"
-                    style={{ transitionDuration: "500ms", transitionProperty: "all" }}>
+                  {hero.carouselImages.map((slide, index) => (
+                  // No CSS transition on slides: Embla positions them with transforms while looping,
+                  // and animating that makes slides fly backwards across the carousel.
+                  <CarouselItem key={`${slide.publicId ?? slide.url}-${index}`}>
                     <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
                       <div className="relative w-full h-full">
+                        {slide.publicId ? (
                          <CloudinaryImage
-                          publicId="10_cdpaih"
-                          alt="Slide visual"
+                          publicId={slide.publicId}
+                          alt={slide.alt}
                           width={380}
                           height={540}
-                          className="absolute inset-0 w-full h-full object-cover rounded-[32px]"
+                          className={`absolute inset-0 w-full h-full object-cover rounded-[32px] ${index === heroIndex ? "about-kenburns" : ""}`}
                         />
+                        ) : slide.url ? (
+                          <Image
+                            src={slide.url}
+                            alt={slide.alt}
+                            width={380}
+                            height={540}
+                            className={`absolute inset-0 w-full h-full object-cover rounded-[32px] ${index === heroIndex ? "about-kenburns" : ""}`}
+                          />
+                        ) : null}
                         <div className="absolute inset-0  "></div>
                         <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                         </div>
                       </div>
                     </div>
                   </CarouselItem>
-                  <CarouselItem className="ease-out data-[active]:scale-100 data-[active]:opacity-100 data-[inactive]:scale-95 data-[inactive]:opacity-70"
-                    style={{ transitionDuration: "500ms", transitionProperty: "all" }}>
-                    <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card shadow-2xl overflow-hidden">
-                     
-                      <div className="relative w-full h-full">
-                        <CloudinaryImage
-                          publicId="1A_1_luhi2h"
-                          alt="Slide visual"
-                          width={380}
-                          height={540}
-                          className="absolute inset-0 w-full h-full object-cover rounded-[32px]"
-                        />
-                        <div className="absolute inset-0  rounded-[32px]"></div>
-                        <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                        </div>
-                      </div>
-                
-                    </div>
-                  </CarouselItem>
-                  <CarouselItem className="ease-out data-[active]:scale-100 data-[active]:opacity-100 'data-[inactive]:scale-95 data-[inactive]:opacity-70'"
-                    style={{ transitionDuration: "500ms", transitionProperty: "all" }}>
-                    <div className="w-[300px] sm:w-[340px] md:w-[380px] h-[440px] sm:h-[500px] md:h-[540px] rounded-[32px] border bg-card overflow-hidden">
-                      <div className="relative w-full h-full">
-                        <CloudinaryImage
-                          publicId="C_8_gcmkxe"
-                          alt="Slide visual"
-                          width={380}
-                          height={540}
-                          className="absolute inset-0 w-full h-full object-cover rounded-[32px]"
-                        />
-                        <div className="absolute inset-0 'bg-gradient-to-t' from-black/60 via-transparent to-transparent rounded-[32px]"></div>
-                      </div>
-                    </div>
-                  </CarouselItem>
+                  ))}
                 </CarouselContent>
-                <CarouselPrevious aria-label="Previous" />
-                <CarouselNext aria-label="Next" />
               </Carousel>
-            </div>
+            </Reveal>
           </div>
         </div>
       </Container>
@@ -226,58 +218,77 @@ export function HeroSection() {
 }
 
 export function LegacyAboutSection() {
-  const { ref, isInView } = useInView({ threshold: 0.2 })
+  const { content } = useSiteContent()
+  const { about } = content.home
+  const [aboutApi, setAboutApi] = useState<CarouselApi | null>(null)
+  const [paused, setPaused] = useState(false)
+  const [aboutIndex, setAboutIndex] = useState(0)
+
+  // Track the visible photo so it gets the slow Ken Burns zoom (replays on every slide).
+  useEffect(() => {
+    if (!aboutApi) return
+    const onSelect = () => setAboutIndex(aboutApi.selectedScrollSnap())
+    onSelect()
+    aboutApi.on("select", onSelect)
+    return () => {
+      aboutApi.off("select", onSelect)
+    }
+  }, [aboutApi])
+
+  // Auto-slide on every screen size; pauses while hovered/focused or when the tab is hidden.
+  useEffect(() => {
+    if (!aboutApi || paused || about.carouselImages.length < 2) return
+    const id = setInterval(() => {
+      if (!document.hidden) aboutApi.scrollNext()
+    }, 5000)
+    return () => clearInterval(id)
+  }, [aboutApi, paused, about.carouselImages.length])
 
   return (
-    <section id="about-legacy" ref={ref} className="py-20 md:py-32 bg-muted relative">
+    <section id="about-legacy" className="py-20 md:py-32 bg-muted relative">
       {/* Decorative Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-10 w-40 h-40 bg-accent/10 rounded-full blur-3xl opacity-40" />
         <div className="absolute bottom-1/4 right-10 w-60 h-60 bg-primary/10 rounded-full blur-3xl opacity-30" />
       </div>
-      
+
       <Container className="relative z-10 ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          <div
-            className={`relative h-96 rounded-xl overflow-hidden ${
-              isInView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-12"
-            }`}
-            style={{ transitionDuration: "1000ms", transitionProperty: "opacity, transform" }}
-          >
-            <Carousel 
+          <Reveal variant="left" className="relative">
+          {/* Soft gold halo behind the photos, like the About page slideshow */}
+          <div className="absolute -inset-3 rounded-2xl bg-accent/20 blur-2xl" aria-hidden />
+          <div className="relative h-96 rounded-xl overflow-hidden border-4 border-white/70 shadow-2xl">
+            <Carousel
+              setApi={setAboutApi}
               className="w-full h-full"
-              plugins={[
-               
-              ]}
               opts={{
                 loop: true,
               }}
+              onMouseEnter={() => setPaused(true)}
+              onMouseLeave={() => setPaused(false)}
+              onFocusCapture={() => setPaused(true)}
+              onBlurCapture={() => setPaused(false)}
             >
               <CarouselContent className="h-full">
-                <CarouselItem className="h-full">
+                {about.carouselImages.map((slide, index) => (
+                <CarouselItem key={`${slide.publicId ?? slide.url}-${index}`} className="h-full overflow-hidden">
+                  {slide.publicId ? (
                   <CloudinaryImage
-                    publicId="1A_40_ime6ny"
-                    alt="Pastor Evelyn Joshua"
-                    className="w-full h-full object-cover hover:scale-105"
-                    style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
+                    publicId={slide.publicId}
+                    alt={slide.alt}
+                    className={`w-full h-full object-cover ${index === aboutIndex ? "about-kenburns" : ""}`}
                   />
-                </CarouselItem>
-                <CarouselItem className="h-full">
-                  <CloudinaryImage
-                    publicId="E_4_retutw"
-                    alt="Pastor Evelyn Joshua Ministry"
-                    className="w-full h-full object-cover hover:scale-105"
-                    style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
+                  ) : slide.url ? (
+                  <Image
+                    src={slide.url}
+                    alt={slide.alt}
+                    width={800}
+                    height={600}
+                    className={`w-full h-full object-cover ${index === aboutIndex ? "about-kenburns" : ""}`}
                   />
+                  ) : null}
                 </CarouselItem>
-                <CarouselItem className="h-full">
-                  <CloudinaryImage
-                    publicId="1A_40_ime6ny"
-                    alt="Pastor Evelyn Joshua Service"
-                    className="w-full h-full object-cover hover:scale-105"
-                    style={{ transitionDuration: "500ms", transitionProperty: "transform" }}
-                  />
-                </CarouselItem>
+                ))}
               </CarouselContent>
               <div className="absolute inset-0 'bg-gradient-to-t' from-primary/30 via-transparent to-transparent" />
               <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
@@ -286,36 +297,27 @@ export function LegacyAboutSection() {
               </div>
             </Carousel>
           </div>
-          <div
-            className={`${
-              isInView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"
-            }`}
-            style={{ 
-              transitionDuration: "1000ms", 
-              transitionDelay: isInView ? "300ms" : "0ms",
-              transitionProperty: "opacity, transform"
-            }}
-          >
-            <h2 className="text-4xl font-bold text-primary mb-6 bg">
-              About <span className="gold-accent font-bold">Pastor Evelyn Joshua</span>
-            </h2>
-            <div className="mt-3 h-1 w-16 bg-accent rounded-full mb-6" />
-            <p className="text-lg text-foreground/70 leading-relaxed mb-6 text-justify">
-              Pastor Evelyn Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is
-              the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of
-              All Nations (The SCOAN). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).
-            </p>
-             <div className="mt-8">
-                <Link 
-                  href="/about/pst-evelyn-joshua" 
+          </Reveal>
+          <div>
+            <Reveal as="h2" variant="up" delay={150} className="text-4xl font-bold text-primary mb-6">
+              {about.title} <span className="gold-accent font-bold">{about.highlightText}</span>
+            </Reveal>
+            <Reveal variant="fade" delay={300}>
+              <div className="mt-3 h-1 w-16 bg-accent rounded-full mb-6" />
+            </Reveal>
+            <Reveal as="p" variant="up" delay={400} className="text-lg text-foreground/70 leading-relaxed mb-6 text-justify">
+              {about.content}
+            </Reveal>
+             <Reveal variant="up" delay={550} className="mt-8">
+                <Link
+                  href={about.learnMoreHref} 
                   className="inline-flex items-center px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-1"
                   style={{ transition: "all 300ms ease-out" }}
                 >
                   Learn More
                   <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
-              
-              </div>
+              </Reveal>
           </div>
         </div>
       </Container>
@@ -324,6 +326,8 @@ export function LegacyAboutSection() {
 }
 
 function LatestSermonSection() {
+  const { content } = useSiteContent()
+  const sermon = content.home.sermon
   const [showFacebookVideo, setShowFacebookVideo] = useState(false)
   const [isLoadingVideo, setIsLoadingVideo] = useState(false)
 
@@ -338,14 +342,14 @@ function LatestSermonSection() {
   return (
     <section className="py-12 sm:py-20 bg-gradient-to-b from-primary/5 to-transparent">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center animate-scale-up">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Featured Image */}
-          <div className="order-2 lg:order-1">
+          <Reveal variant="left" className="order-2 lg:order-1">
             <div className="relative rounded-2xl overflow-hidden shadow-xl hover-lift group">
               {!showFacebookVideo ? (
                 <>
                   <Image
-                    src="https://res.cloudinary.com/dvlcc2r5w/image/upload/v1773053310/EMMANUEL_TV_-_20_YEARS_OF_GOD_S_GLORY_-_Pastor_Evelyn_Joshua_Sermon_Landscape_co6hnh.png"
+                    src={sermon.featuredImageUrl}
                     alt="Featured sermon"
                     width={1280}
                     height={720}
@@ -367,7 +371,7 @@ function LatestSermonSection() {
               ) : (
                 <div className="relative w-full bg-black aspect-video">
                   <iframe
-                    src="https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1429301158950052%2F&show_text=false&width=560&t=0"
+                    src={sermon.facebookVideoEmbedUrl}
                     width="560"
                     height="314"
                     style={{ border: 'none', overflow: 'hidden' }}
@@ -389,53 +393,52 @@ function LatestSermonSection() {
                 </div>
               )}
             </div>
-          </div>
+          </Reveal>
 
-          {/* Sermon Details */}
-          <div className="order-1 lg:order-2 space-y-6 animate-slide-in-right">
+          {/* Sermon Details. On mobile this wrapper "dissolves" (display: contents) so its parts
+              join the grid and the image/video sits between the description and the buttons.
+              Each part rises in on scroll, one after another. */}
+          <div className="contents lg:order-2 lg:block lg:space-y-6">
+            <div className="order-1 space-y-6">
             {/* Category Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20">
-              <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">Latest Sermon</span>
-            </div>
+            <Reveal variant="up">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 text-accent rounded-full border border-accent/20">
+                <span className="text-xs sm:text-sm font-semibold uppercase tracking-wider">{sermon.badge}</span>
+              </div>
+            </Reveal>
 
             {/* Title */}
-            <h2 className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-primary leading-tight">
-              EMMANUEL TV - 20 YEARS OF GOD'S GLORY<span className="text-accent"></span> 
-            </h2>
+            <Reveal as="h2" variant="up" delay={120} className="text-3xl sm:text-4xl lg:text-4xl font-extrabold text-primary leading-tight">
+              {sermon.title}
+            </Reveal>
 
             {/* Meta Information */}
-            <div className="space-y-3 text-foreground/70">
+            <Reveal variant="up" delay={220} className="space-y-3 text-foreground/70">
               <div className="flex items-center gap-3">
                 <Calendar size={20} className="text-accent"/>
-                <span className="text-sm sm:text-base">March 08, 2026</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock size={20} className="text-accent"/>
-                <span className="text-sm sm:text-base">22 minutes</span>
+                <span className="text-sm sm:text-base">{sermon.date}</span>
               </div>
               <div className="flex items-center gap-3">
                 <User size={20} className="text-accent"/>
-                <span className="text-sm sm:text-base">Pastor Evelyn Joshua Sermon</span>
+                <span className="text-sm sm:text-base">{sermon.speaker}</span>
               </div>
-            </div>
+            </Reveal>
 
             {/* Summary */}
-            <div className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
-              In her address during The Emmanuel TV 20th Anniversary, Pastor Evelyn Joshua gives a message on love, faith and standing firm during trials.
+            <Reveal variant="up" delay={320} className="text-base sm:text-lg text-foreground/80 leading-relaxed text-justify">
+              {sermon.summaryParagraphs.map((paragraph, index) => (
+                <p key={index} className={index > 0 ? "mt-4" : undefined}>{paragraph}</p>
+              ))}
 
-              <p className="mt-4">Reading from James 1:2-8, The SCOAN Leader enjoins us to persevere in faith, love and the rendering of service to fellow humans - in the manner taught by Prophet TB Joshua via the example of Emmanuel TV.</p>
+              {sermon.quote && <p className="mt-4">{sermon.quote}</p>}
 
-
-
-              <p className="mt-4">"Your faith will not grow until you are placed in a situation that requires more than you have ever had." - Pastor Evelyn Joshua.</p>
-
-            </div>
+            </Reveal>
 
             {/* Key Points */}
-            <div className="space-y-2">
+            <Reveal variant="up" delay={420} className="space-y-2">
               <h3 className="font-semibold text-primary text-sm uppercase tracking-wider">Key Topics</h3>
               <div className="flex flex-wrap gap-2">
-                {["Trust in God", "Faith", "Perseverance", "Joyful Life"].map((topic, index) => (
+                {sermon.keyTopics.map((topic, index) => (
                   <span
                     key={`hero-${topic}-${index}`}
                     className="px-3 py-1 bg-secondary/10 text-secondary border border-secondary/20 rounded-full text-sm"
@@ -444,23 +447,24 @@ function LatestSermonSection() {
                   </span>
                 ))}
               </div>
+            </Reveal>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+            <Reveal variant="up" delay={200} className="order-3 flex flex-col sm:flex-row gap-3 lg:pt-4">
               <button 
-                onClick={() => window.open('https://www.stream.emmanuel.tv/title/conquering-with-faith-and-love-%7C-pastor-evelyn-joshua-sermon/en?id=69adfbcde4b064133a2afdd4&type=vod&isFromTabLayout=true', '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open(sermon.watchNowUrl, '_blank', 'noopener,noreferrer')}
                 className="px-8 py-3 bg-accent text-accent-foreground rounded-lg font-semibold hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Watch Now
+                {sermon.watchNowLabel || "Watch Now"}
               </button>
               <button 
-                onClick={() => window.open('https://emmanuel.tv/download/', '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open(sermon.downloadAppUrl, '_blank', 'noopener,noreferrer')}
                 className="px-8 py-3 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary/5 transition-all duration-300"
               >
-                Download App
+                {sermon.downloadAppLabel || "Download App"}
               </button>
-            </div>
+            </Reveal>
           </div>
         </div>
       </Container>

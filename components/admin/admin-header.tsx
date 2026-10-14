@@ -21,6 +21,8 @@ export function AdminHeader() {
     switch (pathname) {
       case '/admin':
         return 'Dashboard'
+      case '/admin/content':
+        return 'Website Content'
       case '/admin/pages':
         return 'Pages'
       case '/admin/sermons':

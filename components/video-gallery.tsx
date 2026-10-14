@@ -1,9 +1,10 @@
 "use client"
 
-import { useRef, useState, useEffect } from 'react'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useCallback, useRef, useState, useEffect, useLayoutEffect } from 'react'
+import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
-import { VideoModal } from './video-modal'
+import { VideoLightbox } from './video-lightbox'
+import { Reveal } from '@/components/ui/reveal'
 
 interface VideoItem {
   id: string
@@ -58,7 +59,6 @@ export function VideoGallery({
   const [canScrollRight, setCanScrollRight] = useState(true)
   const [focusedVideoIndex, setFocusedVideoIndex] = useState<number | null>(null)
   const [selectedVideo, setSelectedVideo] = useState<VideoItem | null>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // Update scroll button states
   const updateScrollButtons = () => {
@@ -101,13 +101,14 @@ export function VideoGallery({
         e.preventDefault()
         scrollContainerRef.current?.scrollTo({ left: 0, behavior: 'smooth' })
         break
-      case 'End':
+      case 'End': {
         e.preventDefault()
         const container = scrollContainerRef.current
         if (container) {
           container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' })
         }
         break
+      }
     }
   }
 
@@ -116,17 +117,9 @@ export function VideoGallery({
     setFocusedVideoIndex(index)
   }
 
-  // Handle video selection and modal opening
-  const handleVideoSelect = (video: VideoItem) => {
-    setSelectedVideo(video)
-    setIsModalOpen(true)
-  }
-
-  // Handle modal closing
-  const handleModalClose = () => {
-    setIsModalOpen(false)
-    setSelectedVideo(null)
-  }
+  // Play button: open the video on its own in a popup.
+  const handleVideoSelect = (video: VideoItem) => setSelectedVideo(video)
+  const handleModalClose = useCallback(() => setSelectedVideo(null), [])
 
   // Touch/swipe support
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -175,18 +168,18 @@ export function VideoGallery({
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary leading-tight mb-4">
+          <Reveal as="h2" variant="up" className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-primary leading-tight mb-4">
             {title}
-          </h2>
+          </Reveal>
           {subtitle && (
-            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
+            <Reveal as="p" variant="up" delay={120} className="text-lg text-foreground/70 max-w-2xl mx-auto">
               {subtitle}
-            </p>
+            </Reveal>
           )}
         </div>
 
         {/* Gallery Container */}
-        <div className="relative">
+        <Reveal variant="right" delay={200} className="relative">
           {/* Navigation Arrows */}
           <button
             onClick={() => scroll('left')}
@@ -242,7 +235,7 @@ export function VideoGallery({
               msOverflowStyle: 'none'
             }}
           >
-            <div className="flex gap-6 pb-4" style={{ width: 'max-content' }}>
+            <div className="flex items-start gap-6 pb-4 pt-2" style={{ width: 'max-content' }}>
               {videos.map((video, index) => (
                 <VideoCard
                   key={video.id}
@@ -256,7 +249,7 @@ export function VideoGallery({
               ))}
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Scroll Indicators */}
         <div className="flex justify-center mt-6 gap-2">
@@ -294,12 +287,8 @@ export function VideoGallery({
         }
       `}</style>
 
-      {/* Video Modal */}
-      <VideoModal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        video={selectedVideo!}
-      />
+      {/* Video popup: just the video, playing straight away */}
+      <VideoLightbox video={selectedVideo} onClose={handleModalClose} />
     </section>
   )
 }
@@ -316,40 +305,48 @@ interface VideoCardProps {
 function VideoCard({ video, index, isFocused, onFocus, onBlur, onSelect }: VideoCardProps) {
   const [imageError, setImageError] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [expanded, setExpanded] = useState(false)
+  const [overflows, setOverflows] = useState(false)
+  const descriptionRef = useRef<HTMLParagraphElement>(null)
+
+  // Only offer "Read more" when the description is actually cut off.
+  useLayoutEffect(() => {
+    const el = descriptionRef.current
+    if (!el || expanded) return
+    const check = () => setOverflows(el.scrollHeight > el.clientHeight + 1)
+    check()
+    const observer = new ResizeObserver(check)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [video.description, expanded])
 
   const handleImageError = () => {
     setImageError(true)
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onSelect()
-    }
-  }
-
   return (
     <div
       className={`
-        relative group cursor-pointer
+        relative group
         w-80 flex-shrink-0
         rounded-2xl overflow-hidden shadow-xl
         transition-all duration-500
         hover:shadow-2xl hover:-translate-y-2
         ${isFocused ? 'ring-2 ring-accent ring-offset-2' : ''}
       `}
-      role="button"
-      tabIndex={0}
-      aria-label={`Watch ${video.title} `}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      onClick={onSelect}
+      data-index={index}
     >
-      {/* Video Thumbnail */}
-      <div className="relative aspect-video bg-muted overflow-hidden">
+      {/* Video Thumbnail: the play button */}
+      <button
+        type="button"
+        onClick={onSelect}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        aria-label={`Play ${video.title}`}
+        className="relative block w-full aspect-video bg-muted overflow-hidden cursor-pointer focus:outline-none"
+      >
         {!imageError ? (
           <img
             src={video.thumbnail}
@@ -398,21 +395,37 @@ function VideoCard({ video, index, isFocused, onFocus, onBlur, onSelect }: Video
             </svg>
           </div>
         </div>
-      </div>
+      </button>
 
       {/* Video Info */}
       <div className="p-5 bg-background">
         <h3 className="font-semibold text-foreground text-lg mb-2 line-clamp-2">
           {video.title}
         </h3>
-        
-        <p className="text-sm text-foreground/70 mb-3 line-clamp-2">
-          {video.description}
-        </p>
 
-        <div className="flex items-center justify-between text-xs text-foreground/60">
-        
-        </div>
+        {video.description && (
+          <>
+            <p
+              ref={descriptionRef}
+              id={`video-desc-${video.id}`}
+              className={`text-sm text-foreground/70 leading-relaxed ${expanded ? '' : 'line-clamp-2'}`}
+            >
+              {video.description}
+            </p>
+            {(overflows || expanded) && (
+              <button
+                type="button"
+                onClick={() => setExpanded((e) => !e)}
+                aria-expanded={expanded}
+                aria-controls={`video-desc-${video.id}`}
+                className="mt-2 inline-flex items-center gap-1 rounded text-sm font-semibold text-accent hover:text-accent/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              >
+                {expanded ? 'Show less' : 'Read more'}
+                <ChevronDown className={`size-4 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       {/* Focus Ring Animation */}

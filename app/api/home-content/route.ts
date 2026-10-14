@@ -1,88 +1,84 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server"
 
-// Mock database for now - in production this would connect to your actual database
-let homePageContent = {
-  heroTitle: "Good Morning,",
-  heroSubtitle: "And Win Today",
-  heroPhrases: ["And Win Today", "Win Tomorrow", "And Win Forever"],
-  heroDescription: "Serving the world with faith, love, and spiritual guidance.",
-  aboutTitle: "About Pastor Evelyn Joshua",
-  aboutContent: "Pastor Evelyn Joshua is a Nigerian minister of God, pastor, preacher and tele-evangelist. She is the Senior Pastor and Leader of world renowned charismatic Christian ministry, The Synagogue, Church of All Nations (The SCOAN). Evelyn is also the President of Emmanuel Global Network (Owner of Emmanuel TV).",
-  sermonTitle: "THE YEAR OF OVERFLOWING JOY 2026",
-  sermonContent: "So did the Lord Almighty declare through Pastor Evelyn Joshua to believers across the world during the SCOAN Candlelight Service 2025.",
-  updatedAt: new Date().toISOString(),
-  updatedBy: 'Admin User'
-}
+import { getSiteContent, saveSiteContent } from "@/lib/content/store"
+import { requireUser } from "@/lib/server/api"
 
 export async function GET() {
   try {
-    return NextResponse.json({
-      success: true,
-      data: homePageContent
-    })
+    const content = await getSiteContent()
+    const legacy = {
+      heroTitle: content.home.hero.title,
+      heroSubtitle: content.home.hero.phrases[0] ?? "",
+      heroPhrases: content.home.hero.phrases,
+      heroDescription: content.home.about.content.slice(0, 120),
+      aboutTitle: `${content.home.about.title} ${content.home.about.highlightText}`,
+      aboutContent: content.home.about.content,
+      sermonTitle: content.home.sermon.title,
+      sermonContent: content.home.sermon.summaryParagraphs[0] ?? "",
+      updatedAt: content.updatedAt,
+      updatedBy: content.updatedBy,
+    }
+
+    return NextResponse.json({ success: true, data: legacy })
   } catch (error) {
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to fetch home page content' 
-      },
+      { success: false, error: "Failed to fetch home page content" },
       { status: 500 }
     )
   }
 }
 
 export async function POST(request: NextRequest) {
+  const user = await requireUser("website.manage")
+  if (user instanceof Response) return user
+
   try {
     const body = await request.json()
-    const { content } = body
+    const { content: legacyContent } = body
 
-    if (!content) {
+    if (!legacyContent) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Content is required' 
-        },
+        { success: false, error: "Content is required" },
         { status: 400 }
       )
     }
 
-    // Validate content structure
-    const requiredFields = ['heroTitle', 'heroSubtitle', 'aboutTitle', 'aboutContent']
-    const missingFields = requiredFields.filter(field => !content[field])
-    
-    if (missingFields.length > 0) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: `Missing required fields: ${missingFields.join(', ')}` 
+    const current = await getSiteContent()
+    const updated = await saveSiteContent(
+      {
+        ...current,
+        home: {
+          ...current.home,
+          hero: {
+            ...current.home.hero,
+            title: legacyContent.heroTitle ?? current.home.hero.title,
+            phrases: legacyContent.heroPhrases ?? current.home.hero.phrases,
+          },
+          about: {
+            ...current.home.about,
+            content: legacyContent.aboutContent ?? current.home.about.content,
+          },
+          sermon: {
+            ...current.home.sermon,
+            title: legacyContent.sermonTitle ?? current.home.sermon.title,
+            summaryParagraphs: legacyContent.sermonContent
+              ? [legacyContent.sermonContent]
+              : current.home.sermon.summaryParagraphs,
+          },
         },
-        { status: 400 }
-      )
-    }
-
-    // Simulate database save
-    homePageContent = {
-      ...homePageContent,
-      ...content,
-      updatedAt: new Date().toISOString(),
-      updatedBy: 'Admin User' // In production, get from session/auth
-    }
-
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, 1000))
+      },
+      user.name
+    )
 
     return NextResponse.json({
       success: true,
-      message: 'Home page content saved successfully',
-      data: homePageContent
+      message: "Home page content saved successfully",
+      data: updated,
     })
   } catch (error) {
-    console.error('Error saving home page content:', error)
+    console.error("Error saving home page content:", error)
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Failed to save home page content' 
-      },
+      { success: false, error: "Failed to save home page content" },
       { status: 500 }
     )
   }

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./admin.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -387,4 +388,133 @@ video {
   max-width: none;
   width: 100%;
   height: 100%;
+}
+
+/* Homepage slider: fills the active dot while a slide is on screen */
+@keyframes home-slider-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+/* Entrance animations (e.g. elements that start off to the side) must never cause sideways scrolling.
+   `clip` (unlike `hidden`) doesn't break sticky positioning. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Rich text written in Admin → Pages (About slideshows, sermon summary). */
+.about-rich > * + * { margin-top: 1.25rem; }
+.about-rich a { color: var(--primary); text-decoration: underline; transition: opacity 0.2s; }
+.about-rich a:hover { opacity: 0.8; }
+.about-rich ul { list-style: disc; padding-left: 1.5rem; }
+.about-rich ol { list-style: decimal; padding-left: 1.5rem; }
+.about-rich h2, .about-rich h3, .about-rich h4 { font-weight: 700; color: var(--primary); line-height: 1.3; }
+.about-rich h2 { font-size: 1.4em; }
+.about-rich h3 { font-size: 1.2em; }
+.about-rich blockquote { border-left: 3px solid var(--accent); padding-left: 1rem; font-style: italic; }
+.about-rich img { max-width: 100%; height: auto; border-radius: 0.75rem; }
+
+/* Equalizer bars in the sermon audio player. */
+@keyframes eqbar {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+[class*="animate-[eqbar"] { transform-origin: bottom; }
+
+/* ---------------------------------------------------------------------------
+   About slideshow (components/sections/about-carousel.tsx).
+   Classes are applied when a slide becomes active, so each change replays them.
+   --------------------------------------------------------------------------- */
+@keyframes about-slide-in {
+  from { opacity: 0; transform: translateX(var(--about-from, 60px)) scale(0.98); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes about-in-up {
+  from { opacity: 0; transform: translateY(22px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes about-in-photo {
+  0%   { opacity: 0; transform: scale(0.78) rotate(-8deg); filter: blur(10px); }
+  60%  { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: blur(0); }
+}
+@keyframes about-ring {
+  0%   { opacity: 0.8; transform: scale(0.92); }
+  100% { opacity: 0;   transform: scale(1.22); }
+}
+@keyframes about-kenburns {
+  from { transform: scale(1.12) translate(1.5%, 1%); }
+  to   { transform: scale(1)    translate(0, 0); }
+}
+@keyframes about-bar {
+  from { opacity: 0; width: 0; }
+  to   { opacity: 1; width: 3rem; }
+}
+
+.about-slide-in { animation: about-slide-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.about-in-up    { animation: about-in-up 0.75s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.about-in-photo { animation: about-in-photo 1s cubic-bezier(0.34, 1.4, 0.64, 1) 0.05s both; }
+.about-ring     { animation: about-ring 1.6s ease-out 0.45s both; }
+.about-kenburns { animation: about-kenburns 7s ease-out both; }
+.about-bar      { animation: about-bar 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.about-delay-1  { animation-delay: 0.15s; }
+.about-delay-2  { animation-delay: 0.28s; }
+.about-delay-3  { animation-delay: 0.45s; }
+.about-delay-4  { animation-delay: 0.55s; }
+
+/* Homepage slider background: a slower, subtler zoom than the About photos (full-width images). */
+@keyframes home-kenburns {
+  from { transform: scale(1.1); }
+  to   { transform: scale(1); }
+}
+.home-kenburns { animation: home-kenburns 8s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .about-slide-in, .about-in-up, .about-in-photo, .about-bar {
+    animation: about-fade 0.3s ease both;
+  }
+  .about-ring, .about-kenburns, .home-kenburns { animation: none; }
+}
+@keyframes about-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------------------------------------------------------------------------
+   Scroll reveal (components/ui/reveal.tsx): content animates in the first time
+   it scrolls into view.
+   --------------------------------------------------------------------------- */
+.reveal-pending { opacity: 0; }
+.reveal-in {
+  animation-duration: 0.9s;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  animation-fill-mode: both;
+}
+.reveal-up    { animation-name: reveal-up; }
+.reveal-left  { animation-name: reveal-left; }
+.reveal-right { animation-name: reveal-right; }
+.reveal-zoom  { animation-name: reveal-zoom; }
+.reveal-fade  { animation-name: about-fade; }
+
+@keyframes reveal-up {
+  from { opacity: 0; transform: translateY(40px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes reveal-left {
+  from { opacity: 0; transform: translateX(-56px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes reveal-right {
+  from { opacity: 0; transform: translateX(56px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes reveal-zoom {
+  from { opacity: 0; transform: translateY(24px) scale(0.94); filter: blur(8px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-pending { opacity: 1; }
+  .reveal-in { animation: none; }
+}
+@media (scripting: none) {
+  .reveal-pending { opacity: 1; }
 }

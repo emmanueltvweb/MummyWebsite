@@ -2,7 +2,8 @@ import { Metadata } from "next"
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { AboutTBJoshuaSection } from "@/components/sections/about-tb-joshua"
+import { AboutCarousel } from "@/components/sections/about-carousel"
+import { getAboutPageContent } from "@/lib/content/page-store"
 import SplashCursor from "@/components/SplashCursor"
 
 export const metadata: Metadata = {
@@ -16,13 +17,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function TBJoshuaPage() {
+// Content is edited in Admin → Pages.
+export const dynamic = "force-dynamic"
+
+export default async function TBJoshuaPage() {
+  const content = await getAboutPageContent("tb-joshua")
+
   return (
     <div className="min-h-screen bg-background">
       <SplashCursor />
       <Header />
       <main>
-        <AboutTBJoshuaSection />
+        <AboutCarousel content={content} sectionId="about-tb-joshua" label="About Prophet T.B. Joshua" />
       </main>
       <Footer />
     </div>

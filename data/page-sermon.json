@@ -1,0 +1,147 @@
+{
+  "hero": {
+    "label": "Messages",
+    "title": "Sermons &",
+    "titleHighlight": "Teachings",
+    "subtitle": "Discover powerful messages that will inspire, encourage, and strengthen your faith journey."
+  },
+  "featured": {
+    "badge": "Sermon of the Week",
+    "title": "THE GLORY OF GOD",
+    "date": "December 09, 2025",
+    "speaker": "Pastor Evelyn Joshua Sermon",
+    "summaryHtml": "<p>What if the trials you are trying to escape are not a reason to run from God, but an invitation to trust Him more?</p><p><strong>Pastor Evelyn Joshua</strong> reminds us in her sermon, “The Glory of God,” that God remains faithful even when our circumstances change. His goodness does not depend on our timelines or situations.</p><p>Drawing from James 1:17 and Revelation 4:11, she points us back to God as the source of every good and perfect gift and the One worthy of all glory.</p><p>What has God done in your life that reminds you He can never fail?</p><p>Watch this powerful message and be reminded to hold on to God, trust His faithfulness, and give Him the glory.</p>",
+    "keyTopics": [
+      "Trust in God",
+      "Faith",
+      "Perseverance",
+      "Divine Plan"
+    ],
+    "imageUrl": "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1791199349/website-uploads/sermons/jhjbop3x25fu0bebugte.png",
+    "videoEmbedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1825435371985464%2F&show_text=false&width=560&t=0",
+    "watchNowLabel": "Watch Now",
+    "watchNowUrl": "https://www.stream.emmanuel.tv/title/en/6937f6a8e4b0425d920b8319?v3=true&type=vod",
+    "downloadAppLabel": "Download App",
+    "downloadAppUrl": "https://emmanuel.tv/download/"
+  },
+  "videos": {
+    "title": "More Sermons",
+    "subtitle": "Discover powerful messages that will transform your life",
+    "items": [
+      {
+        "id": "video-muzq8kio6jgk",
+        "title": "THE GLORY OF GOD",
+        "description": "What if the trials you are trying to escape are not a reason to run from God, but an invitation to trust Him more?\n\nPastor Evelyn Joshua reminds us in her sermon, “The Glory of God,” that God remains faithful even when our circumstances change. His goodness does not depend on our timelines or situations.\n\nDrawing from James 1:17 and Revelation 4:11, she points us back to God as the source of every good and perfect gift and the One worthy of all glory.\n\nWhat has God done in your life that reminds you He can never fail?\n\nWatch this powerful message and be reminded to hold on to God, trust His faithfulness, and give Him the glory.",
+        "thumbnail": "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1791199349/website-uploads/sermons/jhjbop3x25fu0bebugte.png",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1825435371985464%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "1",
+        "title": "DIVINE HEALING",
+        "description": "In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.",
+        "thumbnail": "/sermonpix/divinehealing.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F860049446673969%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "2",
+        "title": "THE TRUE SOLUTION",
+        "description": "What is the true solution to life’s challenges?; When all that glitters fades and worldly possessions can’t fill the emptiness within, where do you turn?",
+        "thumbnail": "/sermonpix/sermon.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F801335522787767%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "3",
+        "title": "The Character of a True Beliver",
+        "description": "What is the character of a true believer? Is it about the words of their mouth, their outward appearance, or the paraphernalia of their Christian office?",
+        "thumbnail": "/sermonpix/sermon2.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fwatch%2F%3Fv%3D1340651834319725&show_text=0&width=560&mute=0"
+      },
+      {
+        "id": "4",
+        "title": "WATCH AND PRAY",
+        "description": "In this exhortation to the Church, Pastor Evelyn Joshua reads from Numbers 21:4-9 as she speaks on faith, the promise of healing and salvation, and several other issues on how the believer can look up to Jesus in order to live.",
+        "thumbnail": "/sermonpix/watchandpray.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1486381456133444%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "5",
+        "title": "INVITING GOD'S PRESENCE AND POWER",
+        "description": "What does it take to invite God's presence and power into your situation?",
+        "thumbnail": "/sermonpix/invitinggods.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1261441498680117%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "6",
+        "title": "A WORTHY PARTNER IN GOD'S WORK",
+        "description": "What is it about a threefold cord that makes it so special, as affirmed by the Scriptures?",
+        "thumbnail": "/sermonpix/worthypartner.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1396099284756281%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "7",
+        "title": "THE POWER OF BELIEF",
+        "description": "Reading from John 14:12, Pastor Evelyn Joshua speaks categorically about the link between faith and confession.",
+        "thumbnail": "/sermonpix/belief.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F609068458157062%2F&show_text=false&width=560&t=0"
+      },
+      {
+        "id": "8",
+        "title": "GOD'S LOVE",
+        "description": "As a Christian, do you know the source of power for exploits in the spiritual realm that manifest in the physical?",
+        "thumbnail": "/sermonpix/Godslove.jpeg",
+        "embedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2FSCOANLegacy%2Fvideos%2F1224324055327535%2F&show_text=false&width=560&t=0"
+      }
+    ]
+  },
+  "audio": {
+    "tracks": [
+      {
+        "id": 1,
+        "title": "The Character of a True Believer",
+        "artist": "Pastor Evelyn Joshua",
+        "category": "Sermon",
+        "duration": "28:37",
+        "date": "Sept 28, 2025",
+        "audioUrl": "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416823/THE_CHARACTER_OF_A_TRUE_BELIEVER_Pastor_Evelyn_Joshua_Sermon_vrnaqt.mp3"
+      },
+      {
+        "id": 2,
+        "title": "THE TRUE SOLUTION",
+        "artist": "Pastor Evelyn Joshua",
+        "category": "Sermon",
+        "duration": "30:16",
+        "date": "Oct 26, 2025",
+        "audioUrl": "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416830/THE_TRUE_SOLUTION_-_Pastor_Evelyn_Joshua_Sermon_lmakzi.mp3"
+      },
+      {
+        "id": 3,
+        "title": "INVITING GOD'S PRESENCE AND POWER",
+        "artist": "Pastor Evelyn Joshua",
+        "category": "Sermon",
+        "duration": "32:53",
+        "date": "July 06, 2025",
+        "audioUrl": "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416822/INVITING_GOD_S_PRESENCE_AND_POWER___Pastor_Evelyn_Joshua_Sermon_bbwmji.mp3"
+      },
+      {
+        "id": 4,
+        "title": "DIVINE HEALING",
+        "artist": "Pastor Evelyn Joshua",
+        "category": "Sermon",
+        "duration": "34:14",
+        "date": "Dec 6, 2025",
+        "audioUrl": "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416816/DIVINE_HEALING_-_Pastor_Evelyn_Joshua_Sermon_i4gfxv.mp3"
+      },
+      {
+        "id": 5,
+        "title": "A SONG FOR CHRISTMAS A SONG FOR ALL SEASONS",
+        "artist": "SCOAN Choir",
+        "category": "Worship Music",
+        "duration": "2:56",
+        "date": "Dec 25, 2025",
+        "audioUrl": "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416811/A_SONG_FOR_CHRISTMAS_A_SONG_FOR_ALL_SEASONS_c5vlef.mp3"
+      }
+    ]
+  },
+  "updatedAt": "2026-10-08T16:40:33.618Z",
+  "updatedBy": "Hosea"
+}

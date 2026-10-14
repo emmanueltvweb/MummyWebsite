@@ -141,13 +141,14 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
       className="overflow-hidden"
       data-slot="carousel-content"
     >
+      {/* No CSS transition here: Embla animates the track itself, and a CSS transition turns its
+          invisible loop "wrap" jump into a visible slide backwards to the first picture. */}
       <div
         className={cn(
-          'flex transition-transform',
+          'flex',
           orientation === 'horizontal' ? '-ml-4' : '-mt-4 flex-col',
           className,
         )}
-        style={{ transitionDuration: '300ms' }}
         {...props}
       />
     </div>

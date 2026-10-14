@@ -1,1247 +1,901 @@
 "use client"
 
-import React, { useState, useEffect, useRef } from "react"
-import { Play, Pause, SkipBack, SkipForward, Volume2, Music, AlertTriangle } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import {
+  AlertTriangle,
+  Loader2,
+  Music2,
+  Pause,
+  Play,
+  Repeat,
+  Repeat1,
+  RotateCcw,
+  RotateCw,
+  Shuffle,
+  SkipBack,
+  SkipForward,
+  Volume1,
+  Volume2,
+  VolumeX,
+} from "lucide-react"
+
 import { Container } from "@/components/layout/container"
-// -------------------- Helpers --------------------
+import { Reveal } from "@/components/ui/reveal"
+import type { SermonAudioTrack } from "@/lib/content/page-types"
+import { cn } from "@/lib/utils"
 
-// Format seconds to mm:ss
-const formatDuration = (seconds: number) => {
-  if (!seconds || isNaN(seconds) || seconds === Infinity) return "0:00"
-  const mins = Math.floor(seconds / 60)
-  const secs = Math.floor(seconds % 60)
-  return `${mins}:${secs < 10 ? "0" : ""}${secs}`
+/* ============================================================================
+   Audio library player for the Sermon page. Tracks are managed in
+   Admin → Pages → Sermon → Audio playlist.
+   ========================================================================== */
+
+const SPEEDS = [0.75, 1, 1.25, 1.5, 2]
+const BAR_COUNT = 64
+const SKIP_SECONDS = 15
+const PREFS_KEY = "sermon-player:prefs"
+
+type RepeatMode = "off" | "all" | "one"
+
+function formatTime(seconds: number) {
+  const s = Number.isFinite(seconds) && seconds > 0 ? seconds : 0
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  const sec = Math.floor(s % 60)
+  return h ? `${h}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}` : `${m}:${String(sec).padStart(2, "0")}`
 }
 
-// Accessibility helper: announce track changes to screen readers (and optionally speak them)
-function announceTrackChange(track: { title?: string; artist?: string }) {
+function readPrefs(): { volume: number; muted: boolean; rate: number } {
   try {
-    const announcement = track?.title
-      ? `Now playing: ${track.title}${track.artist ? " by " + track.artist : ""}`
-      : "Track changed"
-
-    // Prefer speechSynthesis for an audible cue (optional)
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      try {
-        const utter = new SpeechSynthesisUtterance(announcement)
-        utter.volume = 0.6
-        window.speechSynthesis.cancel()
-        window.speechSynthesis.speak(utter)
-        return
-      } catch (e) {
-        // fallback to aria-live
-        // eslint-disable-next-line no-console
-        console.warn("speechSynthesis failed, falling back to aria-live:", e)
-      }
+    const parsed = JSON.parse(localStorage.getItem(PREFS_KEY) || "{}")
+    return {
+      volume: typeof parsed.volume === "number" ? Math.min(1, Math.max(0, parsed.volume)) : 0.85,
+      muted: Boolean(parsed.muted),
+      rate: SPEEDS.includes(parsed.rate) ? parsed.rate : 1,
     }
-
-    // Fallback: update a polite aria-live region so screen readers announce the text
-    const ID = "sr-announcer"
-    let el = document.getElementById(ID) as HTMLElement | null
-    if (!el) {
-      el = document.createElement("div")
-      el.id = ID
-      el.setAttribute("aria-live", "polite")
-      el.setAttribute("aria-atomic", "true")
-      el.style.position = "absolute"
-      el.style.width = "1px"
-      el.style.height = "1px"
-      el.style.margin = "-1px"
-      el.style.overflow = "hidden"
-      el.style.clip = "rect(0 0 0 0)"
-      el.style.whiteSpace = "nowrap"
-      el.style.border = "0"
-      document.body.appendChild(el)
-    }
-    el.textContent = announcement
-
-    setTimeout(() => {
-      if (el) el.textContent = ""
-    }, 1200)
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.warn("announceTrackChange error", err)
+  } catch {
+    return { volume: 0.85, muted: false, rate: 1 }
   }
 }
 
-// Pause and clear other audio elements on the page except optional 'except' audio element
-function pauseAllOtherAudio(except?: HTMLAudioElement | null) {
-  try {
-    const audios = Array.from(document.querySelectorAll('audio')) as HTMLAudioElement[]
-    audios.forEach(a => {
-      if (except && a === except) return
-      try {
-        a.pause()
-        // clear src to avoid continued streaming
-        a.removeAttribute('src')
-        // reload to ensure it is stopped
-        // some browsers require load() after removing src
-        a.load()
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.warn('Failed to pause/clear audio element', e)
-      }
-    })
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.warn('pauseAllOtherAudio error', e)
-  }
+/* ------------------------------------------------------------------ Web Audio graph */
+
+interface AudioGraph {
+  ctx: AudioContext
+  analyser: AnalyserNode
+  gain: GainNode
 }
 
-// -------------------- Types & Tracks --------------------
+/**
+ * Routes the <audio> element through an analyser (for the live waves) and a gain node (volume).
+ * Created on the first play, because browsers only allow audio contexts after a user gesture.
+ */
+function useAudioGraph(audioRef: React.RefObject<HTMLAudioElement | null>) {
+  const graphRef = useRef<AudioGraph | null>(null)
+  const unavailable = useRef(false)
+  const [ready, setReady] = useState(false)
 
-interface AudioTrack {
-  id: number
-  title: string
-  artist: string
-  category: string
-  duration: string
-  date?: string
-  audioUrl?: string
-  embedUrl?: string
-  isEmbed?: boolean
-  isPreloaded?: boolean
-}
-
-interface AudioPlayerState {
-  isPlaying: boolean
-  isLoading: boolean
-  currentTime: number
-  duration: number
-  volume: number
-  playbackRate: number
-  error: string | null
-  isMuted: boolean
-  isSeeking: boolean
-  isBuffering: boolean
-}
-
-const audioTracks: AudioTrack[] = [
-  {
-    id: 1,
-    title: "The Character of a True Believer",
-    artist: "Pastor Evelyn Joshua",
-    category: "Sermon",
-    duration: "28:37",
-    date: "Sept 28, 2025",
-    embedUrl: "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416823/THE_CHARACTER_OF_A_TRUE_BELIEVER_Pastor_Evelyn_Joshua_Sermon_vrnaqt.mp3",
-    isEmbed: true
-  },
-  {
-    id: 2,
-    title: "THE TRUE SOLUTION",
-    artist: "Pastor Evelyn Joshua",
-    category: "Sermon",
-    duration: "30:16",
-    date: "Oct 26, 2025",
-    embedUrl: "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416830/THE_TRUE_SOLUTION_-_Pastor_Evelyn_Joshua_Sermon_lmakzi.mp3",
-    isEmbed: true
-  },
-  {
-    id: 3,
-    title: "INVITING GOD'S PRESENCE AND POWER",
-    artist: "Pastor Evelyn Joshua",
-    category: "Sermon",
-    duration: "32:53",
-    date: "July 06, 2025",
-    embedUrl: "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416822/INVITING_GOD_S_PRESENCE_AND_POWER___Pastor_Evelyn_Joshua_Sermon_bbwmji.mp3",
-    isEmbed: true
-  },
-  {
-    id: 4,
-    title: "DIVINE HEALING",
-    artist: "Pastor Evelyn Joshua",
-    category: "Sermon",
-    duration: "34:14",
-    date: "Dec 6, 2025",
-    embedUrl: "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416816/DIVINE_HEALING_-_Pastor_Evelyn_Joshua_Sermon_i4gfxv.mp3",
-    isEmbed: true
-  },
-  {
-    id: 5,
-    title: "A SONG FOR CHRISTMAS A SONG FOR ALL SEASONS",
-    artist: "SCOAN Choir",
-    category: "Worship Music",
-    duration: "2:56",
-    date: "Dec 25, 2025",
-    embedUrl: "https://res.cloudinary.com/dvlcc2r5w/video/upload/v1771416811/A_SONG_FOR_CHRISTMAS_A_SONG_FOR_ALL_SEASONS_c5vlef.mp3",
-    isEmbed: true
-  },
-]
-
-// -------------------- Component --------------------
-
-export function AudioPlaylistSection() {
-  const router = useRouter()
-  const [currentTrack, setCurrentTrack] = useState<AudioTrack>(audioTracks[0])
-  const [playerState, setPlayerState] = useState<AudioPlayerState>({
-    isPlaying: false,
-    isLoading: false,
-    currentTime: 0,
-    duration: 0,
-    volume: 1,
-    playbackRate: 1,
-    error: null,
-    isMuted: false,
-    isSeeking: false,
-    isBuffering: false
-  })
-  const [activeTab, setActiveTab] = useState("all")
-  const [isNavigating, setIsNavigating] = useState(false)
-  const [audioBars, setAudioBars] = useState<number[]>([])
-  const [audioContext, setAudioContext] = useState<AudioContext | null>(null)
-  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null)
-  const [dataArray, setDataArray] = useState<Uint8Array | null>(null)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const iframeRef = useRef<HTMLIFrameElement | null>(null)
-  const animationRef = useRef<number>(0)
-  const loadingTimeoutRef = useRef<any>(null)
-  const progressIntervalRef = useRef<any>(null)
-  const embedTimeoutRef = useRef<any>(null)
-
-  // id to track the latest play attempt (prevents race conditions)
-  const playAttemptIdRef = useRef<number>(0)
-
-  const filteredTracks = audioTracks.filter((track) => {
-    if (activeTab === "all") return true
-    return track.category.toLowerCase().replace(" ", "-") === activeTab
-  })
-
-  const currentIndex = audioTracks.findIndex((t) => t.id === currentTrack.id)
-
-  const isDirectAudioUrl = (url?: string) => {
-    if (!url) return false
-    const ext = url.split('.').pop()?.split(/[?#]/)[0]?.toLowerCase() || ''
-    return ['mp3','m4a','wav','aac','ogg','flac'].includes(ext)
-  }
-
-  const handlePrevious = () => {
-    if (currentIndex > 0) {
-      setCurrentTrack(audioTracks[currentIndex - 1])
-      setPlayerState(prev => ({ ...prev, isPlaying: false, currentTime: 0, error: null }))
-      // ensure stopping any audio
-      pauseAllOtherAudio(null)
-    }
-  }
-
-  const handleNext = () => {
-    if (currentIndex < audioTracks.length - 1) {
-      setCurrentTrack(audioTracks[currentIndex + 1])
-      setPlayerState(prev => ({ ...prev, isPlaying: false, currentTime: 0, error: null }))
-      pauseAllOtherAudio(null)
-    }
-  }
-
-  // playWithRetry: checks for attempt id to abort stale attempts
-  const playWithRetry = async (audio: HTMLAudioElement | null, maxRetries: number, attemptId: number): Promise<void> => {
-    if (!audio) throw new Error('Audio element not available')
-
-    let lastError: Error | null = null
-
-    for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      // If a new attempt started after this one, bail out
-      if (attemptId !== playAttemptIdRef.current) {
-        throw new Error('Play attempt aborted (stale)')
-      }
-
-      try {
-        await audio.play()
-        return // Success!
-      } catch (error) {
-        lastError = error as Error
-        // eslint-disable-next-line no-console
-        console.warn(`Audio play attempt ${attempt} failed:`, error)
-
-        if (attempt < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, attempt * 500))
-        }
-      }
-    }
-
-    throw lastError || new Error('Audio playback failed after retries')
-  }
-
-  // Initialize audio context
-  const initializeAudioContext = async () => {
-    if (!audioContext) {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)()
-      const analyserNode = ctx.createAnalyser()
-      analyserNode.fftSize = 256
-      analyserNode.smoothingTimeConstant = 0.8
-
-      const bufferLength = analyserNode.frequencyBinCount
-      const dataArray = new Uint8Array(bufferLength)
-
-      setAudioContext(ctx)
-      setAnalyser(analyserNode)
-      setDataArray(dataArray)
-    }
-    return { ctx: audioContext, analyser, dataArray }
-  }
-
-  // Connect audio element to analyser (guard double connections)
-  const connectAudioToAnalyser = async (audioElement: HTMLAudioElement) => {
-    const { ctx, analyser } = await initializeAudioContext()
-    if (ctx && analyser) {
-      try {
-        const source = ctx.createMediaElementSource(audioElement)
-        source.connect(analyser)
-        analyser.connect(ctx.destination)
-      } catch (err) {
-        // ignore double connection errors
-      }
-    }
-  }
-
-  // updateAudioVisualization
-  const updateAudioVisualization = () => {
-    if (analyser && dataArray) {
-      const frequencyData = new Uint8Array(analyser.frequencyBinCount)
-      analyser.getByteFrequencyData(frequencyData)
-
-      const barCount = 30
-      const bars = Array.from({ length: barCount }).map((_, i) => {
-        const index = Math.floor((i / barCount) * frequencyData.length)
-        const value = frequencyData[index]
-        return Math.max(10, (value / 255) * 100)
-      })
-
-      setAudioBars(bars)
-
-      animationRef.current = requestAnimationFrame(updateAudioVisualization)
-    }
-  }
-
-  // Improved track selection: handle direct audio vs true iframe embed
-  const handleTrackSelect = async (track: AudioTrack) => {
+  const ensure = useCallback(() => {
+    const audio = audioRef.current
+    if (graphRef.current || unavailable.current || !audio) return graphRef.current
     try {
-      // Announce track change to screen readers
-      announceTrackChange(track)
-
-      // Clear existing intervals/timeouts
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current)
-        loadingTimeoutRef.current = null
-      }
-
-      // Stop current playback and cleanup visualization
-      if (audioRef.current && playerState.isPlaying) {
-        audioRef.current.pause()
-        cancelAnimationFrame(animationRef.current)
-      }
-
-      // Reset state
-      setPlayerState(prev => ({
-        ...prev,
-        isPlaying: false,
-        currentTime: 0,
-        duration: 0,
-        error: null,
-        isLoading: false
-      }))
-
-      // Set new track
-      setCurrentTrack(track)
-
-      // If the embedUrl is actually a direct audio (Cloudinary mp3), treat it as direct audio:
-      const directUrl = track.audioUrl || (isDirectAudioUrl(track.embedUrl || '') ? track.embedUrl : undefined)
-
-      if (directUrl && audioRef.current) {
-        // Pause any other audio elements first
-        pauseAllOtherAudio(audioRef.current)
-
-        // Set src and attempt to play
-        audioRef.current.src = directUrl
-        audioRef.current.crossOrigin = 'anonymous'
-        audioRef.current.load()
-
-        // Initialize audio context + analyser if needed
-        if (!audioContext) await initializeAudioContext()
-        connectAudioToAnalyser(audioRef.current)
-
-        // Start a new play attempt
-        playAttemptIdRef.current += 1
-        const attemptId = playAttemptIdRef.current
-
-        setPlayerState(prev => ({ ...prev, isLoading: true, error: null }))
-
-        try {
-          await playWithRetry(audioRef.current, 3, attemptId)
-          if (attemptId === playAttemptIdRef.current) {
-            setPlayerState(prev => ({ ...prev, isPlaying: true, isLoading: false }))
-            updateAudioVisualization()
-          }
-        } catch (err) {
-          if (attemptId === playAttemptIdRef.current) {
-            // eslint-disable-next-line no-console
-            console.error('Playback failed after retries:', err)
-            setPlayerState(prev => ({ ...prev, isPlaying: false, isLoading: false, error: 'Unable to play audio. Please try again.' }))
-          }
-        }
-
-        return
-      }
-
-      // If it's a true embed that is NOT a direct audio file (e.g., archive.org embed), we rely on iframe
-      if (track.isEmbed && track.embedUrl && !isDirectAudioUrl(track.embedUrl)) {
-        setPlayerState(prev => ({ ...prev, isLoading: true }))
-        const cleanup = loadEmbeddedContent(track)
-        return cleanup
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Track selection failed:', error)
-      setPlayerState(prev => ({ ...prev, error: 'Unable to select track. Please try again.', isLoading: false }))
+      const Ctx = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
+      if (!Ctx) throw new Error("Web Audio not supported")
+      const ctx = new Ctx()
+      const source = ctx.createMediaElementSource(audio)
+      const analyser = ctx.createAnalyser()
+      analyser.fftSize = 512
+      analyser.smoothingTimeConstant = 0.72
+      const gain = ctx.createGain()
+      // Analyse before the volume, so the waves keep moving even when the volume is low.
+      source.connect(analyser)
+      analyser.connect(gain)
+      gain.connect(ctx.destination)
+      graphRef.current = { ctx, analyser, gain }
+      setReady(true)
+    } catch {
+      unavailable.current = true
     }
-  }
+    return graphRef.current
+  }, [audioRef])
 
-  const handleNavigateToSermons = () => {
-    setIsNavigating(true)
-    try {
-      router.push('/Sermon')
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Navigation failed:', error)
-      setIsNavigating(false)
-      window.location.href = '/Sermon'
-    }
-  }
-
-  const handleTimeUpdate = () => {
-    if (audioRef.current) {
-      setPlayerState(prev => ({ ...prev, currentTime: audioRef.current!.currentTime }))
-    }
-  }
-
-  const handleLoadedMetadata = () => {
-    if (audioRef.current) {
-      const newDuration = audioRef.current.duration
-      setPlayerState(prev => ({ ...prev, duration: newDuration }))
-    }
-  }
-
-  const handleAudioError = (event: React.SyntheticEvent<HTMLAudioElement>) => {
-    const audioElement = event.target as HTMLAudioElement
-    const error = audioElement.error
-    let errorMessage = 'Unable to load audio. Please try another track.'
-    let isRecoverable = false
-
-    if (error) {
-      switch (error.code) {
-        case MediaError.MEDIA_ERR_ABORTED:
-          errorMessage = 'Audio loading was interrupted.'
-          isRecoverable = true
-          break
-        case MediaError.MEDIA_ERR_NETWORK:
-          errorMessage = 'Network error occurred while loading audio.'
-          isRecoverable = true
-          break
-        case MediaError.MEDIA_ERR_DECODE:
-          errorMessage = 'Audio format not supported or corrupted file.'
-          isRecoverable = false
-          break
-        case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-          errorMessage = 'Audio source not supported. Please try a different format.'
-          isRecoverable = false
-          break
-        default:
-          errorMessage = 'Unknown error occurred while loading audio.'
-          isRecoverable = true
-      }
-    }
-
-    // eslint-disable-next-line no-console
-    console.error(`Audio error for track "${currentTrack.title}": ${error?.message} (Code: ${error?.code})`)
-
-    setPlayerState(prev => ({
-      ...prev,
-      error: errorMessage,
-      isPlaying: false,
-      isLoading: false
-    }))
-
-    if (isRecoverable && error?.code === MediaError.MEDIA_ERR_NETWORK) {
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.load()
-          audioRef.current.play().catch(() => {
-            setPlayerState(prev => ({ ...prev, error: 'Unable to recover from network error. Please try a different track.' }))
-          })
-        }
-      }, 1000)
-    }
-  }
-
-  // loadEmbeddedContent
-  const loadEmbeddedContent = (track: AudioTrack) => {
-    setPlayerState(prev => ({ ...prev, isLoading: true, error: null }))
-
-    if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current)
-
-    loadingTimeoutRef.current = setTimeout(() => {
-      if (playerState.isLoading) {
-        // eslint-disable-next-line no-console
-        console.warn(`Embedded content timeout for track: ${track.title}`)
-        handleEmbedError('Embedded content loading timeout')
-      }
-    }, 10000)
-
-    return () => {
-      if (loadingTimeoutRef.current) {
-        clearTimeout(loadingTimeoutRef.current)
-        loadingTimeoutRef.current = null
-      }
-    }
-  }
-
-  const handleEmbedError = (error: string) => {
-    // eslint-disable-next-line no-console
-    console.error(`Embedded player error: ${error}`)
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current)
-      loadingTimeoutRef.current = null
-    }
-    setPlayerState(prev => ({ ...prev, isLoading: false, error: 'Embedded player failed.' }))
-  }
-
-  const handleIframeLoad = () => {
-    if (loadingTimeoutRef.current) {
-      clearTimeout(loadingTimeoutRef.current)
-      loadingTimeoutRef.current = null
-    }
-    setPlayerState(prev => ({ ...prev, isLoading: false, error: null }))
-    try {
-      iframeRef.current?.contentWindow?.postMessage({ type: 'ping' }, '*')
-    } catch (e) {
-      // cross-origin likely — that's expected
-    }
-  }
-
-  const handleIframeError = () => {
-    // eslint-disable-next-line no-console
-    console.error('Iframe failed to load')
-    handleEmbedError('Iframe loading failed')
-  }
-
-  // controlEmbeddedPlayer (unchanged)
-  const controlEmbeddedPlayer = async (action: 'play' | 'pause') => {
-    if (!iframeRef.current) return false
-
-    try {
-      const iframe = iframeRef.current
-
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
-        if (iframeDoc) {
-          const selectors = [
-            'button[title*="Play"]', 'button[aria-label*="Play"]', '.play-button',
-            'button[title*="Pause"]', 'button[aria-label*="Pause"]', '.pause-button',
-            '.jw-play', '.jw-pause', '.mejs-play', '.mejs-pause'
-          ]
-
-          const targetSelector = action === 'play'
-            ? selectors.filter(s => s.toLowerCase().includes('play'))
-            : selectors.filter(s => s.toLowerCase().includes('pause'))
-
-          for (const selector of targetSelector) {
-            const button = iframeDoc.querySelector(selector) as HTMLButtonElement
-            if (button) {
-              button.click()
-              return true
-            }
-          }
-        }
-      } catch (e) {
-        // direct access failed
-      }
-
-      try {
-        iframe.contentWindow?.postMessage({
-          type: 'player-control',
-          action: action,
-          source: 'custom-player'
-        }, '*')
-        return true
-      } catch (e) {
-        // postMessage failed
-      }
-
-      try {
-        const event = new KeyboardEvent('keydown', {
-          key: ' ',
-          code: 'Space',
-          keyCode: 32,
-          which: 32,
-          bubbles: true
-        })
-        iframe.dispatchEvent(event)
-        return true
-      } catch (e) {
-        // keyboard event failed
-      }
-
-      return false
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('All embedded player control methods failed:', error)
-      return false
-    }
-  }
-
-  // Central play/pause handler — improved for direct audio
-  const handlePlayPause = async () => {
-    if (playerState.isLoading) return // guard
-
-    // If current track is an embed but its embedUrl is actually a direct audio file, treat it as direct audio
-    const directUrl = currentTrack.audioUrl || (isDirectAudioUrl(currentTrack.embedUrl || '') ? currentTrack.embedUrl : undefined)
-
-    if (directUrl && audioRef.current) {
-      // Direct audio flow
-      if (!audioContext) {
-        await initializeAudioContext()
-      }
-      connectAudioToAnalyser(audioRef.current)
-
-      if (playerState.isPlaying) {
-        try {
-          audioRef.current.pause()
-          // Also pause any other audio elements just to be safe
-          pauseAllOtherAudio(audioRef.current)
-          cancelAnimationFrame(animationRef.current)
-          setPlayerState(prev => ({ ...prev, isPlaying: false }))
-        } catch (err) {
-          // eslint-disable-next-line no-console
-          console.error('Error pausing audio:', err)
-          setPlayerState(prev => ({ ...prev, isPlaying: false, error: 'Failed to pause audio.' }))
-        }
-        return
-      }
-
-      // Start playback with robust flow
-      playAttemptIdRef.current += 1
-      const attemptId = playAttemptIdRef.current
-      setPlayerState(prev => ({ ...prev, isLoading: true, error: null }))
-
-      // Ensure src is set
-      if (audioRef.current.src !== directUrl) {
-        // Pause other audio before switching
-        pauseAllOtherAudio(audioRef.current)
-        audioRef.current.src = directUrl
-        audioRef.current.crossOrigin = 'anonymous'
-        audioRef.current.load()
-      }
-
-      try {
-        await playWithRetry(audioRef.current, 3, attemptId)
-        if (attemptId === playAttemptIdRef.current) {
-          setPlayerState(prev => ({ ...prev, isPlaying: true, isLoading: false }))
-          updateAudioVisualization()
-        }
-      } catch (err) {
-        if (attemptId === playAttemptIdRef.current) {
-          // eslint-disable-next-line no-console
-          console.error('Playback failed:', err)
-          setPlayerState(prev => ({ ...prev, isPlaying: false, isLoading: false, error: 'Unable to play audio. Please try again.' }))
-        }
-      }
-
-      return
-    }
-
-    // Otherwise try to control embedded iframe player (if any)
-    if (currentTrack.isEmbed && iframeRef.current) {
-      setPlayerState(prev => ({ ...prev, isLoading: true, error: null }))
-      try {
-        const success = await controlEmbeddedPlayer(playerState.isPlaying ? 'pause' : 'play')
-        if (success) {
-          setPlayerState(prev => ({ ...prev, isPlaying: !prev.isPlaying }))
-        } else {
-          // couldn't control embed; flip state only as feedback
-          setPlayerState(prev => ({ ...prev, isPlaying: !prev.isPlaying }))
-        }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.error('Error controlling embedded player:', err)
-        setPlayerState(prev => ({ ...prev, isPlaying: false, error: 'Failed to control embedded player.' }))
-      } finally {
-        loadingTimeoutRef.current = setTimeout(() => setPlayerState(prev => ({ ...prev, isLoading: false })), 500)
-      }
-      return
-    }
-
-    // Fallback: nothing to play
-    setPlayerState(prev => ({ ...prev, error: 'No playable audio source available.' }))
-  }
-
-  // Handle player actions (volume, seek, rate)
-  const handlePlayerAction = (action: 'volume' | 'seek' | 'rate', value: number) => {
-    switch (action) {
-      case 'volume':
-        const newVolume = Math.max(0, Math.min(1, value))
-        const isMuted = newVolume === 0
-        
-        if (audioRef.current) {
-          audioRef.current.volume = newVolume
-          audioRef.current.muted = isMuted
-        }
-        
-        setPlayerState(prev => ({
-          ...prev,
-          volume: newVolume,
-          isMuted: isMuted
-        }))
-        
-        // Save to localStorage
-        try {
-          localStorage.setItem('audioPlayerSettings', JSON.stringify({
-            volume: newVolume,
-            playbackRate: playerState.playbackRate
-          }))
-        } catch (e) {
-          // Silently ignore localStorage errors
-        }
-        break
-        
-      case 'seek':
-        const seekTime = Math.max(0, Math.min(playerState.duration, value))
-        
-        if (audioRef.current) {
-          audioRef.current.currentTime = seekTime
-        }
-        
-        setPlayerState(prev => ({
-          ...prev,
-          currentTime: seekTime
-        }))
-        break
-        
-      case 'rate':
-        const newRate = Math.max(0.5, Math.min(2, value))
-        
-        if (audioRef.current) {
-          audioRef.current.playbackRate = newRate
-        }
-        
-        setPlayerState(prev => ({
-          ...prev,
-          playbackRate: newRate
-        }))
-        
-        // Save to localStorage
-        try {
-          localStorage.setItem('audioPlayerSettings', JSON.stringify({
-            volume: playerState.volume,
-            playbackRate: newRate
-          }))
-        } catch (e) {
-          // Silently ignore localStorage errors
-        }
-        break
-    }
-  }
-
-  const formatTime = (time: number): string => {
-    if (isNaN(time) || time < 0) return '0:00'
-    const minutes = Math.floor(time / 60)
-    const seconds = Math.floor(time % 60)
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`
-  }
-
-  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (audioRef.current && playerState.duration > 0) {
-      const rect = e.currentTarget.getBoundingClientRect()
-      const clickX = e.clientX - rect.left
-      const width = rect.width
-      const percentage = Math.max(0, Math.min(1, clickX / width))
-      const newTime = percentage * playerState.duration
-      try {
-        audioRef.current.currentTime = newTime
-        setPlayerState(prev => ({ ...prev, currentTime: newTime }))
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Error seeking audio:', error)
-        setPlayerState(prev => ({ ...prev, error: 'Unable to seek audio. Please try again.' }))
-      }
-    }
-  }
-
-  const handleProgressKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!audioRef.current || playerState.duration <= 0) return
-    const seekStep = 5
-    let newTime = playerState.currentTime
-    switch (e.key) {
-      case 'ArrowLeft':
-      case 'ArrowDown':
-        newTime = Math.max(0, playerState.currentTime - seekStep)
-        break
-      case 'ArrowRight':
-      case 'ArrowUp':
-        newTime = Math.min(playerState.duration, playerState.currentTime + seekStep)
-        break
-      case 'Home':
-        newTime = 0
-        break
-      case 'End':
-        newTime = playerState.duration
-        break
-      default:
-        return
-    }
-    e.preventDefault()
-    try {
-      audioRef.current.currentTime = newTime
-      setPlayerState(prev => ({ ...prev, currentTime: newTime }))
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Error seeking audio:', error)
-      setPlayerState(prev => ({ ...prev, error: 'Unable to seek audio. Please try again.' }))
-    }
-  }
-
-  const updateProgress = () => {
-    if (audioRef.current && playerState.isPlaying) {
-      const currentTime = audioRef.current.currentTime
-      const duration = audioRef.current.duration
-      if (Math.abs(currentTime - playerState.currentTime) > 0.1 || Math.abs(duration - playerState.duration) > 0.1) {
-        setPlayerState(prev => ({ ...prev, currentTime, duration: duration || prev.duration }))
-      }
-      if (playerState.isPlaying) {
-        animationRef.current = requestAnimationFrame(updateProgress)
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (playerState.isPlaying && !currentTrack.isEmbed) {
-      animationRef.current = requestAnimationFrame(updateProgress)
-    } else {
-      cancelAnimationFrame(animationRef.current)
-    }
-    return () => cancelAnimationFrame(animationRef.current)
-  }, [playerState.isPlaying, currentTrack.isEmbed])
-
-  useEffect(() => {
-    if (audioRef.current && audioContext && analyser) connectAudioToAnalyser(audioRef.current)
-  }, [audioContext, analyser])
-
-  // Simulated progress for true embedded content (keeps previous behavior)
-  useEffect(() => {
-    if (currentTrack.isEmbed && !isDirectAudioUrl(currentTrack.embedUrl || '') && playerState.isPlaying) {
-      progressIntervalRef.current = setInterval(() => {
-        setPlayerState(prev => {
-          const newTime = prev.currentTime + 1
-          const lengthSeconds = 1717
-          if (newTime >= lengthSeconds) {
-            setTimeout(() => setPlayerState(prev => ({ ...prev, isPlaying: false })), 0)
-            return { ...prev, currentTime: lengthSeconds }
-          }
-          return { ...prev, currentTime: newTime }
-        })
-      }, 1000)
-    } else {
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current)
-        progressIntervalRef.current = null
-      }
-    }
-    return () => {
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current)
-        progressIntervalRef.current = null
-      }
-    }
-  }, [currentTrack.isEmbed, playerState.isPlaying])
-
-  useEffect(() => {
-    if (currentTrack.isEmbed) {
-      setPlayerState(prev => ({ ...prev, duration: 1717, currentTime: 0, error: null }))
-    }
-  }, [currentTrack.isEmbed])
-
-  useEffect(() => {
-    return () => {
-      if (loadingTimeoutRef.current) clearTimeout(loadingTimeoutRef.current)
-      if (progressIntervalRef.current) clearInterval(progressIntervalRef.current)
-      if (animationRef.current) cancelAnimationFrame(animationRef.current)
-      if (audioRef.current && playerState.isPlaying) audioRef.current.pause()
-      if (audioContext && audioContext.state !== 'closed') audioContext.close().catch(console.warn)
-      // Pause all other audios on unmount
-      pauseAllOtherAudio(null)
-    }
+  /** Call when a track can't be used with the analyser (no CORS): never build the graph. */
+  const disable = useCallback(() => {
+    if (!graphRef.current) unavailable.current = true
   }, [])
 
-  const cleanupAudioResources = () => {
-    cancelAnimationFrame(animationRef.current)
-    if (progressIntervalRef.current) { clearInterval(progressIntervalRef.current); progressIntervalRef.current = null }
-    if (loadingTimeoutRef.current) { clearTimeout(loadingTimeoutRef.current); loadingTimeoutRef.current = null }
-    if (analyser) analyser.disconnect()
-    if (audioContext) audioContext.close().catch(console.warn)
-    if (audioRef.current) { try { audioRef.current.pause(); audioRef.current.currentTime = 0; audioRef.current.removeAttribute('src'); audioRef.current.load() } catch (e) {} }
-    if (embedTimeoutRef.current) { clearTimeout(embedTimeoutRef.current); embedTimeoutRef.current = null }
-    // ensure no other audio is playing
-    pauseAllOtherAudio(null)
-    // eslint-disable-next-line no-console
-    console.log('Audio resources cleaned up')
-  }
+  useEffect(
+    () => () => {
+      graphRef.current?.ctx.close().catch(() => {})
+    },
+    []
+  )
 
-  const savePlayerState = (): void => {
-    try {
-      const stateToSave = {
-        currentTrackId: currentTrack.id,
-        currentTime: playerState.currentTime,
-        isPlaying: playerState.isPlaying,
-        volume: playerState.volume,
-        playbackRate: playerState.playbackRate,
-        timestamp: Date.now()
-      }
-      localStorage.setItem('audioPlayerState', JSON.stringify(stateToSave))
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.warn('Failed to save player state:', error)
-    }
-  }
+  return { graphRef, ready, ensure, disable }
+}
 
-  const restorePlayerState = () => {
-    try {
-      const savedState = localStorage.getItem('audioPlayerState')
-      if (savedState) {
-        const parsed = JSON.parse(savedState)
-        const maxAge = 24 * 60 * 60 * 1000
-        if (Date.now() - parsed.timestamp < maxAge) {
-          const savedTrack = audioTracks.find(track => track.id === parsed.currentTrackId)
-          if (savedTrack) {
-            setCurrentTrack(savedTrack)
-            setPlayerState(prev => ({ ...prev, volume: parsed.volume || 1, playbackRate: parsed.playbackRate || 1 }))
-            if (audioRef.current && parsed.currentTime > 0) audioRef.current.currentTime = parsed.currentTime
-          }
-        } else {
-          localStorage.removeItem('audioPlayerState')
-        }
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.warn('Failed to restore player state:', error)
-    }
-  }
+/* ------------------------------------------------------------------ Visualizer */
+
+/** Mirrored frequency bars drawn on a canvas; bass in the middle, treble at the edges. */
+function Visualizer({
+  analyser,
+  playing,
+  progress,
+  pulseRef,
+}: {
+  analyser: AnalyserNode | null
+  playing: boolean
+  progress: number
+  pulseRef: React.RefObject<HTMLDivElement | null>
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const state = useRef({ analyser, playing, progress })
+  state.current = { analyser, playing, progress }
 
   useEffect(() => {
-    const saveTimeout = setTimeout(() => savePlayerState(), 1000)
-    return () => clearTimeout(saveTimeout)
-  }, [currentTrack.id, playerState.currentTime, playerState.volume, playerState.playbackRate])
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext("2d")
+    if (!ctx) return
 
-  const preloadAudioMetadata = async (track: AudioTrack) => {
-    if (!track.audioUrl && !isDirectAudioUrl(track.embedUrl || '')) return
-    try {
-      const audio = new Audio()
-      audio.preload = 'metadata'
-      return new Promise<void>((resolve) => {
-        audio.addEventListener('loadedmetadata', () => {
-          const duration = formatDuration(audio.duration)
-          const trackIndex = audioTracks.findIndex(t => t.id === track.id)
-          if (trackIndex !== -1) audioTracks[trackIndex].duration = duration
-          resolve()
-        })
-        audio.addEventListener('error', () => resolve())
-        const src = track.audioUrl || track.embedUrl
-        if (src) { audio.src = src; audio.load() } else resolve()
-      })
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.warn(`Error preloading metadata for "${track.title}":`, error)
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    const levels = new Float32Array(BAR_COUNT)
+    let data = new Uint8Array(256)
+    let frame = 0
+    let width = 0
+    let height = 0
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect()
+      const dpr = Math.min(window.devicePixelRatio || 1, 2)
+      width = rect.width
+      height = rect.height
+      canvas.width = Math.round(width * dpr)
+      canvas.height = Math.round(height * dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
-  }
+    resize()
+    const observer = new ResizeObserver(resize)
+    observer.observe(canvas)
 
-  const preloadNextTracks = async (currentIndex: number, count: number = 2) => {
-    const tracksToPreload = audioTracks.slice(currentIndex + 1, currentIndex + 1 + count)
-    if (tracksToPreload.length === 0) return
-    const results = await Promise.allSettled(tracksToPreload.map(track => preloadAudioMetadata(track)))
-    // eslint-disable-next-line no-console
-    console.log(`Preloaded ${results.length} next tracks (some may have failed)`)
-  }
+    const accent = getComputedStyle(canvas).getPropertyValue("--player-accent").trim() || "#f5a524"
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const trackId = entry.target.getAttribute('data-track-id')
-          if (trackId) {
-            const track = audioTracks.find(t => t.id === parseInt(trackId))
-            if (track && (track.audioUrl || isDirectAudioUrl(track.embedUrl || '')) && (!track.duration || track.duration === '0:00')) {
-              preloadAudioMetadata(track)
-            }
+    const draw = (time: number) => {
+      const { analyser, playing, progress } = state.current
+      const half = BAR_COUNT / 2
+      let bass = 0
+
+      if (analyser && playing) {
+        if (data.length !== analyser.frequencyBinCount) data = new Uint8Array(analyser.frequencyBinCount)
+        analyser.getByteFrequencyData(data)
+        // Voices and music live mostly in the lower ~40% of the spectrum.
+        const usable = Math.floor(data.length * 0.42)
+        for (let i = 0; i < half; i++) {
+          // Logarithmic spread: more bars for the low/mid range where speech is.
+          const start = Math.floor(Math.pow(i / half, 1.7) * usable)
+          const end = Math.max(start + 1, Math.floor(Math.pow((i + 1) / half, 1.7) * usable))
+          let sum = 0
+          for (let b = start; b < end; b++) sum += data[b]
+          const v = Math.pow(sum / (end - start) / 255, 1.35)
+          const target = Math.min(1, v * 1.15)
+          const left = half - 1 - i
+          const right = half + i
+          for (const idx of [left, right]) {
+            levels[idx] += (target - levels[idx]) * (target > levels[idx] ? 0.55 : 0.18)
           }
         }
-      })
-    }, { rootMargin: '50px', threshold: 0.1 })
-
-    const trackElements = document.querySelectorAll('[data-track-id]')
-    trackElements.forEach(el => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-
-  useEffect(() => {
-    const currentIdx = audioTracks.findIndex(track => track.id === currentTrack.id)
-    if (currentIdx !== -1) preloadNextTracks(currentIdx)
-  }, [currentTrack.id])
-
-  useEffect(() => { restorePlayerState() }, [])
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true') return
-      switch (e.key.toLowerCase()) {
-        case ' ':
-          e.preventDefault()
-          handlePlayPause()
-          break
-        case 'p':
-          e.preventDefault()
-          handlePrevious()
-          break
-        case 'n':
-          e.preventDefault()
-          handleNext()
-          break
-        case 'm':
-          e.preventDefault()
-          handlePlayerAction('volume', playerState.isMuted ? playerState.volume : 0)
-          break
-        case 'arrowleft':
-          e.preventDefault()
-          if (audioRef.current) handlePlayerAction('seek', Math.max(0, playerState.currentTime - 5))
-          break
-        case 'arrowright':
-          e.preventDefault()
-          if (audioRef.current) handlePlayerAction('seek', Math.min(playerState.duration, playerState.currentTime + 5))
-          break
-        case 'arrowup':
-          e.preventDefault()
-          handlePlayerAction('volume', Math.min(1, playerState.volume + 0.1))
-          break
-        case 'arrowdown':
-          e.preventDefault()
-          handlePlayerAction('volume', Math.max(0, playerState.volume - 0.1))
-          break
-        default:
-          if (/[0-9]/.test(e.key)) {
-            e.preventDefault()
-            const percent = parseInt(e.key) * 10
-            handlePlayerAction('seek', (playerState.duration * percent) / 100)
-          }
+        for (let b = 0; b < 6; b++) bass += data[b]
+        bass = bass / 6 / 255
+      } else {
+        // Idle: a calm breathing wave (or a lively one if audio plays without the analyser).
+        for (let i = 0; i < BAR_COUNT; i++) {
+          const d = Math.abs(i - BAR_COUNT / 2 + 0.5) / (BAR_COUNT / 2)
+          const t = reduceMotion ? 0 : time / 1000
+          const target = playing
+            ? 0.18 + 0.32 * (1 - d) * (0.6 + 0.4 * Math.sin(t * 6 + i * 0.7)) * (0.7 + 0.3 * Math.sin(t * 2.3 + i))
+            : 0.05 + 0.04 * (1 - d) * (1 + Math.sin(t * 1.6 + i * 0.35))
+          levels[i] += (target - levels[i]) * 0.08
+        }
       }
+
+      if (pulseRef.current) {
+        pulseRef.current.style.setProperty("--pulse", String(playing ? Math.min(1, bass * 1.4) : 0))
+      }
+
+      ctx.clearRect(0, 0, width, height)
+      const slot = width / BAR_COUNT
+      const barWidth = Math.max(2, slot * 0.56)
+      const mid = height / 2
+      const playedUpTo = progress * BAR_COUNT
+
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const h = Math.max(3, levels[i] * (height - 6))
+        const x = i * slot + (slot - barWidth) / 2
+        const played = i < playedUpTo
+        ctx.globalAlpha = played ? 1 : 0.38
+        ctx.fillStyle = played ? accent : "#ffffff"
+        ctx.shadowColor = accent
+        ctx.shadowBlur = played && playing ? 10 : 0
+        ctx.beginPath()
+        if (ctx.roundRect) ctx.roundRect(x, mid - h / 2, barWidth, h, barWidth / 2)
+        else ctx.rect(x, mid - h / 2, barWidth, h)
+        ctx.fill()
+      }
+      ctx.globalAlpha = 1
+      ctx.shadowBlur = 0
+      frame = requestAnimationFrame(draw)
     }
+    frame = requestAnimationFrame(draw)
 
-    document.addEventListener('keydown', handleKeyDown)
-    return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [playerState.isPlaying, playerState.isMuted, playerState.volume, playerState.currentTime, playerState.duration])
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+    }
+  }, [pulseRef])
 
-  useEffect(() => {
-    const bars = Array.from({ length: 30 }).map(() => Math.random() * 30 + 15)
-    setAudioBars(bars)
-  }, [])
+  return <canvas ref={canvasRef} className="block h-full w-full" aria-hidden />
+}
 
-  const KeyboardShortcuts = () => {
-    const [isOpen, setIsOpen] = useState(false)
-    return (
-      <div className="absolute top-4 right-4 z-10">
-        <button onClick={() => setIsOpen(!isOpen)} className="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-accent" aria-label="Keyboard shortcuts" title="Keyboard shortcuts" type="button">
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-        </button>
+/* ------------------------------------------------------------------ Range slider */
 
-        {isOpen && (
-          <div className="absolute top-12 right-0 bg-black/90 backdrop-blur-sm border border-white/20 rounded-lg p-4 min-w-[250px] shadow-xl animate-fade-in">
-            <h3 className="text-white font-semibold mb-3">Keyboard Shortcuts</h3>
-            <div className="space-y-2 text-sm text-white/80">
-              <div className="flex justify-between"><span>Play/Pause:</span><span className="text-accent">Space</span></div>
-              <div className="flex justify-between"><span>Previous Track:</span><span className="text-accent">P</span></div>
-              <div className="flex justify-between"><span>Next Track:</span><span className="text-accent">N</span></div>
-              <div className="flex justify-between"><span>Mute/Unmute:</span><span className="text-accent">M</span></div>
-              <div className="flex justify-between"><span>Seek Backward:</span><span className="text-accent">←</span></div>
-              <div className="flex justify-between"><span>Seek Forward:</span><span className="text-accent">→</span></div>
-              <div className="flex justify-between"><span>Volume Up:</span><span className="text-accent">↑</span></div>
-              <div className="flex justify-between"><span>Volume Down:</span><span className="text-accent">↓</span></div>
-              <div className="flex justify-between"><span>Jump to 0-90%:</span><span className="text-accent">0-9</span></div>
-            </div>
-          </div>
-        )}
+function Slider({
+  value,
+  max,
+  buffered,
+  onChange,
+  onCommit,
+  label,
+  valueText,
+  className,
+  step = 0.01,
+}: {
+  value: number
+  max: number
+  buffered?: number
+  onChange: (value: number) => void
+  onCommit?: (value: number) => void
+  label: string
+  valueText?: string
+  className?: string
+  step?: number
+}) {
+  const pct = max > 0 ? Math.min(100, (value / max) * 100) : 0
+  const bufferedPct = max > 0 && buffered ? Math.min(100, (buffered / max) * 100) : 0
+  return (
+    <div className={cn("group/slider relative flex h-5 items-center", className)}>
+      <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-white/15 transition-[height] group-hover/slider:h-2">
+        {bufferedPct > 0 && <div className="absolute inset-y-0 left-0 rounded-full bg-white/20" style={{ width: `${bufferedPct}%` }} />}
+        <div className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[var(--player-accent)] to-amber-300" style={{ width: `${pct}%` }} />
       </div>
+      <div
+        className="pointer-events-none absolute size-3.5 -translate-x-1/2 rounded-full bg-white shadow-[0_0_0_4px_rgba(245,165,36,0.35)] opacity-0 transition-opacity group-hover/slider:opacity-100 group-focus-within/slider:opacity-100"
+        style={{ left: `${pct}%` }}
+      />
+      <input
+        type="range"
+        min={0}
+        max={max || 0}
+        step={step}
+        value={Math.min(value, max || 0)}
+        onChange={(e) => onChange(Number(e.target.value))}
+        onPointerUp={(e) => onCommit?.(Number((e.target as HTMLInputElement).value))}
+        onKeyUp={(e) => onCommit?.(Number((e.target as HTMLInputElement).value))}
+        aria-label={label}
+        aria-valuetext={valueText}
+        className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+      />
+    </div>
+  )
+}
+
+/* ------------------------------------------------------------------ Player */
+
+export function AudioPlaylistSection({ tracks }: { tracks: SermonAudioTrack[] }) {
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const pulseRef = useRef<HTMLDivElement>(null)
+  const { graphRef, ready: graphReady, ensure: ensureGraph, disable: disableGraph } = useAudioGraph(audioRef)
+
+  const [currentId, setCurrentId] = useState(tracks[0]?.id)
+  const [playing, setPlaying] = useState(false)
+  const [buffering, setBuffering] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [buffered, setBuffered] = useState(0)
+  const [scrubbing, setScrubbing] = useState<number | null>(null)
+  const [volume, setVolume] = useState(0.85)
+  const [muted, setMuted] = useState(false)
+  const [rate, setRate] = useState(1)
+  const [shuffle, setShuffle] = useState(false)
+  const [repeat, setRepeat] = useState<RepeatMode>("off")
+  const [error, setError] = useState<string | null>(null)
+  const [category, setCategory] = useState("All")
+  const [durations, setDurations] = useState<Record<number, string>>({})
+
+  const playOnLoad = useRef(false)
+  const corsRetried = useRef<Set<number>>(new Set())
+  const [corsMode, setCorsMode] = useState(true)
+
+  const index = Math.max(0, tracks.findIndex((t) => t.id === currentId))
+  const track = tracks[index]
+  const categories = useMemo(() => ["All", ...Array.from(new Set(tracks.map((t) => t.category).filter(Boolean)))], [tracks])
+  const visible = category === "All" ? tracks : tracks.filter((t) => t.category === category)
+
+  // Preferences (volume, mute, speed) are remembered per browser.
+  useEffect(() => {
+    const prefs = readPrefs()
+    setVolume(prefs.volume)
+    setMuted(prefs.muted)
+    setRate(prefs.rate)
+  }, [])
+  useEffect(() => {
+    try {
+      localStorage.setItem(PREFS_KEY, JSON.stringify({ volume, muted, rate }))
+    } catch {
+      // Storage unavailable (private mode): preferences just won't be remembered.
+    }
+  }, [volume, muted, rate])
+
+  // Volume: through the gain node when the analyser graph is active, otherwise on the element.
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+    const level = muted ? 0 : volume
+    const graph = graphRef.current
+    if (graph) {
+      audio.volume = 1
+      graph.gain.gain.setTargetAtTime(level * level, graph.ctx.currentTime, 0.02) // perceptual curve
+    } else {
+      audio.volume = level * level
+    }
+  }, [volume, muted, graphReady, graphRef])
+
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.playbackRate = rate
+  }, [rate, currentId])
+
+  /* ------------ loading / playing */
+
+  const play = useCallback(async () => {
+    const audio = audioRef.current
+    if (!audio || !track) return
+    setError(null)
+    if (corsMode) {
+      const graph = ensureGraph()
+      if (graph?.ctx.state === "suspended") await graph.ctx.resume().catch(() => {})
+    }
+    try {
+      await audio.play()
+    } catch (err) {
+      if ((err as DOMException)?.name === "NotAllowedError") setError("Your browser blocked playback. Press play to start.")
+      else if ((err as DOMException)?.name !== "AbortError") setError("This audio couldn't be played. Please try again.")
+    }
+  }, [corsMode, ensureGraph, track])
+
+  const pause = useCallback(() => audioRef.current?.pause(), [])
+  const toggle = useCallback(() => (audioRef.current?.paused ? play() : pause()), [play, pause])
+
+  // Load the selected track.
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio || !track) return
+    setCurrentTime(0)
+    setDuration(0)
+    setBuffered(0)
+    setError(null)
+    audio.src = track.audioUrl
+    audio.load()
+    if (playOnLoad.current) void play()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [track?.id, track?.audioUrl, corsMode])
+
+  /** Clicking a playlist row: switch track, or play/pause if it's already the current one. */
+  const select = useCallback(
+    (id: number) => {
+      if (id === currentId) return void toggle()
+      playOnLoad.current = true
+      setCurrentId(id)
+    },
+    [currentId, toggle]
+  )
+
+  /** Next / previous / auto-advance: always plays the target (restarting it if it's the same track). */
+  const goTo = useCallback(
+    (id: number) => {
+      if (id === currentId) {
+        if (audioRef.current) audioRef.current.currentTime = 0
+        return void play()
+      }
+      playOnLoad.current = true
+      setCurrentId(id)
+    },
+    [currentId, play]
+  )
+
+  const step = useCallback(
+    (direction: 1 | -1, auto = false) => {
+      if (!tracks.length) return
+      if (shuffle && tracks.length > 1) {
+        let next = index
+        while (next === index) next = Math.floor(Math.random() * tracks.length)
+        goTo(tracks[next].id)
+        return
+      }
+      const nextIndex = index + direction
+      if (nextIndex >= tracks.length) {
+        if (auto && repeat === "off") {
+          // End of the playlist: stop and rewind.
+          playOnLoad.current = false
+          setPlaying(false)
+          if (audioRef.current) audioRef.current.currentTime = 0
+          return
+        }
+        goTo(tracks[0].id)
+      } else if (nextIndex < 0) {
+        goTo(tracks[tracks.length - 1].id)
+      } else {
+        goTo(tracks[nextIndex].id)
+      }
+    },
+    [index, repeat, goTo, shuffle, tracks]
+  )
+
+  const previous = useCallback(() => {
+    const audio = audioRef.current
+    // Like most players: "previous" restarts the track unless you're at the very beginning.
+    if (audio && audio.currentTime > 3) {
+      audio.currentTime = 0
+      return
+    }
+    step(-1)
+  }, [step])
+
+  const seekTo = useCallback((time: number) => {
+    const audio = audioRef.current
+    if (!audio || !Number.isFinite(audio.duration)) return
+    audio.currentTime = Math.min(Math.max(0, time), audio.duration)
+    setCurrentTime(audio.currentTime)
+  }, [])
+  const skip = useCallback((seconds: number) => seekTo((audioRef.current?.currentTime ?? 0) + seconds), [seekTo])
+
+  /* ------------ element events */
+
+  const onError = () => {
+    const audio = audioRef.current
+    if (!audio || !track) return
+    // A host without CORS headers can't feed the analyser; retry once in plain mode if possible.
+    if (corsMode && !graphRef.current && !corsRetried.current.has(track.id)) {
+      corsRetried.current.add(track.id)
+      disableGraph()
+      setCorsMode(false)
+      return
+    }
+    setPlaying(false)
+    setBuffering(false)
+    setError(
+      graphRef.current && !corsMode
+        ? "This audio file's host doesn't allow it to be played here. Upload it to the Media Library instead."
+        : "This audio couldn't be loaded. Check your connection and try again."
     )
   }
 
+  const onLoadedMetadata = () => {
+    const audio = audioRef.current
+    if (!audio || !track) return
+    setDuration(audio.duration)
+    audio.playbackRate = rate
+    if (Number.isFinite(audio.duration)) setDurations((d) => ({ ...d, [track.id]: formatTime(audio.duration) }))
+  }
+
+  const onProgress = () => {
+    const audio = audioRef.current
+    if (!audio || !audio.buffered.length) return
+    setBuffered(audio.buffered.end(audio.buffered.length - 1))
+  }
+
+  const onPlay = () => {
+    setPlaying(true)
+    playOnLoad.current = true
+    // Only one thing plays at a time on the page.
+    document.querySelectorAll("audio, video").forEach((el) => {
+      if (el !== audioRef.current) (el as HTMLMediaElement).pause()
+    })
+  }
+
+  const onEnded = () => {
+    if (repeat === "one") {
+      seekTo(0)
+      void play()
+    } else step(1, true)
+  }
+
+  /* ------------ media session (lock screen / headphone controls) */
+
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || !track) return
+    navigator.mediaSession.metadata = new MediaMetadata({ title: track.title, artist: track.artist, album: track.category || "Sermons" })
+    const handlers: [MediaSessionAction, MediaSessionActionHandler][] = [
+      ["play", () => void play()],
+      ["pause", () => pause()],
+      ["previoustrack", () => previous()],
+      ["nexttrack", () => step(1)],
+      ["seekbackward", () => skip(-SKIP_SECONDS)],
+      ["seekforward", () => skip(SKIP_SECONDS)],
+      ["seekto", (d) => d.seekTime !== undefined && seekTo(d.seekTime)],
+    ]
+    for (const [action, handler] of handlers) {
+      try {
+        navigator.mediaSession.setActionHandler(action, handler)
+      } catch {
+        // Unsupported action in this browser.
+      }
+    }
+  }, [track, play, pause, previous, step, skip, seekTo])
+
+  useEffect(() => {
+    if ("mediaSession" in navigator) navigator.mediaSession.playbackState = playing ? "playing" : "paused"
+  }, [playing])
+
+  /* ------------ keyboard shortcuts (while the player has focus) */
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const target = e.target as HTMLElement
+    const typing = target.tagName === "SELECT" || (target.tagName === "INPUT" && (target as HTMLInputElement).type !== "range")
+    if (typing || e.metaKey || e.ctrlKey || e.altKey) return
+    const key = e.key.toLowerCase()
+    const onRange = target.tagName === "INPUT"
+    if ((key === " " && target.tagName !== "BUTTON") || key === "k") {
+      e.preventDefault()
+      void toggle()
+    } else if (key === "j" || (key === "arrowleft" && !onRange)) {
+      e.preventDefault()
+      skip(-SKIP_SECONDS)
+    } else if (key === "l" || (key === "arrowright" && !onRange)) {
+      e.preventDefault()
+      skip(SKIP_SECONDS)
+    } else if (key === "m") {
+      setMuted((m) => !m)
+    } else if (key === "n") {
+      step(1)
+    } else if (key === "p") {
+      previous()
+    }
+  }
+
+  if (!track) return null
+
+  const shownTime = scrubbing ?? currentTime
+  const totalTime = duration || 0
+  const progress = totalTime ? shownTime / totalTime : 0
+  const effectiveVolume = muted ? 0 : volume
+  const VolumeIcon = effectiveVolume === 0 ? VolumeX : effectiveVolume < 0.5 ? Volume1 : Volume2
+
   return (
     <section className="py-12 sm:py-20">
-      <style jsx>{`
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-      `}</style>
       <Container>
-        <KeyboardShortcuts />
-
-        {/* Hidden Audio Element for Web Audio API (single persistent element) */}
-        <audio
-          ref={audioRef}
-          preload="metadata"
-          onTimeUpdate={handleTimeUpdate}
-          onLoadedMetadata={handleLoadedMetadata}
-          onPlay={() => setPlayerState(prev => ({ ...prev, isPlaying: true }))}
-          onPause={() => setPlayerState(prev => ({ ...prev, isPlaying: false }))}
-          onError={handleAudioError}
-          onLoadStart={() => setPlayerState(prev => ({ ...prev, isLoading: true }))}
-          onCanPlay={() => setPlayerState(prev => ({ ...prev, isLoading: false }))}
-          className="hidden"
-          crossOrigin="anonymous"
-        />
-
-        {/* Render iframe only when embedUrl exists and it's NOT a direct audio file */}
-        {currentTrack.isEmbed && currentTrack.embedUrl && !isDirectAudioUrl(currentTrack.embedUrl) && (
-          <iframe
-            ref={iframeRef}
-            src={currentTrack.embedUrl}
-            className="w-full h-20 border border-border rounded-lg mb-4"
-            allow="autoplay"
-            sandbox="allow-scripts allow-same-origin allow-popups"
-            title={`Embedded player for ${currentTrack.title}`}
-            onLoad={handleIframeLoad}
-            onError={handleIframeError}
-            loading="lazy"
-          />
-        )}
-
-        {/* Section Header */}
-        <div className="text-center mb-12 animate-fade-in">
-          <p className="text-accent font-semibold tracking-wider uppercase text-xs sm:text-sm mb-3">Audio Library</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary mb-4">Sermons, Music & <span className="text-accent">Teaching Series</span></h2>
-          <p className="text-foreground/70 max-w-2xl mx-auto">Explore our collection of inspiring sermons, worship music, and daily teaching series</p>
+        <div className="mb-10 text-center">
+          <Reveal as="p" variant="fade" className="mb-3 text-xs font-semibold tracking-wider text-accent uppercase sm:text-sm">Audio Library</Reveal>
+          <Reveal as="h2" variant="up" delay={100} className="mb-4 text-3xl font-bold text-primary sm:text-4xl lg:text-5xl">
+            Sermons, Music & <span className="text-accent">Teaching Series</span>
+          </Reveal>
+          <Reveal as="p" variant="up" delay={200} className="mx-auto max-w-2xl text-foreground/70">
+            Explore our collection of inspiring sermons, worship music, and daily teaching series
+          </Reveal>
         </div>
 
-        {/* Audio Player UI (unchanged visually) */}
-        <div className="mb-12 animate-scale-up">
-          <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-8 sm:p-10 text-white shadow-xl">
-            <div className="mb-6">
-              <p className="text-accent/80 text-sm uppercase tracking-wider font-semibold mb-2">Now Playing</p>
-              <h3 className="text-2xl sm:text-3xl font-bold mb-2">{currentTrack.title}</h3>
-              <p className="text-white/80">{currentTrack.artist}</p>
+        {/* ---------------- Player card ---------------- */}
+        <Reveal variant="zoom">
+        {/* Keyboard shortcuts are delegated from the player's own buttons/sliders while they have focus. */}
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+        <div
+          className="relative mb-10 overflow-clip rounded-[28px] bg-[#101a3d] text-white shadow-2xl ring-1 ring-white/10 [--player-accent:#f5a524]"
+          onKeyDown={onKeyDown}
+          role="region"
+          aria-label="Audio player"
+        >
+          {/* ambient background */}
+          <div className="pointer-events-none absolute inset-0" aria-hidden>
+            <div className="absolute -top-32 -left-24 size-96 rounded-full bg-[var(--player-accent)]/20 blur-3xl" />
+            <div className="absolute -right-24 -bottom-40 size-[28rem] rounded-full bg-indigo-500/25 blur-3xl" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] to-transparent" />
+          </div>
+
+          {/* Sermon audio has no caption files; titles are shown in the player. */}
+          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+          <audio
+            ref={audioRef}
+            preload="metadata"
+            crossOrigin={corsMode ? "anonymous" : undefined}
+            onPlay={onPlay}
+            onPause={() => setPlaying(false)}
+            onWaiting={() => setBuffering(true)}
+            onPlaying={() => setBuffering(false)}
+            onCanPlay={() => setBuffering(false)}
+            onTimeUpdate={() => scrubbing === null && setCurrentTime(audioRef.current?.currentTime ?? 0)}
+            onLoadedMetadata={onLoadedMetadata}
+            onDurationChange={onLoadedMetadata}
+            onProgress={onProgress}
+            onEnded={onEnded}
+            onError={onError}
+            className="hidden"
+          />
+
+          <div className="relative grid gap-6 p-6 sm:p-8 md:grid-cols-[auto_1fr] md:gap-8 lg:p-10">
+            {/* Artwork: a slowly spinning disc that pulses with the bass */}
+            <div className="flex justify-center md:block">
+              <div
+                ref={pulseRef}
+                className="relative size-36 sm:size-44"
+                style={{ transform: "scale(calc(1 + var(--pulse, 0) * 0.06))", transition: "transform 80ms linear" }}
+              >
+                <div
+                  className="absolute inset-0 rounded-full bg-[var(--player-accent)]/40 blur-2xl transition-opacity duration-300"
+                  style={{ opacity: "calc(0.25 + var(--pulse, 0) * 0.75)" }}
+                  aria-hidden
+                />
+                <div
+                  className={cn(
+                    "relative flex size-full items-center justify-center rounded-full bg-[repeating-radial-gradient(circle_at_center,#1b2652_0px,#1b2652_2px,#141d42_3px,#141d42_5px)] shadow-2xl ring-4 ring-white/10 motion-safe:animate-[spin_9s_linear_infinite]",
+                    !playing && "[animation-play-state:paused]"
+                  )}
+                >
+                  <div className="flex size-14 items-center justify-center rounded-full bg-gradient-to-br from-[var(--player-accent)] to-amber-600 text-sm font-bold text-[#101a3d] shadow-lg sm:size-16">
+                    Pst.
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Visualization */}
-            <div className="mb-6 flex items-end gap-1 h-20 bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-              {currentTrack.isEmbed && !isDirectAudioUrl(currentTrack.embedUrl || '') ? (
-                Array.from({ length: 30 }).map((_, i) => (
-                  <div key={i} className={`flex-1 rounded-full transition-all duration-300 ${playerState.isPlaying ? 'bg-accent' : 'bg-white/40'}`} style={{ height: `${playerState.isPlaying ? Math.random() * 60 + 20 : 30}%`, transform: playerState.isPlaying ? 'scaleY(1)' : 'scaleY(0.3)', transformOrigin: 'bottom', animation: playerState.isPlaying ? `pulse ${Math.random() * 0.5 + 0.5}s ease-in-out infinite` : 'none' }} />
-                ))
-              ) : (
-                audioBars.map((height, i) => (
-                  <div key={i} className={`flex-1 rounded-full transition-all duration-75 ${playerState.isPlaying ? 'bg-accent animate-pulse' : 'bg-white/40'}`} style={{ height: `${height}%`, transform: playerState.isPlaying ? 'scaleY(1)' : 'scaleY(0.3)', transformOrigin: 'bottom' }} />
-                ))
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--player-accent)]/15 px-3 py-1 text-xs font-semibold tracking-wider text-[var(--player-accent)] uppercase">
+                  {playing ? (
+                    <span className="flex h-3 items-end gap-[2px]" aria-hidden>
+                      {[0, 1, 2].map((i) => (
+                        <span key={i} className="w-[3px] rounded-full bg-current motion-safe:animate-[eqbar_0.9s_ease-in-out_infinite]" style={{ animationDelay: `${i * 0.15}s`, height: "100%" }} />
+                      ))}
+                    </span>
+                  ) : (
+                    <Music2 className="size-3" aria-hidden />
+                  )}
+                  {playing ? "Now playing" : "Ready to play"}
+                </span>
+                {track.category && <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80">{track.category}</span>}
+                {track.date && <span className="text-xs text-white/50">{track.date}</span>}
+              </div>
+              <h3 className="mt-3 line-clamp-2 text-2xl leading-tight font-bold sm:text-3xl" aria-live="polite">
+                {track.title}
+              </h3>
+              <p className="mt-1 text-white/70">{track.artist}</p>
+
+              {/* Waves */}
+              <div className="relative mt-5 h-20 sm:h-24">
+                <Visualizer analyser={graphRef.current?.analyser ?? null} playing={playing && !buffering} progress={progress} pulseRef={pulseRef} />
+                {buffering && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <span className="inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-xs text-white/90 backdrop-blur">
+                      <Loader2 className="size-3.5 animate-spin" /> Loading…
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* Progress */}
+              <div className="mt-3">
+                <Slider
+                  value={shownTime}
+                  max={totalTime}
+                  buffered={buffered}
+                  step={0.1}
+                  label="Seek"
+                  valueText={`${formatTime(shownTime)} of ${formatTime(totalTime)}`}
+                  onChange={(v) => setScrubbing(v)}
+                  onCommit={(v) => {
+                    seekTo(v)
+                    setScrubbing(null)
+                  }}
+                />
+                <div className="mt-1 flex justify-between text-xs text-white/60 tabular-nums">
+                  <span>{formatTime(shownTime)}</span>
+                  <span>{totalTime ? `-${formatTime(totalTime - shownTime)}` : durations[track.id] ?? track.duration}</span>
+                </div>
+              </div>
+
+              {error && (
+                <div role="alert" className="mt-3 flex items-start gap-2 rounded-xl border border-red-400/30 bg-red-500/15 p-3 text-sm text-red-100">
+                  <AlertTriangle className="mt-0.5 size-4 shrink-0 text-red-300" aria-hidden />
+                  <p className="flex-1">{error}</p>
+                  <button type="button" className="font-semibold underline underline-offset-2" onClick={() => void play()}>
+                    Try again
+                  </button>
+                </div>
               )}
-            </div>
 
-            {/* Progress */}
-            <div role="slider" aria-label="Audio progress" aria-valuemin={0} aria-valuemax={playerState.duration || 0} aria-valuenow={playerState.currentTime || 0} aria-valuetext={`${formatTime(playerState.currentTime)} of ${formatTime(playerState.duration)}`} tabIndex={0} onKeyDown={!currentTrack.isEmbed ? handleProgressKeyDown : undefined}>
-              <div className={`w-full bg-white/20 rounded-full h-2 mb-3 group ${currentTrack.isEmbed ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`} onClick={!currentTrack.isEmbed ? handleProgressClick : undefined}>
-                <div className="bg-accent h-full rounded-full transition-all duration-300 group-hover:brightness-110" style={{ width: `${playerState.duration > 0 ? (playerState.currentTime / playerState.duration) * 100 : 0}%` }} />
-              </div>
-              <div className="flex justify-between text-sm text-white/80"><span aria-label="Current time">{formatTime(playerState.currentTime)}</span><span aria-label="Total duration">{formatTime(playerState.duration)}</span></div>
-            </div>
+              {/* Controls */}
+              <div className="mt-4 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex items-center justify-center gap-1 sm:gap-2 lg:justify-start">
+                  <IconButton label={shuffle ? "Shuffle on" : "Shuffle off"} active={shuffle} onClick={() => setShuffle((s) => !s)}>
+                    <Shuffle className="size-4" />
+                  </IconButton>
+                  <IconButton label="Previous (P)" onClick={previous}>
+                    <SkipBack className="size-5" />
+                  </IconButton>
+                  <IconButton label={`Back ${SKIP_SECONDS} seconds (J)`} onClick={() => skip(-SKIP_SECONDS)} className="relative">
+                    <RotateCcw className="size-5" />
+                    <span className="absolute text-[8px] font-bold">{SKIP_SECONDS}</span>
+                  </IconButton>
+                  <button
+                    type="button"
+                    onClick={() => void toggle()}
+                    aria-label={playing ? "Pause (Space)" : "Play (Space)"}
+                    className="mx-1 flex size-16 items-center justify-center rounded-full bg-gradient-to-br from-[var(--player-accent)] to-amber-500 text-[#101a3d] shadow-[0_10px_30px_-5px_rgba(245,165,36,0.6)] transition hover:scale-105 active:scale-95 focus-visible:ring-4 focus-visible:ring-white/40 focus-visible:outline-none sm:size-[72px]"
+                  >
+                    {buffering && playing ? <Loader2 className="size-7 animate-spin" /> : playing ? <Pause className="size-7 fill-current" /> : <Play className="ml-1 size-7 fill-current" />}
+                  </button>
+                  <IconButton label={`Forward ${SKIP_SECONDS} seconds (L)`} onClick={() => skip(SKIP_SECONDS)} className="relative">
+                    <RotateCw className="size-5" />
+                    <span className="absolute text-[8px] font-bold">{SKIP_SECONDS}</span>
+                  </IconButton>
+                  <IconButton label="Next (N)" onClick={() => step(1)}>
+                    <SkipForward className="size-5" />
+                  </IconButton>
+                  <IconButton
+                    label={repeat === "off" ? "Repeat off" : repeat === "all" ? "Repeat all" : "Repeat this track"}
+                    active={repeat !== "off"}
+                    onClick={() => setRepeat((r) => (r === "off" ? "all" : r === "all" ? "one" : "off"))}
+                  >
+                    {repeat === "one" ? <Repeat1 className="size-4" /> : <Repeat className="size-4" />}
+                  </IconButton>
+                </div>
 
-            {/* Error */}
-            {playerState.error && (
-              <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg flex items-center gap-2 animate-fade-in" role="alert" aria-live="assertive" aria-atomic="true">
-                <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0" aria-hidden="true" />
-                <div className="flex-1">
-                  <p className="text-red-200 text-sm" aria-label="Error message">{playerState.error}</p>
-                  <button onClick={() => setPlayerState(prev => ({ ...prev, error: null }))} className="text-red-300 hover:text-red-100 text-xs underline mt-1 focus:outline-none focus:ring-2 focus:ring-red-300 rounded" aria-label="Dismiss error message" type="button">Dismiss error</button>
+                <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 lg:justify-end">
+                  <div className="flex items-center gap-2">
+                    <IconButton label={muted || volume === 0 ? "Unmute (M)" : "Mute (M)"} onClick={() => (volume === 0 ? (setVolume(0.6), setMuted(false)) : setMuted((m) => !m))}>
+                      <VolumeIcon className="size-5" />
+                    </IconButton>
+                    <Slider
+                      className="w-24 sm:w-28"
+                      value={effectiveVolume}
+                      max={1}
+                      label="Volume"
+                      valueText={`${Math.round(effectiveVolume * 100)}%`}
+                      onChange={(v) => {
+                        setVolume(v)
+                        setMuted(v === 0)
+                      }}
+                    />
+                    <span className="w-8 text-right text-xs text-white/60 tabular-nums">{Math.round(effectiveVolume * 100)}</span>
+                  </div>
+                  <label className="flex items-center gap-1.5 rounded-full bg-white/10 py-1 pr-1 pl-3 text-xs text-white/70">
+                    Speed
+                    <select
+                      value={rate}
+                      onChange={(e) => setRate(Number(e.target.value))}
+                      className="cursor-pointer rounded-full bg-white/10 px-2 py-1 text-xs font-semibold text-white focus-visible:ring-2 focus-visible:ring-[var(--player-accent)] focus-visible:outline-none"
+                      aria-label="Playback speed"
+                    >
+                      {SPEEDS.map((s) => (
+                        <option key={s} value={s} className="text-black">
+                          {s}x
+                        </option>
+                      ))}
+                    </select>
+                  </label>
                 </div>
               </div>
-            )}
-
-            {/* Controls */}
-            <div className="flex items-center justify-center gap-6 mb-6">
-              <button onClick={handlePrevious} disabled={currentIndex === 0} className="p-3 hover:bg-white/10 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent" aria-label="Previous track (Keyboard: P)" aria-disabled={currentIndex === 0} title="Previous track (Keyboard: P)" type="button"><SkipBack size={24} /></button>
-
-              <button onClick={handlePlayPause} disabled={playerState.isLoading} className="bg-white text-primary rounded-full p-4 sm:p-5 shadow-lg hover:scale-110 transition-all duration-300 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background" aria-label={playerState.isPlaying ? 'Pause audio (Keyboard: Space)' : 'Play audio (Keyboard: Space)'} title={playerState.isPlaying ? 'Pause audio (Keyboard: Space)' : 'Play audio (Keyboard: Space)'} aria-pressed={playerState.isPlaying} type="button">
-                {playerState.isLoading ? <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : playerState.isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6" />}
-              </button>
-
-              <button onClick={handleNext} disabled={currentIndex === audioTracks.length - 1} className="p-3 hover:bg-white/10 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-accent" aria-label="Next track (Keyboard: N)" aria-disabled={currentIndex === audioTracks.length - 1} title="Next track (Keyboard: N)" type="button"><SkipForward size={24} /></button>
-
-              <div className="ml-auto flex items-center gap-3" role="group" aria-label="Volume controls">
-                <button onClick={() => handlePlayerAction('volume', playerState.isMuted ? playerState.volume : 0)} className="p-2 hover:bg-white/10 rounded-full transition-all" aria-label={playerState.isMuted ? 'Unmute audio' : 'Mute audio'} aria-pressed={playerState.isMuted}><Volume2 size={20} /></button>
-                <div className="w-24 h-1 bg-white/20 rounded-full cursor-pointer" role="slider" aria-label={`Volume: ${Math.round(playerState.volume * 100)}%`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(playerState.volume * 100)} aria-orientation="horizontal" tabIndex={0} onClick={(e) => { const rect = e.currentTarget.getBoundingClientRect(); const percent = (e.clientX - rect.left) / rect.width; handlePlayerAction('volume', percent) }} onKeyDown={(e) => { if (e.key === 'ArrowLeft') { e.preventDefault(); handlePlayerAction('volume', Math.max(0, playerState.volume - 0.1)) } else if (e.key === 'ArrowRight') { e.preventDefault(); handlePlayerAction('volume', Math.min(1, playerState.volume + 0.1)) } }}>
-                  <div className="bg-accent h-full rounded-full transition-all duration-300" style={{ width: `${playerState.volume * 100}%` }} />
-                </div>
-
-                <div className="flex items-center gap-2 ml-4" role="group" aria-label="Playback speed controls">
-                  <span className="text-xs text-white/70">Speed:</span>
-                  <select value={playerState.playbackRate} onChange={(e) => handlePlayerAction('rate', parseFloat(e.target.value))} className="bg-white/10 text-white text-xs px-2 py-1 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-accent" aria-label={`Playback speed: ${playerState.playbackRate}x`}>
-                    <option value={0.5} aria-label="Half speed">0.5x</option>
-                    <option value={0.75} aria-label="Three quarters speed">0.75x</option>
-                    <option value={1} aria-label="Normal speed">1x</option>
-                    <option value={1.25} aria-label="One and a quarter speed">1.25x</option>
-                    <option value={1.5} aria-label="One and a half speed">1.5x</option>
-                    <option value={2} aria-label="Double speed">2x</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-between text-sm text-white/70 border-t border-white/10 pt-4">
-              <span>{currentTrack.category}</span>
-              <span>{currentTrack.date}</span>
             </div>
           </div>
         </div>
+        </Reveal>
 
-        <div className="mb-8 flex flex-wrap gap-3 animate-fade-in" role="tablist" aria-label="Audio categories">
-          {["all", "sermon", "worship-music", "teaching-series"].map((category) => (
-            <button key={category} onClick={() => setActiveTab(category)} className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full font-semibold transition-all duration-300 text-sm sm:text-base ${activeTab === category ? "bg-accent text-accent-foreground shadow-lg" : "bg-muted text-foreground hover:bg-muted/80"}`} role="tab" aria-selected={activeTab === category} aria-label={`Filter by ${category.replace("-", " ")} category`} tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setActiveTab(category) } }}>{category === "all" ? "All" : category.replace("-", " ").toUpperCase()}</button>
-          ))}
-        </div>
+        {/* ---------------- Playlist ---------------- */}
+        <Reveal variant="up">
+        {categories.length > 2 && (
+          <div className="mb-5 flex flex-wrap gap-2" role="group" aria-label="Filter by category">
+            {categories.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setCategory(c)}
+                aria-pressed={category === c}
+                className={cn(
+                  "rounded-full px-4 py-2 text-sm font-semibold transition",
+                  category === c ? "bg-accent text-accent-foreground shadow-md" : "bg-muted text-foreground/70 hover:bg-accent/20"
+                )}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        )}
 
-        <div className="space-y-3 animate-slide-in-left">
-          {filteredTracks.map((track) => (
-            <button key={track.id} onClick={() => handleTrackSelect(track)} className={`group w-full p-4 sm:p-5 rounded-xl border-2 transition-all duration-300 cursor-pointer hover-lift text-left ${ currentTrack.id === track.id ? "border-accent bg-accent/10" : "border-border hover:border-accent/50 bg-card hover:bg-muted" }`} aria-label={`Play ${track.title} by ${track.artist}`} aria-pressed={currentTrack.id === track.id} role="button" tabIndex={0} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleTrackSelect(track) } }} data-track-id={track.id}>
-              <div className="flex items-center gap-4">
-                <div className="flex-shrink-0">
-                  {currentTrack.id === track.id && playerState.isLoading ? (
-                    <div className="w-12 h-12 bg-accent text-accent-foreground rounded-full flex items-center justify-center"><div className="animate-spin rounded-full h-5 w-5 border-b-2 border-current"></div></div>
-                  ) : currentTrack.id === track.id && playerState.isPlaying ? (
-                    <div className="w-12 h-12 bg-accent text-accent-foreground rounded-full flex items-center justify-center"><Pause size={20} /></div>
-                  ) : (
-                    <div className="w-12 h-12 bg-accent/20 text-accent rounded-full flex items-center justify-center group-hover:bg-accent group-hover:text-accent-foreground transition-all"><Play size={20} className="ml-1" /></div>
-                  )}
-                </div>
-
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-foreground truncate">{track.title}{currentTrack.id === track.id && <span className="sr-only"> - Currently playing</span>}</h3>
-                  <p className="text-sm text-foreground/60">{track.artist}</p>
-                  <div className="flex items-center gap-2 text-xs text-foreground/60 mt-1">
-                    <span className="px-2 py-1 bg-secondary/10 text-secondary rounded-full" aria-label={`Category: ${track.category}`}>{track.category}</span>
-                    <span aria-label={`Duration: ${track.duration}`}>{track.duration}</span>
-                    <span>•</span>
-                    <span aria-label={`Date: ${track.date}`}>{track.date}</span>
-                    {track.isEmbed && <><span>•</span><span className="px-2 py-1 bg-yellow text-blue-800 rounded-full" aria-label="Embedded content"></span></>}
-                  </div>
-
-                  {currentTrack.id === track.id && playerState.isLoading && <div className="mt-2 flex items-center gap-2 text-accent text-sm" aria-label="Loading audio"><div className="w-3 h-3 border border-accent border-t-transparent rounded-full animate-spin" /><span>Loading...</span></div>}
-                  {currentTrack.id === track.id && playerState.isPlaying && !playerState.isLoading && <div className="mt-2 flex items-center gap-2 text-accent text-sm" aria-label="Now playing"><div className="w-2 h-2 bg-accent rounded-full animate-pulse" /><span>Now playing</span></div>}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {currentTrack.id === track.id && <div className="flex items-center gap-2">{playerState.isPlaying && <div className="flex items-center gap-1"><div className="w-1 h-3 bg-accent rounded-full animate-pulse" /><div className="w-1 h-4 bg-accent rounded-full animate-pulse" style={{ animationDelay: '0.1s' }} /><div className="w-1 h-3 bg-accent rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} /></div>}{playerState.isLoading && <div className="w-4 h-4 border-2 border-accent border-t-transparent rounded-full animate-spin" />}</div>}
-                  <Music className="w-4 h-4 text-foreground/60 group-hover:text-accent transition-colors" />
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-
+        <ol className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          {visible.map((t, i) => {
+            const isCurrent = t.id === track.id
+            return (
+              <li key={t.id} className={cn("border-b border-border last:border-b-0", isCurrent && "bg-accent/10")}>
+                <button
+                  type="button"
+                  onClick={() => select(t.id)}
+                  aria-current={isCurrent ? "true" : undefined}
+                  aria-label={`${isCurrent && playing ? "Pause" : "Play"} ${t.title} by ${t.artist}`}
+                  className="group flex w-full items-center gap-4 px-4 py-3.5 text-left transition hover:bg-muted/60 sm:px-5"
+                >
+                  <span
+                    className={cn(
+                      "flex size-11 shrink-0 items-center justify-center rounded-full transition",
+                      isCurrent ? "bg-accent text-accent-foreground shadow-md" : "bg-primary/5 text-primary group-hover:bg-accent group-hover:text-accent-foreground"
+                    )}
+                  >
+                    {isCurrent && playing ? (
+                      <span className="flex h-4 items-end gap-[3px] group-hover:hidden" aria-hidden>
+                        {[0, 1, 2, 3].map((b) => (
+                          <span key={b} className="w-[3px] rounded-full bg-current motion-safe:animate-[eqbar_0.9s_ease-in-out_infinite]" style={{ animationDelay: `${b * 0.12}s`, height: "100%" }} />
+                        ))}
+                      </span>
+                    ) : (
+                      <span className="text-sm font-semibold tabular-nums group-hover:hidden">{i + 1}</span>
+                    )}
+                    {isCurrent && playing ? <Pause className="hidden size-4 fill-current group-hover:block" /> : <Play className="ml-0.5 hidden size-4 fill-current group-hover:block" />}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className={cn("block truncate font-semibold", isCurrent ? "text-primary" : "text-foreground")}>{t.title}</span>
+                    <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-xs text-foreground/60">
+                      <span>{t.artist}</span>
+                      {t.category && (
+                        <>
+                          <span aria-hidden>•</span>
+                          <span>{t.category}</span>
+                        </>
+                      )}
+                      {t.date && (
+                        <>
+                          <span aria-hidden>•</span>
+                          <span>{t.date}</span>
+                        </>
+                      )}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-sm text-foreground/60 tabular-nums">{durations[t.id] ?? t.duration}</span>
+                </button>
+              </li>
+            )
+          })}
+        </ol>
+        </Reveal>
+        <p className="mt-3 text-center text-xs text-foreground/50">
+          Tip: click the player, then use Space to play/pause, J / L to skip 15s, N / P for next / previous and M to mute.
+        </p>
       </Container>
     </section>
+  )
+}
+
+function IconButton({
+  label,
+  onClick,
+  active,
+  className,
+  children,
+}: {
+  label: string
+  onClick: () => void
+  active?: boolean
+  className?: string
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      title={label}
+      aria-pressed={active}
+      className={cn(
+        "flex size-10 items-center justify-center rounded-full transition hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-[var(--player-accent)] focus-visible:outline-none sm:size-11",
+        active ? "text-[var(--player-accent)]" : "text-white/80 hover:text-white",
+        className
+      )}
+    >
+      {children}
+    </button>
   )
 }

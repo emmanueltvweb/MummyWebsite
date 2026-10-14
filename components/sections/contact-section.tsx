@@ -5,10 +5,12 @@ import { useState } from "react"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
 
 import { Container } from "@/components/layout/container"
-import { useInView } from "@/hooks/use-in-view"
+import { useSiteContent } from "@/components/content/site-content-provider"
+import { Reveal } from "@/components/ui/reveal"
 
 export function ContactSection() {
-  const { ref, isInView } = useInView({ threshold: 0.2 })
+  const { content } = useSiteContent()
+  const contact = content.contact
   const [formState, setFormState] = useState({
     name: "",
     email: "",
@@ -38,15 +40,15 @@ export function ContactSection() {
   }
 
   return (
-    <section id="contact" ref={ref} className="py-20 md:py-32 bg-muted">
+    <section id="contact" className="py-20 md:py-32 bg-muted">
       <Container>
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-primary mb-4">
-            Get In <span className="gold-accent">Touch</span>
-          </h2>
-          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-            Have questions or want to learn more about our ministry? We'd love to hear from you.
-          </p>
+          <Reveal as="h2" variant="up" className="text-4xl md:text-5xl font-bold text-primary mb-4">
+            {contact.title} <span className="gold-accent">{contact.titleHighlight}</span>
+          </Reveal>
+          <Reveal as="p" variant="up" delay={150} className="text-lg text-foreground/70 max-w-2xl mx-auto">
+            {contact.subtitle}
+          </Reveal>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
@@ -55,45 +57,37 @@ export function ContactSection() {
             {
               icon: Mail,
               title: "Email",
-              value: "info@scoan.org",
+              value: contact.email,
               delay: 0,
             },
             {
               icon: Phone,
               title: "Phone",
-              value: "+234 (0) 8068220995",
+              value: contact.phone,
               delay: 150,
             },
             {
               icon: MapPin,
               title: "Location",
-              value: "The Synagogue, Church Of All Nations Headquarters is located at: 1, Prophet T.B Joshua Street, Ikotun-Egbe, Lagos, Nigeria",
+              value: contact.location,
               delay: 300,
             },
           ].map(({ icon: Icon, title, value, delay }, index) => (
-            <div
-              key={index}
-              className="p-6 rounded-xl bg-background border border-border hover:border-accent transition-all duration-300 text-center hover-lift"
-              style={{
-                animation: isInView ? `slideInLeft 0.6s ease-out forwards ${delay}ms` : "none",
-                opacity: isInView ? 1 : 0,
-              }}
-            >
+            <Reveal key={index} variant="up" delay={delay}>
+            <div className="h-full p-6 rounded-xl bg-background border border-border hover:border-accent transition-all duration-300 text-center hover-lift">
               <div className="w-12 h-12 bg-gradient-to-br from-accent/20 to-accent/10 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Icon className="w-6 h-6 text-accent" />
               </div>
               <h3 className="font-semibold text-primary mb-2">{title}</h3>
               <p className="text-foreground/70">{value}</p>
             </div>
+            </Reveal>
           ))}
         </div>
 
         {/* Contact Form */}
-        <div
-          className={`max-w-2xl mx-auto p-8 rounded-xl bg-background border border-border transition-all duration-1000 ${
-            isInView ? "opacity-100 scale-100" : "opacity-0 scale-95"
-          }`}
-        >
+        <Reveal variant="zoom">
+        <div className="max-w-2xl mx-auto p-8 rounded-xl bg-background border border-border">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Name Field */}
@@ -193,6 +187,7 @@ export function ContactSection() {
             </button>
           </form>
         </div>
+        </Reveal>
       </Container>
     </section>
   )

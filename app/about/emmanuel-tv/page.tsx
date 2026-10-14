@@ -2,7 +2,8 @@ import { Metadata } from "next"
 
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
-import { AboutEmmanuelTVSection } from "@/components/sections/about-emmanuel-tv"
+import { AboutCarousel } from "@/components/sections/about-carousel"
+import { getAboutPageContent } from "@/lib/content/page-store"
 import SplashCursor from "@/components/SplashCursor"
 
 export const metadata: Metadata = {
@@ -16,13 +17,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function EmmanuelTVPage() {
+// Content is edited in Admin → Pages.
+export const dynamic = "force-dynamic"
+
+export default async function EmmanuelTVPage() {
+  const content = await getAboutPageContent("emmanuel-tv")
+
   return (
     <div className="min-h-screen bg-background">
       <SplashCursor />
       <Header />
       <main>
-        <AboutEmmanuelTVSection />
+        <AboutCarousel content={content} sectionId="about-emmanuel-tv" label="About Emmanuel TV" />
       </main>
       <Footer />
     </div>

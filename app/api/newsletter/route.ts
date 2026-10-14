@@ -1,94 +1,52 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { getEmailTransporter, emailTemplates } from '@/lib/email-config-resend'
+import { after } from "next/server"
 
-// Get the configured email transporter
-const transporter = getEmailTransporter()
+import { emailTemplates, getEmailTransporter } from "@/lib/email-config-resend"
+import { notify } from "@/lib/server/audit"
+import { parseBody, route } from "@/lib/server/api"
+import { logger } from "@/lib/server/logger"
+import { newSubscriberToken } from "@/lib/cms/newsletter"
+import { subscribeInput } from "@/lib/cms/schemas"
+import { subscribers } from "@/lib/cms/store"
 
-export async function POST(request: NextRequest) {
-  try {
-    const { email } = await request.json()
+export const POST = route(
+  { auth: false, rateLimit: { limit: 5, windowMs: 10 * 60_000, key: "newsletter" } },
+  async ({ request }) => {
+    const { email, name, source } = await parseBody(request, subscribeInput)
 
-    if (!email) {
-      return NextResponse.json(
-        { error: 'Email is required' },
-        { status: 400 }
-      )
+    const existing = await subscribers.find((s) => s.email === email)
+    if (existing?.status === "subscribed") {
+      // Respond identically so the endpoint can't be used to probe who is subscribed.
+      return { subscribed: true, message: "Successfully subscribed to newsletter" }
     }
 
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Invalid email format' },
-        { status: 400 }
-      )
+    if (existing) {
+      await subscribers.update(existing.id, { status: "subscribed", unsubscribedAt: undefined })
+    } else {
+      await subscribers.insert({ email, name, status: "subscribed", source: source || "website", token: newSubscriberToken() })
     }
 
-    // Get email templates
-    const subscriberTemplate = emailTemplates.newsletterWelcome(email)
-    const adminTemplate = emailTemplates.adminNotification(email)
-
-    // Email content for the subscriber
-    const subscriberMailOptions = {
-      from: 'noreply@scoanlegacy.org',
-      to: email,
-      subject: subscriberTemplate.subject,
-      html: subscriberTemplate.html,
-      text: subscriberTemplate.text,
-    }
-
-    // Email notification for admin (optional)
-    const adminMailOptions = {
-      from: 'noreply@scoanlegacy.org',
-      to: process.env.ADMIN_EMAIL || 'admin@scoanlegacy.org',
-      subject: adminTemplate.subject,
-      html: adminTemplate.html,
-      text: adminTemplate.text,
-    }
-
-    try {
-      // Send email to subscriber
-      await transporter.sendMail(subscriberMailOptions)
-      
-      // Send notification to admin (optional - remove if not needed)
+    after(async () => {
+      await notify({ type: "subscriber", title: "New subscriber", body: `${email} joined the newsletter.`, href: "/admin/subscribers" })
+      const transporter = getEmailTransporter()
+      const from = process.env.NEWSLETTER_FROM_EMAIL || "noreply@scoanlegacy.org"
+      const welcome = emailTemplates.newsletterWelcome(email)
+      const admin = emailTemplates.adminNotification(email)
       try {
-        await transporter.sendMail(adminMailOptions)
-      } catch (adminError) {
-        console.warn('Failed to send admin notification:', adminError)
-        // Don't fail the main request if admin email fails
+        await transporter.sendMail({ from, to: email, ...welcome })
+      } catch (error) {
+        logger.warn("Welcome email failed", { error })
       }
+      try {
+        await transporter.sendMail({ from, to: process.env.ADMIN_EMAIL || "admin@scoanlegacy.org", ...admin })
+      } catch (error) {
+        logger.warn("Admin subscriber notification failed", { error })
+      }
+    })
 
-      return NextResponse.json({
-        success: true,
-        message: 'Successfully subscribed to newsletter'
-      })
-
-    } catch (emailError) {
-      console.error('Email sending failed:', emailError)
-      return NextResponse.json(
-        { 
-          error: 'Subscription successful but email notification failed',
-          details: process.env.NODE_ENV === 'development' ? emailError.message : undefined
-        },
-        { status: 200 }
-      )
-    }
-
-  } catch (error) {
-    console.error('Newsletter subscription error:', error)
-    return NextResponse.json(
-      { 
-        error: 'Internal server error',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
-      },
-      { status: 500 }
-    )
+    return { subscribed: true, message: "Successfully subscribed to newsletter" }
   }
-}
+)
 
 export async function GET() {
-  return NextResponse.json(
-    { message: 'Newsletter API endpoint - Use POST to subscribe' },
-    { status: 200 }
-  )
+  return Response.json({ message: "Newsletter API endpoint - Use POST to subscribe" })
 }

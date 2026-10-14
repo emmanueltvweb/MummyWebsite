@@ -1,0 +1,32 @@
+{
+  "siteName": "Pastor Evelyn Joshua",
+  "tagline": "A ministry dedicated to spiritual growth, community service, and faith-based teachings.",
+  "logoUrl": "",
+  "faviconUrl": "",
+  "contactEmail": "info@example.org",
+  "contactPhone": "",
+  "address": "",
+  "social": {
+    "facebook": "",
+    "instagram": "",
+    "youtube": "",
+    "twitter": "",
+    "tiktok": ""
+  },
+  "seo": {
+    "defaultTitle": "Pastor Evelyn Joshua website",
+    "titleTemplate": "%s",
+    "defaultDescription": "Welcome to a ministry dedicated to spiritual growth, community service, and faith-based teachings with gold and blue elegance.",
+    "keywords": [],
+    "ogImage": "",
+    "twitterHandle": "",
+    "allowIndexing": true,
+    "googleAnalyticsId": ""
+  },
+  "blog": {
+    "postsPerPage": 9,
+    "commentsEnabled": true,
+    "requireCommentApproval": true
+  },
+  "updatedAt": "2026-09-30T18:10:49.684Z"
+}
