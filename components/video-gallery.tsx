@@ -5,6 +5,7 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 
 import { VideoLightbox } from './video-lightbox'
 import { Reveal } from '@/components/ui/reveal'
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary/optimize"
 
 interface VideoItem {
   id: string
@@ -349,7 +350,7 @@ function VideoCard({ video, index, isFocused, onFocus, onBlur, onSelect }: Video
       >
         {!imageError ? (
           <img
-            src={video.thumbnail}
+            src={optimizeCloudinaryUrl(video.thumbnail, { width: 640 })}
             alt={video.title}
             className={`
               w-full h-full object-cover

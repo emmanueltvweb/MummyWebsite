@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, Play } from 'lucide-react'
 import Image from "next/image"
 
 import CloudinaryImage from "@/components/cloudinary-image"
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary/optimize"
 
 interface GalleryItem {
   id: number
@@ -168,7 +169,7 @@ export function GalleryGrid({ galleryItems, activeCategory }: GalleryGridProps) 
                   />
                 ) : (
                   <Image
-                    src={item.image || "/placeholder.svg"}
+                    src={optimizeCloudinaryUrl(item.image, { width: 800 }) || "/placeholder.svg"}
                     alt={item.title}
                     fill
                     className="object-cover w-full h-full"

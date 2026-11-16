@@ -49,7 +49,9 @@ export function GalleryContent() {
       </div>
 
       <div className="relative z-10">
-        <Reveal variant="up">
+        {/* relative z-30: the reveal animation makes this its own layer, so without it the mobile
+            category dropdown would open *behind* the photo grid below. */}
+        <Reveal variant="up" className="relative z-30">
           <GalleryFilter categories={categories} activeCategory={activeCategory} onCategoryChange={chooseCategory} />
         </Reveal>
 

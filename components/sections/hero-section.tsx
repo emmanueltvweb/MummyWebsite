@@ -6,6 +6,7 @@ import { Container } from "@/components/layout/container"
 import { ArrowRight, Calendar, User } from "lucide-react"
 import Link from "next/link"
 import CloudinaryImage from "@/components/cloudinary-image"
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary/optimize"
 import { useSiteContent } from "@/components/content/site-content-provider"
 
 import { Reveal } from "@/components/ui/reveal"
@@ -156,7 +157,9 @@ export function HeroSection() {
               ))}
             </div>
           </div>
-          <div className="hidden lg:flex justify-center lg:justify-end">
+          {/* Lifted a little so the photo slideshow doesn't run into the About section below
+              (that section is pulled up under the hero with a negative top margin). */}
+          <div className="hidden lg:flex justify-center lg:justify-end lg:-translate-y-20">
             <Reveal variant="right" delay={250} className="relative">
               <Carousel
                 setApi={setApi}
@@ -184,7 +187,7 @@ export function HeroSection() {
                         />
                         ) : slide.url ? (
                           <Image
-                            src={slide.url}
+                            src={optimizeCloudinaryUrl(slide.url, { width: 1000 })}
                             alt={slide.alt}
                             width={380}
                             height={540}
@@ -280,7 +283,7 @@ export function LegacyAboutSection() {
                   />
                   ) : slide.url ? (
                   <Image
-                    src={slide.url}
+                    src={optimizeCloudinaryUrl(slide.url, { width: 1000 })}
                     alt={slide.alt}
                     width={800}
                     height={600}
@@ -349,7 +352,7 @@ function LatestSermonSection() {
               {!showFacebookVideo ? (
                 <>
                   <Image
-                    src={sermon.featuredImageUrl}
+                    src={optimizeCloudinaryUrl(sermon.featuredImageUrl, { width: 1280 })}
                     alt="Featured sermon"
                     width={1280}
                     height={720}

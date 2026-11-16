@@ -20,7 +20,7 @@
     "imageUrl": "https://res.cloudinary.com/dvlcc2r5w/image/upload/v1791199349/website-uploads/sermons/jhjbop3x25fu0bebugte.png",
     "videoEmbedUrl": "https://www.facebook.com/plugins/video.php?height=314&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1825435371985464%2F&show_text=false&width=560&t=0",
     "watchNowLabel": "Watch Now",
-    "watchNowUrl": "https://www.stream.emmanuel.tv/title/en/6937f6a8e4b0425d920b8319?v3=true&type=vod",
+    "watchNowUrl": "https://www.stream.emmanuel.tv/player?id=6ac29fb985c945d089f39297&type=vod",
     "downloadAppLabel": "Download App",
     "downloadAppUrl": "https://emmanuel.tv/download/"
   },
@@ -142,6 +142,6 @@
       }
     ]
   },
-  "updatedAt": "2026-10-08T16:40:33.618Z",
+  "updatedAt": "2026-10-26T16:07:21.898Z",
   "updatedBy": "Hosea"
 }

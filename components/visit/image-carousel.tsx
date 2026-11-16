@@ -5,6 +5,7 @@ import Image from "next/image"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
 import CloudinaryImage from "@/components/cloudinary-image"
+import { optimizeCloudinaryUrl } from "@/lib/cloudinary/optimize"
 
 const churchImages = [
   {
@@ -109,7 +110,7 @@ export function ImageCarousel() {
               />
             ) : (
               <Image
-                src={image.src}
+                src={optimizeCloudinaryUrl(image.src, { width: 1600 })}
                 alt={image.alt}
                 fill
                 className="object-cover"
